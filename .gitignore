@@ -12,3 +12,6 @@ venv/
 
 # OS
 .DS_Store
+
+# Personal Files
+Progress_Notes.md

@@ -14,5 +14,5 @@ venv/
 .DS_Store
 
 # Personal Files
-Progress_Notes.mdpytest.ini
+Progress_Notes.md
 pytest.ini

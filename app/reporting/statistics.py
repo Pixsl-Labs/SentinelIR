@@ -512,10 +512,45 @@ class Statistics:
             + f"Generated: {now}\n"
         )
 
-        print(f"{'Failed attempts:':<25} {stats['failed_attempts']}")
-        print(f"{'Successful logins:':<25} {stats['successful_logins']}")
-        print(f"{'Suspicious IPs:':<25} {stats['suspicious_ips']}")
-        print(f"{'Brute-force alerts:':<25} {stats['brute_force_alerts']}")
+        failed_colour = get_attempt_colour(
+            stats['failed_attempts']
+        )
+
+        successful_colour = get_count_colour(
+            stats['successful_logins']
+        )
+
+        suspicious_colour = get_count_colour(
+            stats['suspicious_ips']
+        )
+
+        brute_colour = get_attempt_colour(
+            stats['brute_force_alerts']
+        )
+
+        print(
+            f"{'Failed attempts:':<25} "
+            f"{failed_colour}"
+            f"{stats['failed_attempts']}"
+        )
+
+        print(
+            f"{'Successful logins:':<25} "
+            f"{successful_colour}"
+            f"{stats['successful_logins']}"
+        )
+
+        print(
+            f"{'Suspicious IPs:':<25} "
+            f"{suspicious_colour}"
+            f"{stats['suspicious_ips']}"
+        )
+
+        print(
+            f"{'Brute-force alerts:':<25} "
+            f"{brute_colour}"
+            f"{stats['brute_force_alerts']}"
+        )
 
         print(
             Fore.MAGENTA

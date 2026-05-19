@@ -6,7 +6,13 @@ from app.config import (
     TIME_WINDOW_SECONDS,
     SEVERITY_LEVEL
 )
-from app.utils.colours import get_severity_colour, get_status_colour
+from app.utils.colours import (
+    get_severity_colour, 
+    get_status_colour, 
+    get_attempt_colour, 
+    get_count_colour
+)
+from app.utils.formatting import format_column, print_table_header
 
 
 class Detection:
@@ -90,24 +96,53 @@ class Detection:
             return
 
         print(
-            Fore.YELLOW
-            + "\n=== Brute Force Detected ===\n"
+            Fore.LIGHTRED_EX
+            + "\n\n=== Brute Force Detected ===\n"
         )
+
+        attempt_colour = get_count_colour(len(results))
 
         print(
-            Fore.CYAN
-            + f"   Total number of brute force attempts detected: {len(results)}\n"
+            f"{attempt_colour}"
+            + f"   Brute force Alerts: {len(results)}\n"
         )
 
+        columns = [
+            ("IP Address", 15),
+            ("Attempts", 10, "^"),
+            ("Time Window", 14, "^"),
+            ("Severity", 12)
+        ]
+
+        print_table_header(columns)
+
         for ip, attempts, diff in results:
+            
             severity = self.get_severity_level(attempts)
 
+            severity_colour = get_severity_colour(severity)
+
             print(
-                f"{Fore.LIGHTRED_EX}"
-                f"   {ip:<12} -> "
-                f"{attempts:<2} attempts "
-                f"in {diff:>3.1f}s "
-                f"[{severity}]"
+                "   "
+                + severity_colour
+                + format_column(
+                    f"{ip}",
+                    15
+                )
+                + format_column(
+                    f"{attempts}",
+                    10,
+                    "^"
+                )
+                + format_column(
+                    f"{diff}",
+                    14,
+                    "^"
+                )
+                + format_column(
+                    f"{severity}",
+                    12
+                )
             )
 
     def print_suspicious_success(self) -> None:
@@ -136,21 +171,33 @@ class Detection:
 
         print(
             Fore.YELLOW
-            + "\n=== IPs with Success After Failure ==="
+            + "\n\n=== Success After Failure ==="
         )
 
+        attempt_colour = get_count_colour(len(matching_ips))
+
         print(
-            Fore.CYAN
-            + f"\n   Total matching IPs: "
-            f"{len(matching_ips)}\n"
+            f"{attempt_colour}"
+            + f"\n   Matching IPs: {len(matching_ips)}\n"
         )
+
+        columns = [
+            ("IP Address", 16),
+            ("Result", 10)
+        ]
+
+        print_table_header(columns)
 
         for ip in sorted(matching_ips):
 
             print(
-                f"{Fore.YELLOW}"
-                f"   {ip:<12} -> "
-                f"Successful login after failures"
+                "   "
+                + Fore.YELLOW
+                + format_column(
+                    f"{ip}",
+                    16
+                )
+                + "Success after failures"
             )
 
     def get_user_targeting(
@@ -196,21 +243,66 @@ class Detection:
 
             return
 
-        print("\n=== User Targeted Attacks Detected ===\n")
-
         print(
-            Fore.CYAN
-            + f"   Total number of targeted users: {len(results)}\n"
+            Fore.LIGHTRED_EX
+            + "\n\n=== User Targeted Attacks ===\n"
         )
 
+        attempt_colour = get_count_colour(len(results))
+
+        print(
+            f"{attempt_colour}"
+            + f"   Distributed Attacks Detected: {len(results)}\n"
+        )
+
+        columns = [
+            ("User", 8),
+            ("Unique IPs", 15, "^"),
+            ("Attempts", 12, "^"),
+            ("Severity", 12, "^")
+        ]
+
+        print_table_header(columns)
+
         for user, unique_ips, total_attempts in results:
+
             severity = self.get_severity_level(unique_ips)
 
+            severity_colour = get_severity_colour(severity)
+
+            ip_colour = get_attempt_colour(
+                unique_ips
+            )
+
+            attempt_colour = get_attempt_colour(
+                total_attempts
+            )
+
             print(
-                f"   {user} targeted by "
-                f"{unique_ips} IPs "
-                f"({total_attempts} attempts) "
-                f"[{severity}]"
+                "   "
+                + format_column(
+                    user,
+                    8
+                )
+                + ip_colour
+                + format_column(
+                    unique_ips,
+                    15,
+                    "^"
+                )
+                + attempt_colour
+                + format_column(
+                    total_attempts,
+                    12,
+                    "^"
+                )
+                + severity_colour
+                + severity_colour
+                + format_column(
+                    f"[{severity}]",
+                    12,
+                    "^"
+                )
             )
 
     def get_suspicious_ips(
@@ -273,13 +365,24 @@ class Detection:
         
         print(
             Fore.YELLOW
-            + "\n=== Suspicious IPs (Failed Attempts) ===\n"
+            + "\n\n=== Suspicious IPs (Failed Attempts) ===\n"
         )
 
+        attempt_colour = get_count_colour(len(results))
+
         print(
-            Fore.CYAN
-            + f"   Total number of suspicious IPs: {len(results)}\n"
+            f"{attempt_colour}"
+            + f"   Suspicious IPs Detected: {len(results)}\n"
         )
+
+        columns = [
+            ("IP Address", 15),
+            ("Attempts", 12, "^"),
+            ("Status", 20, "^"),
+            ("Severity", 15)
+        ]
+
+        print_table_header(columns)
 
         for current_ip, count, current_severity in results:
 
@@ -291,10 +394,28 @@ class Detection:
                 )
             )
 
+            attempt_colour = get_attempt_colour(count)
+
             print(
-                f"   {current_ip:<12} -> "
-                f"{count:<2} attempts "
-                f"({status:^11}) "
-                f"{severity_colour}"
-                f"[{current_severity:^8}]"
+                "   "                
+                + f"{attempt_colour}"
+                + format_column(
+                    f"{current_ip}",
+                    15
+                )
+                + format_column(
+                    f"{count}",
+                    12,
+                    "^"
+                )
+                + format_column(
+                    f"{status}",
+                    20,
+                    "^"
+                )
+                + f"{severity_colour}"
+                + format_column(
+                    f"{current_severity}",
+                    15
+                )
             )

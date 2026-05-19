@@ -43,3 +43,18 @@ def get_attempt_colour(
         return Fore.LIGHTYELLOW_EX
     
     return Fore.LIGHTGREEN_EX
+
+def get_count_colour(
+    count: int
+) -> str:
+
+    if count >= 20:
+        return Fore.LIGHTRED_EX
+
+    elif count >= 10:
+        return Fore.YELLOW
+
+    elif count >= 1:
+        return Fore.CYAN
+
+    return Fore.LIGHTBLACK_EX

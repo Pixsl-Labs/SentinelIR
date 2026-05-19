@@ -5,6 +5,7 @@ from app.config import MAX_ATTEMPTS, TIME_WINDOW_SECONDS
 from app.interaction.menus import display_log_analysis_menu, current_config
 from app.interaction.filters import integer_validation, handle_filter_menu, get_time_range
 from app.interaction.configuration import configure
+from app.utils.colours import get_count_colour
 
 import os
 from colorama import Fore
@@ -60,19 +61,20 @@ class Interaction:
 
                 print(
                     Fore.LIGHTRED_EX
-                    + "=== Attention Needed ===\n"
+                    + "=== Attention Needed ===\n\n"
                 )
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
-                print(
-                    Fore.CYAN
-                    + f"Number of unique IPs: {total_ips}\n"
-                )
+                
+                total_failed = self.reporter.get_total_failed_login_attempts()
 
-                total = self.reporter.get_total_failed_login_attempts()
+                failed_attempt_colour = get_count_colour(total_failed)
+                
                 print(
                     Fore.CYAN
-                    + f"Total number of failed logins: {total}"
+                    + f"Unique IP Addresses: {total_ips:>7}\n"
+                    + f"{failed_attempt_colour}"
+                    + f"Failed Login Attempts: {total_failed:>4}"
                 )
 
                 self.reporter.print_suspicious_ips()
@@ -89,20 +91,14 @@ class Interaction:
 
                 print(
                     Fore.CYAN
-                    + "\n=== Standard Logins ===\n"
-                )
-
-                total_ = self.reporter.get_total_successful_logins()
-                print(
-                    Fore.LIGHTCYAN_EX
-                    + f"Total number of successful logins: {total_}"
-                )                
+                    + "\n\n=== Standard Logins ==="
+                )   
 
                 self.reporter.print_successful_logins()
                 
                 print(
                     Fore.MAGENTA
-                    + "\n=== End of Report ==="
+                    + "\n=== End of Report ===\n"
                 )
 
             elif choice == "2":

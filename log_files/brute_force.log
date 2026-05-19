@@ -54,3 +54,14 @@ Jan 10 2024 12:01:08 Failed password for admin from 10.0.0.5
 Jan 10 2024 12:01:09 Failed password for admin from 10.0.0.5
 Jan 10 2024 12:01:10 Failed password for admin from 10.0.0.5
 Jan 10 2024 12:01:11 Failed password for admin from 10.0.0.5
+
+Jun 10 2024 12:03:01 server sshd[1019]: Failed password for admin from 192.168.1.20 port 22 ssh2
+Jun 10 2024 12:03:02 server sshd[1020]: Failed password for admin from 192.168.1.21 port 22 ssh2
+Jun 10 2024 12:03:03 server sshd[1021]: Failed password for admin from 192.168.1.22 port 22 ssh2
+Jun 10 2024 12:03:04 server sshd[1022]: Failed password for admin from 192.168.1.23 port 22 ssh2
+Jun 10 2024 12:03:05 server sshd[1023]: Failed password for admin from 192.168.1.24 port 22 ssh2
+Jun 10 2024 12:03:06 server sshd[1024]: Failed password for admin from 192.168.1.25 port 22 ssh2
+Jun 10 2024 12:03:07 server sshd[1025]: Failed password for admin from 192.168.1.26 port 22 ssh2
+Jun 10 2024 12:03:08 server sshd[1026]: Failed password for admin from 192.168.1.27 port 22 ssh2
+Jun 10 2024 12:03:09 server sshd[1027]: Failed password for admin from 192.168.1.28 port 22 ssh2
+Jun 10 2024 12:03:10 server sshd[1028]: Failed password for admin from 192.168.1.29 port 22 ssh2

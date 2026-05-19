@@ -1,6 +1,11 @@
 from app.log_analyser.log_entry import LogEntry
 from app.utils.filtering import filter_log_entries
-from app.utils.colours import get_severity_colour, get_attempt_colour
+from app.utils.colours import (
+    get_severity_colour, 
+    get_attempt_colour,
+    get_count_colour
+)
+from app.utils.formatting import print_table_header, format_column
 
 from datetime import time, datetime
 from colorama import Fore
@@ -66,16 +71,27 @@ class Statistics:
         )
         
         print(
-            Fore.CYAN
-            + "\n=== Failed Login Results ==="
+            Fore.YELLOW
+            + "\n\n=== Failed Login Results ==="
         )
+
+        attempt_colour = get_count_colour(len(results))
 
         print(
-            Fore.CYAN
-            + f"\n   Total results: {len(results)}\n"
+            f"{attempt_colour}"
+            + f"\n   Total Results: {len(results)}\n"
         )
 
+        columns = [
+            ("Severity", 12),
+            ("User", 10),
+            ("IP Address", 15)
+        ]
+        
+        print_table_header(columns)
+
         for entry in results:
+
             severity_colour = (
                 get_severity_colour(
                     entry.severity
@@ -83,11 +99,20 @@ class Statistics:
             )
 
             print(
-                f"   "
-                f"{severity_colour}"
-                f"[{entry.severity:^8}] "
-                f"{entry.user:<6} "
-                f"{entry.ip}"
+                "   "
+                + severity_colour
+                + format_column(
+                    f"{entry.severity}",
+                    12
+                )
+                + format_column(
+                    entry.user,
+                    10
+                )
+                + format_column(
+                    entry.ip,
+                    15
+                )
             )
 
     def get_successful_logins(
@@ -149,13 +174,22 @@ class Statistics:
         )
 
         print(
-            Fore.CYAN
+            Fore.GREEN
             + "\n=== Successful Logins ==="
         )
         print(
             Fore.CYAN
-            + f"\n   Total results: {len(results)}\n"
+            + f"\n   Successful Logins: {len(results)}\n"
         )
+
+        columns = [
+            ("Status", 12),
+            ("Timestamp", 21),
+            ("User", 10),
+            ("IP Address", 15)
+        ]
+
+        print_table_header(columns)
 
         for entry in results:
 
@@ -167,10 +201,24 @@ class Statistics:
 
             print(
                 Fore.GREEN
-                +f"   [{entry.status:<7}] "
-                f"{time_str:<20} "
-                f"{entry.user:<6} "
-                f"{entry.ip}"
+                +
+                "   "
+                + format_column(
+                    f"[{entry.status}]",
+                    12
+                )
+                + format_column(
+                    time_str,
+                    21
+                )
+                + format_column(
+                    entry.user,
+                    10
+                )
+                + format_column(
+                    entry.ip,
+                    15
+                )
             )
 
     def get_total_failed_login_attempts(self) -> int:
@@ -305,24 +353,51 @@ class Statistics:
 
         print(
             Fore.CYAN
-            + "\n=== Most Targeted Users ===\n"
+            + "\n\n=== Most Targeted Users ===\n"
         )
+
+        attempt_colour = get_count_colour(len(sorted_users))
 
         print(
-            Fore.CYAN
-            + f"   Total number of targeted users: {len(sorted_users)}\n"
+            f"{attempt_colour}"
+            + f"   Targeted Users Detected: {len(sorted_users)}\n"
         )
 
+        columns = [
+            ("User", 5),
+            ("Attempts", 15, "^"),
+            ("Severity", 12)
+        ]
+
+        print_table_header(columns)
+
         for user, count in sorted_users:
+
+            severity = self.get_severity_level(count)
+
+            severity_colour = get_severity_colour(severity)
+
             attempt_colour = get_attempt_colour(
                 count
             )
 
             print(
-                f"   "
-                f"{attempt_colour}"
-                f"{user:<6} -> "
-                f"{count} attempts"
+                "   "
+                + attempt_colour
+                + format_column(
+                    f"{user}",
+                    5
+                )
+                + format_column(
+                    f"{count}",
+                    15,
+                    "^"
+                )
+                + severity_colour
+                + format_column(
+                    f"{severity}",
+                    12
+                )
             )
 
     def print_attack_statistics(self) -> None:

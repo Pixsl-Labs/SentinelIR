@@ -3,6 +3,11 @@ from colorama import Fore
 
 from app.config import MAX_ATTEMPTS
 from app.utils.colours import get_attempt_colour
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count
+)
 
 
 class Summary:
@@ -11,9 +16,9 @@ class Summary:
         Prints a high-level summary of detected threats.
         """
 
-        print(
+        print_section_header(
+            "Attack Summary",
             Fore.GREEN
-            + "\n=== Attack Summary ===\n"
         )
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -66,18 +71,18 @@ class Summary:
 
         if targeted:
 
-            top_user, unique_ips, attempts = targeted[0]
+            top_target = targeted[0]
 
             targeted_colour = get_attempt_colour(
-                attempts
+                top_target.attempts
             )
 
             print(
                 f"{'Most targeted user:':<25} "
                 f"{targeted_colour}"
-                f"{top_user} "
-                f"({attempts} attempts from "
-                f"{unique_ips} IPs)"
+                f"{top_target.username} "
+                f"({top_target.attempts} attempts "
+                f"from {top_target.unique_ips} IPs)"
             )
 
         else:
@@ -114,7 +119,7 @@ class Summary:
             f"{len(targeting) if targeting else 'None'}"
         )
 
-        print(
+        print_section_header(
+            "End of Report",
             Fore.MAGENTA
-            + "\n=== End of Report ==="
         )

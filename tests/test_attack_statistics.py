@@ -1,6 +1,7 @@
 from app.log_analyser.log_reporter import LogReporter
 from app.log_analyser.log_analyser import LogAnalyser
 from conftest import brute_force_reporter, empty_reporter
+from app.utils.severity import get_severity_level
 
 def test_attack_statistics_returns_dictionary(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()

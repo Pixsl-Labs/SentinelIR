@@ -1,10 +1,10 @@
 from collections import defaultdict
 from colorama import Fore
+from datetime import time
 
 from app.config import (
     MAX_ATTEMPTS,
-    TIME_WINDOW_SECONDS,
-    SEVERITY_LEVEL
+    TIME_WINDOW_SECONDS
 )
 from app.utils.colours import (
     get_severity_colour, 
@@ -13,42 +13,29 @@ from app.utils.colours import (
     get_count_colour
 )
 from app.utils.formatting import format_column, print_table_header
+from app.utils.severity import get_severity_level
+from app.utils.risk import get_risk_level
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count
+)
+
+from app.models.detection_results import (
+    SuspiciousIPResult, 
+    BruteForceResult,
+    UserTargetingResult,
+    SuspiciousSuccessResult
+)
 
 
 class Detection:
-    def get_risk_level(self, count: int) -> str:
-        """
-        Returns the risk level based on the number of attempts
-
-        Returns:
-            str: Risk level
-        """
-        return "Investigate" if count >= MAX_ATTEMPTS else "Low risk"
-
-    def get_severity_level(self, count: int) -> str:
-        """
-        Returns the severity level based on the number of attempts.
-
-        Args:
-            count (int): Number of detected attempts.
-
-        Returns:
-            str: Severity level
-        """
-        if count >= SEVERITY_LEVEL["HIGH"]:
-            return "HIGH"
-
-        elif count >= SEVERITY_LEVEL["MEDIUM"]:
-            return "MEDIUM"
-
-        else:
-            return "LOW"
 
     def get_bruteforce(
             self,
             threshold=MAX_ATTEMPTS,
             window_seconds=TIME_WINDOW_SECONDS
-        ) -> list[tuple[str, int, float]]:
+        ) -> list[BruteForceResult]:
         """
         Detects brute force attacks based on failed login attempts
         within a specified time window
@@ -68,7 +55,16 @@ class Detection:
                 diff = (end - start).total_seconds()
 
                 if diff <= window_seconds:
-                    results.append((ip, threshold, diff))
+                    severity = get_severity_level(threshold)
+
+                    results.append(
+                        BruteForceResult(
+                            ip=ip,
+                            attempts=threshold,
+                            time_window=diff,
+                            severity=severity
+                            )
+                        )
                     break
 
         return results
@@ -88,23 +84,23 @@ class Detection:
         )
 
         if not results:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo brute force activity detected."
+            print_empty_message(
+                "No brute force activity detected."
             )
 
             return
-
-        print(
+        
+        print_section_header(
+            "Brute Force Detected",
             Fore.LIGHTRED_EX
-            + "\n\n=== Brute Force Detected ===\n"
         )
 
         attempt_colour = get_count_colour(len(results))
 
-        print(
-            f"{attempt_colour}"
-            + f"   Brute force Alerts: {len(results)}\n"
+        print_total_count(
+            "Brute force Alerts",
+            len(results),
+            attempt_colour
         )
 
         columns = [
@@ -116,38 +112,24 @@ class Detection:
 
         print_table_header(columns)
 
-        for ip, attempts, diff in results:
-            
-            severity = self.get_severity_level(attempts)
+        for result in results:
 
-            severity_colour = get_severity_colour(severity)
+            severity_colour = get_severity_colour(result.severity)
 
             print(
                 "   "
                 + severity_colour
-                + format_column(
-                    f"{ip}",
-                    15
-                )
-                + format_column(
-                    f"{attempts}",
-                    10,
-                    "^"
-                )
-                + format_column(
-                    f"{diff}",
-                    14,
-                    "^"
-                )
-                + format_column(
-                    f"{severity}",
-                    12
-                )
+                + format_column(result.ip, 15)
+                + format_column(result.attempts, 10, "^")
+                + format_column(result.time_window, 14, "^")
+                + format_column(result.severity, 12)
             )
 
-    def print_suspicious_success(self) -> None:
+    def get_suspicious_success(
+        self
+    ) -> list[SuspiciousIPResult]:
         """
-        Detects successful logins following failed attempts.
+        Returns successful logins that occurred after failed login attempts.
         """
 
         failed_ips = {
@@ -155,55 +137,93 @@ class Detection:
             for entry in self.analyser.failed_logins
         }
 
-        matching_ips = {
-            entry.ip
-            for entry in self.analyser.successful_logins
-            if entry.ip in failed_ips
-        }
+        results = []
 
-        if not matching_ips:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo suspicious success detected."
+        for entry in self.analyser.successful_logins:
+
+            if entry.ip not in failed_ips:
+                continue
+
+            failed_attempts = sum(
+                1
+                for failed_entry in self.analyser.failed_logins
+                if failed_entry.ip == entry.ip
+            )
+
+            severity = get_severity_level(
+                failed_attempts
+            )
+
+            results.append(
+                SuspiciousSuccessResult(
+                    ip=entry.ip,
+                    attempts=failed_attempts,
+                    severity=severity
+                )
+            )
+
+        return results
+
+    def print_suspicious_success(self) -> None:
+        """
+        Detects successful logins following failed attempts.
+        """
+
+        results = self.get_suspicious_success()
+
+        if not results:
+            print_empty_message(
+                "No suspicious success detected."
             )
 
             return
-
-        print(
+        
+        print_section_header(
+            "Success After Failure",
             Fore.YELLOW
-            + "\n\n=== Success After Failure ==="
         )
 
-        attempt_colour = get_count_colour(len(matching_ips))
+        attempt_colour = get_count_colour(
+            len(results)
+        )
 
-        print(
-            f"{attempt_colour}"
-            + f"\n   Matching IPs: {len(matching_ips)}\n"
+        print_total_count(
+            "Matching IPs",
+            len(results),
+            attempt_colour
         )
 
         columns = [
             ("IP Address", 16),
-            ("Result", 10)
+            ("Failed Attempts", 18, "^"),
+            ("Severity", 12)
         ]
 
         print_table_header(columns)
 
-        for ip in sorted(matching_ips):
+        for result in results:
+
+            severity_colour = get_severity_colour(
+                result.severity
+            )
+
+            attempt_colour = get_attempt_colour(
+                result.attempts
+            )
 
             print(
                 "   "
-                + Fore.YELLOW
-                + format_column(
-                    f"{ip}",
-                    16
-                )
-                + "Success after failures"
+                + attempt_colour
+                + format_column(result.ip, 16)
+                + format_column(result.attempts, 18, "^")
+                + severity_colour
+                + format_column(result.severity, 12)
             )
 
     def get_user_targeting(
             self,
             threshold=MAX_ATTEMPTS
-        ):
+        ) -> list[UserTargetingResult]:
         """
         Detects users being targeted by multiple IPs.
         """
@@ -219,8 +239,14 @@ class Detection:
             unique_ips = set(ips)
 
             if len(unique_ips) >= threshold:
+                severity = get_severity_level(len(unique_ips))
+
                 results.append(
-                    (user, len(unique_ips), len(ips))
+                    UserTargetingResult(
+                        username=user, 
+                        unique_ips=len(unique_ips), 
+                        attempts=len(ips),
+                        severity=severity)
                 )
 
         return results
@@ -236,23 +262,23 @@ class Detection:
         results = self.get_user_targeting(threshold)
 
         if not results:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo user-targeted attacks detected."
+            print_empty_message(
+                "No user-targeted attacks detected."
             )
 
             return
 
-        print(
+        print_section_header(
+            "User Targeted Attacks",
             Fore.LIGHTRED_EX
-            + "\n\n=== User Targeted Attacks ===\n"
         )
 
         attempt_colour = get_count_colour(len(results))
-
-        print(
-            f"{attempt_colour}"
-            + f"   Distributed Attacks Detected: {len(results)}\n"
+        
+        print_total_count(
+            "Distributed Attacks Detected",
+            len(results),
+            attempt_colour
         )
 
         columns = [
@@ -264,52 +290,34 @@ class Detection:
 
         print_table_header(columns)
 
-        for user, unique_ips, total_attempts in results:
+        for result in results:
 
-            severity = self.get_severity_level(unique_ips)
-
-            severity_colour = get_severity_colour(severity)
+            severity_colour = get_severity_colour(result.severity)
 
             ip_colour = get_attempt_colour(
-                unique_ips
+                result.unique_ips
             )
 
             attempt_colour = get_attempt_colour(
-                total_attempts
+                result.attempts
             )
 
             print(
                 "   "
-                + format_column(
-                    user,
-                    8
-                )
+                + format_column(result.username, 8)
                 + ip_colour
-                + format_column(
-                    unique_ips,
-                    15,
-                    "^"
-                )
+                + format_column(result.unique_ips, 15, "^")
                 + attempt_colour
-                + format_column(
-                    total_attempts,
-                    12,
-                    "^"
-                )
+                + format_column(result.attempts, 12, "^")
                 + severity_colour
-                + severity_colour
-                + format_column(
-                    f"[{severity}]",
-                    12,
-                    "^"
-                )
+                + format_column(result.severity, 12, "^")
             )
 
     def get_suspicious_ips(
         self,
         ip: str | None=None,
         severity: str | None=None,
-    ) -> list[tuple[str, int, str]]:
+    ) -> list[SuspiciousIPResult]:
         """
         Returns filtered suspicious IP addresses.
         """
@@ -324,7 +332,9 @@ class Detection:
 
         for current_ip, count in sorted_ips:
 
-            current_severity = self.get_severity_level(count)
+            current_severity = get_severity_level(count)
+
+            risk_status = get_risk_level(count)
 
             if ip and current_ip != ip:
                 continue
@@ -333,10 +343,11 @@ class Detection:
                 continue
 
             results.append(
-                (
-                    current_ip,
-                    count,
-                    current_severity
+                SuspiciousIPResult(
+                    ip=current_ip,
+                    attempts=count,
+                    severity=current_severity,
+                    risk_status=risk_status
                 )
             )
 
@@ -345,7 +356,9 @@ class Detection:
     def print_suspicious_ips(
         self,
         ip: str | None=None,
-        severity: str | None=None
+        severity: str | None=None,
+        start_time: time | None=None,
+        end_time: time | None=None
     ) -> None:
         """
         Prints filtered suspicious IP addresses.
@@ -357,22 +370,23 @@ class Detection:
         )
 
         if not results:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo suspicious IPs found."
+            print_empty_message(
+                "No suspicious IPs found."
             )
+
             return
         
-        print(
+        print_section_header(
+            "Suspicious IPs (Failed Attempts)",
             Fore.YELLOW
-            + "\n\n=== Suspicious IPs (Failed Attempts) ===\n"
         )
 
         attempt_colour = get_count_colour(len(results))
 
-        print(
-            f"{attempt_colour}"
-            + f"   Suspicious IPs Detected: {len(results)}\n"
+        print_total_count(
+            "Suspicious IPs Detected",
+            len(results),
+            attempt_colour
         )
 
         columns = [
@@ -384,38 +398,22 @@ class Detection:
 
         print_table_header(columns)
 
-        for current_ip, count, current_severity in results:
-
-            status = self.get_risk_level(count)
+        for result in results:
 
             severity_colour = (
                 get_severity_colour(
-                    current_severity
+                    result.severity
                 )
             )
 
-            attempt_colour = get_attempt_colour(count)
+            attempt_colour = get_attempt_colour(result.attempts)
 
             print(
-                "   "                
-                + f"{attempt_colour}"
-                + format_column(
-                    f"{current_ip}",
-                    15
-                )
-                + format_column(
-                    f"{count}",
-                    12,
-                    "^"
-                )
-                + format_column(
-                    f"{status}",
-                    20,
-                    "^"
-                )
-                + f"{severity_colour}"
-                + format_column(
-                    f"{current_severity}",
-                    15
-                )
+                "   "
+                + attempt_colour
+                + format_column(result.ip, 15)
+                + format_column(result.attempts, 12, "^")
+                + format_column(result.risk_status, 20, "^")
+                + severity_colour
+                + format_column(result.severity, 15)
             )

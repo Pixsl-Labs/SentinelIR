@@ -25,7 +25,7 @@ def test_get_suspicious_ips_by_ip(
     assert len(results) > 0
 
     assert all(
-        result[0] == "192.168.1.10"
+        result.ip == "192.168.1.10"
         for result in results
     )
 
@@ -41,7 +41,7 @@ def test_get_suspicious_ips_by_severity(
     assert len(results) > 0
 
     assert all(
-        result[2] == "LOW"
+        result.severity == "LOW"
         for result in results
     )
 

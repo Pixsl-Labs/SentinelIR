@@ -1,5 +1,5 @@
 from app.log_analyser.log_entry import LogEntry
-from app.config import SEVERITY_LEVEL
+from app.utils.severity import get_severity_level
 
 import re, logging
 from datetime import datetime
@@ -18,25 +18,6 @@ class LogAnalyser:
         self.failed_logins: list[LogEntry] = []
         self.successful_logins: list[LogEntry] = []
         self.failed_ip_counts = {}
-
-    def get_severity_level(self, count: int) -> str:
-        """
-        Returns the severity level based on the number of attempts.
-
-        Args:
-            count (int): Number of detected attempts.
-
-        Returns:
-            str: Severity level
-        """
-        if count >= SEVERITY_LEVEL["HIGH"]:
-            return "HIGH"
-
-        elif count >= SEVERITY_LEVEL["MEDIUM"]:
-            return "MEDIUM"
-
-        else:
-            return "LOW"
 
     def analyse(self, file_path: str) -> bool:
         """
@@ -110,7 +91,7 @@ class LogAnalyser:
 
         attempts = self.failed_ip_counts[ip]
 
-        severity = self.get_severity_level(attempts)
+        severity = get_severity_level(attempts)
 
         self.failed_logins[-1].severity = severity
 

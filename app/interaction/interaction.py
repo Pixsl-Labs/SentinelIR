@@ -5,7 +5,13 @@ from app.config import MAX_ATTEMPTS, TIME_WINDOW_SECONDS
 from app.interaction.menus import display_log_analysis_menu, current_config
 from app.interaction.filters import integer_validation, handle_filter_menu, get_time_range
 from app.interaction.configuration import configure
-from app.utils.colours import get_count_colour
+from app.utils.colours import get_count_colour, get_attempt_colour
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count
+)
+
 
 import os
 from colorama import Fore
@@ -44,9 +50,9 @@ class Interaction:
 
             if choice == "1":
                 current_config(self.threshold, self.window_seconds)
-                print(
+                print_section_header(
+                    "Log Analysis Report",
                     Fore.GREEN
-                    + "\n=== Log Analysis Report ===\n"
                 )
 
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -59,9 +65,9 @@ class Interaction:
                 if not self.analyser.failed_logins and not self.analyser.successful_logins:
                     print("Log file contained no relevant login activity.\n")
 
-                print(
+                print_section_header(
+                    "Attention Needed",
                     Fore.LIGHTRED_EX
-                    + "=== Attention Needed ===\n\n"
                 )
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
@@ -69,12 +75,12 @@ class Interaction:
                 total_failed = self.reporter.get_total_failed_login_attempts()
 
                 failed_attempt_colour = get_count_colour(total_failed)
-                
+            
                 print(
                     Fore.CYAN
                     + f"Unique IP Addresses: {total_ips:>7}\n"
                     + f"{failed_attempt_colour}"
-                    + f"Failed Login Attempts: {total_failed:>4}"
+                    + f"Failed Login Attempts: {total_failed:>5}"
                 )
 
                 self.reporter.print_suspicious_ips()
@@ -89,16 +95,15 @@ class Interaction:
 
                 self.reporter.print_user_targeting(self.threshold)
 
-                print(
-                    Fore.CYAN
-                    + "\n\n=== Standard Logins ==="
-                )   
+                print_section_header(
+                    "Standard Logins"
+                )
 
                 self.reporter.print_successful_logins()
-                
-                print(
+
+                print_section_header(
+                    "End of Report",
                     Fore.MAGENTA
-                    + "\n=== End of Report ===\n"
                 )
 
             elif choice == "2":
@@ -190,21 +195,34 @@ class Interaction:
 
             elif choice == "13":
 
-                total = self.reporter.get_total_failed_login_attempts()
+                total_failed_ = self.reporter.get_total_failed_login_attempts()
 
-                print(f"\nTotal failed logins: {total}")
+                total_colour_failed = get_attempt_colour(total_failed_)
+
+                print(
+                    f"\nTotal failed logins: "
+                    f"{total_colour_failed}{total_failed_}"
+                )
 
             elif choice == "14":
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
 
-                print(f"\nUnique IP count: {total_ips}")
+                total_colour_ips = get_attempt_colour(total_ips)
+
+                print(
+                    f"\nUnique IP count: "
+                    f"{total_colour_ips}{total_ips}"
+                )
 
             # === Configuration ===
 
             elif choice == "15":
-
-                print("\n=== Export Options ===\n")
+                
+                print_section_header(
+                    "Export Options",
+                    Fore.GREEN
+                )
                 print("1. Failed Logins")
                 print("2. Successful Logins")
                 print("3. Activity Timeline")
@@ -248,7 +266,9 @@ class Interaction:
                     title = "Activity Timeline"
 
                 else:
-                    print("\nInvalid export option.")
+                    print_empty_message(
+                        "Invalid export option."
+                    )
                     continue
 
                 file_path = input(
@@ -277,8 +297,9 @@ class Interaction:
                     )
 
                 else:
-
-                    print("\nInvalid file extension.")
+                    print_empty_message(
+                        "Invalid file extension."
+                    )
 
             elif choice == "16":
                 file_path = input("Enter log file path: ")
@@ -297,4 +318,6 @@ class Interaction:
                 self.running = False           
 
             else:
-                print("\nInvalid choice. Please try again.")
+                print_empty_message(
+                    "Invalid choice. Please try again."
+                )

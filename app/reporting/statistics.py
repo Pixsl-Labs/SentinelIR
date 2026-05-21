@@ -6,6 +6,14 @@ from app.utils.colours import (
     get_count_colour
 )
 from app.utils.formatting import print_table_header, format_column
+from app.utils.severity import get_severity_level
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count
+)
+
+from app.models.statistics_results import TargetedUserResult
 
 from datetime import time, datetime
 from colorama import Fore
@@ -25,7 +33,7 @@ class Statistics:
         Returns filtered failed login attempts.
         """
 
-        return filter_log_entries(
+        results = filter_log_entries(
             self.analyser.failed_logins,
             ip=ip,
             username=username,
@@ -33,6 +41,11 @@ class Statistics:
             status=status,
             start_time=start_time,
             end_time=end_time
+        )
+
+        return sorted(
+            results,
+            key=lambda entry: entry.timestamp or datetime.min
         )
     
     def print_failed_logins(
@@ -58,28 +71,23 @@ class Statistics:
         )
 
         if not results:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo matching failed logins found."
+            print_empty_message(
+                "No matching failed logins found."
             )
 
             return
-        
-        results = sorted(
-            results,
-            key=lambda entry: entry.timestamp or datetime.min
-        )
-        
-        print(
+    
+        print_section_header(
+            "Failed Login Results",
             Fore.YELLOW
-            + "\n\n=== Failed Login Results ==="
         )
 
         attempt_colour = get_count_colour(len(results))
 
-        print(
-            f"{attempt_colour}"
-            + f"\n   Total Results: {len(results)}\n"
+        print_total_count(
+            "Total Results",
+            len(results),
+            attempt_colour
         )
 
         columns = [
@@ -101,18 +109,9 @@ class Statistics:
             print(
                 "   "
                 + severity_colour
-                + format_column(
-                    f"{entry.severity}",
-                    12
-                )
-                + format_column(
-                    entry.user,
-                    10
-                )
-                + format_column(
-                    entry.ip,
-                    15
-                )
+                + format_column(entry.severity, 12)
+                + format_column(entry.user, 10)
+                + format_column(entry.ip, 15)
             )
 
     def get_successful_logins(
@@ -128,7 +127,7 @@ class Statistics:
         Returns filtered successful logins.
         """
 
-        return filter_log_entries(
+        results = filter_log_entries(
             self.analyser.successful_logins,
             ip=ip,
             username=username,
@@ -136,6 +135,11 @@ class Statistics:
             status=status,
             start_time=start_time,
             end_time=end_time
+        )
+
+        return sorted(
+            results,
+            key=lambda entry: entry.timestamp or datetime.min
         )
 
     def print_successful_logins(
@@ -161,25 +165,21 @@ class Statistics:
         )
 
         if not results:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo successful logins found."
+            print_empty_message(
+                "No successful logins found."
             )
 
             return
         
-        results = sorted(
-            results,
-            key=lambda entry: entry.timestamp or datetime.min
+        print_section_header(
+            "Successful Logins",
+            Fore.GREEN
         )
 
-        print(
-            Fore.GREEN
-            + "\n=== Successful Logins ==="
-        )
-        print(
+        print_total_count(
+            "Successful Logins",
+            len(results),
             Fore.CYAN
-            + f"\n   Successful Logins: {len(results)}\n"
         )
 
         columns = [
@@ -203,22 +203,10 @@ class Statistics:
                 Fore.GREEN
                 +
                 "   "
-                + format_column(
-                    f"[{entry.status}]",
-                    12
-                )
-                + format_column(
-                    time_str,
-                    21
-                )
-                + format_column(
-                    entry.user,
-                    10
-                )
-                + format_column(
-                    entry.ip,
-                    15
-                )
+                + format_column(f"[{entry.status}]", 12)
+                + format_column(time_str, 21)
+                + format_column(entry.user, 10)
+                + format_column(entry.ip, 15)
             )
 
     def get_total_failed_login_attempts(self) -> int:
@@ -287,7 +275,7 @@ class Statistics:
 
         if self.analyser.failed_ip_counts:
             highest_attempts = max(self.analyser.failed_ip_counts.values())
-            highest_severity = self.get_severity_level(highest_attempts)
+            highest_severity = get_severity_level(highest_attempts)
 
         top_attacker = None
 
@@ -304,7 +292,11 @@ class Statistics:
         targeted_users = self.get_most_targeted_users()
 
         if targeted_users:
-            top_user, attempts = targeted_users[0]
+            top_result = targeted_users[0]
+            
+            top_user = top_result.username
+            attempts = top_result.attempts
+
             most_targeted_user = f"{top_user} ({attempts} attempts)"
 
         return {
@@ -318,7 +310,7 @@ class Statistics:
             "most_targeted_user": most_targeted_user
         }
     
-    def get_most_targeted_users(self) -> list[tuple[str, int]]:
+    def get_most_targeted_users(self) -> list[TargetedUserResult]:
         """
         Returns users sorted by failed login attempts.
         """
@@ -330,9 +322,23 @@ class Statistics:
                 user_counts.get(entry.user, 0) + 1
             )
 
+        results = []
+
+        for username, attempts in user_counts.items():
+
+            severity = get_severity_level(attempts)
+
+            results.append(
+                TargetedUserResult(
+                    username=username,
+                    attempts=attempts,
+                    severity=severity
+                )
+            )
+
         return sorted(
-            user_counts.items(),
-            key=lambda x: x[1],
+            results,
+            key=lambda result: result.attempts,
             reverse=True
         )
 
@@ -344,23 +350,22 @@ class Statistics:
         sorted_users = self.get_most_targeted_users()
 
         if not sorted_users:
-            print(
-                Fore.LIGHTRED_EX
-                + "\nNo targeted users found."
+            print_empty_message(
+                "No targeted users found."
             )
 
             return
 
-        print(
-            Fore.CYAN
-            + "\n\n=== Most Targeted Users ===\n"
+        print_section_header(
+            "Most Targeted Users"
         )
 
         attempt_colour = get_count_colour(len(sorted_users))
 
-        print(
-            f"{attempt_colour}"
-            + f"   Targeted Users Detected: {len(sorted_users)}\n"
+        print_total_count(
+            "Targeted Users Detected",
+            len(sorted_users),
+            attempt_colour
         )
 
         columns = [
@@ -371,33 +376,23 @@ class Statistics:
 
         print_table_header(columns)
 
-        for user, count in sorted_users:
+        for result in sorted_users:
 
-            severity = self.get_severity_level(count)
-
-            severity_colour = get_severity_colour(severity)
+            severity_colour = get_severity_colour(
+                result.severity
+            )
 
             attempt_colour = get_attempt_colour(
-                count
+                result.attempts
             )
 
             print(
                 "   "
                 + attempt_colour
-                + format_column(
-                    f"{user}",
-                    5
-                )
-                + format_column(
-                    f"{count}",
-                    15,
-                    "^"
-                )
+                + format_column(result.username, 5)
+                + format_column(result.attempts, 15, "^")
                 + severity_colour
-                + format_column(
-                    f"{severity}",
-                    12
-                )
+                + format_column(result.severity, 12)
             )
 
     def print_attack_statistics(self) -> None:
@@ -407,9 +402,9 @@ class Statistics:
 
         stats = self.get_attack_statistics()
 
-        print(
+        print_section_header(
+            "Attack Statistics",
             Fore.GREEN
-            + "\n=== Attack Statistics ===\n"
         )
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -488,9 +483,9 @@ class Statistics:
             f"{stats['most_targeted_user']}"
         )
 
-        print(
+        print_section_header(
+            "End of Report",
             Fore.MAGENTA
-            + "\n=== End of Report ==="
         )
 
     def print_analysis_summary(self) -> None:
@@ -500,9 +495,9 @@ class Statistics:
 
         stats = self.get_attack_statistics()
 
-        print(
+        print_section_header(
+            "Analysis Summary",
             Fore.GREEN
-            + "\n=== Analysis Summary ===\n"
         )
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -552,7 +547,7 @@ class Statistics:
             f"{stats['brute_force_alerts']}"
         )
 
-        print(
+        print_section_header(
+            "End of Report",
             Fore.MAGENTA
-            + "\n=== End of Report ==="
         )

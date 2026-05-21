@@ -4,6 +4,11 @@ from colorama import Fore
 from app.log_analyser.log_entry import LogEntry
 from app.utils.filtering import filter_log_entries
 from app.utils.colours import get_status_colour, get_severity_colour
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count
+)
 
 
 class Investigation:    
@@ -20,19 +25,24 @@ class Investigation:
         Returns filtered suspicious activity.
         """
 
-        results = (
+        results_ = (
             self.analyser.failed_logins
             + self.analyser.successful_logins
         )
 
-        return filter_log_entries(
-            results,
+        results = filter_log_entries(
+            results_,
             ip=ip,
             username=username,
             severity=severity,
             status=status,
             start_time=start_time,
             end_time=end_time
+        )
+
+        return sorted(
+            results,
+            key=lambda entry: entry.timestamp or datetime.min
         )
     
     def print_suspicious_activity(
@@ -58,17 +68,20 @@ class Investigation:
         )
 
         if not results:
-            print("\nNo matching suspicious activity found.")
+            print_empty_message(
+                "No matching suspicious activity found."
+            )
             return
         
-        print(
+        print_section_header(
+            "Suspicious Activity",
             Fore.GREEN
-            + "\n=== Suspicious Activity ==="
         )
 
-        print(
+        print_total_count(
+            "Total Events",
+            len(results),
             Fore.CYAN
-            + f"\n   Total events: {len(results)}\n"
         )
 
         for entry in results:
@@ -155,17 +168,20 @@ class Investigation:
         )
 
         if not results:
-            print("\nNo matching activity timeline found.")
+            print_empty_message(
+                "No matching activity timeline found."
+            )
             return
         
-        print(
+        print_section_header(
+            "Activity Timeline",
             Fore.GREEN
-            + "\n=== Activity Timeline ==="
         )
 
-        print(
+        print_total_count(
+            "Total Events",
+            len(results),
             Fore.CYAN
-            + f"\n   Total events: {len(results)}\n"
         )
 
         for entry in results:
@@ -188,9 +204,9 @@ class Investigation:
                 f"{entry.ip}"
             )
 
-        print(
+        print_section_header(
+            "End of Report",
             Fore.MAGENTA
-            + "\n=== End of Report ==="
         )
 
     def print_all_usernames(self) -> None:
@@ -206,10 +222,16 @@ class Investigation:
         }
 
         if not unique_usernames:
-            print("\nNo usernames found.")
-            return
+            print_empty_message(
+                "No usernames found."
+            )
 
-        print("\n=== All Available Users ===\n")
+            return
+        
+        print_section_header(
+            "All Available Users",
+            Fore.GREEN
+        )
 
         for user in sorted(unique_usernames):
             print(f"   {user}")
@@ -227,10 +249,16 @@ class Investigation:
         }
 
         if not unique_ips:
-            print("\nNo IP addresses found.")
+            print_empty_message(
+                "No IP addresses found."
+            )
+
             return
 
-        print("\n=== All Available IP Addresses ===\n")
+        print_section_header(
+            "All Available IP Addresses",
+            Fore.GREEN
+        )
 
         for ip in sorted(unique_ips):
             print(f"   {ip}")

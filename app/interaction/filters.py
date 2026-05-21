@@ -1,6 +1,7 @@
 import logging
 
 from datetime import datetime, time
+from colorama import Fore
 
 def integer_validation(
         prompt, 
@@ -169,7 +170,7 @@ def handle_filter_menu(
         elif selected_filter == "severity":
 
             severity = input(
-                "\nEnter severity (LOW/MEDIUM/HIGH): "
+                f"\nEnter severity ({Fore.GREEN}LOW/{Fore.YELLOW}MEDIUM/{Fore.LIGHTRED_EX}HIGH{Fore.RESET}): "
             ).strip().upper()
 
             if not severity:
@@ -189,7 +190,7 @@ def handle_filter_menu(
         elif selected_filter == "status":
 
             status = input(
-                "\nEnter status (SUCCESS/FAILED): "
+                f"\nEnter status ({Fore.GREEN}SUCCESS/{Fore.LIGHTRED_EX}FAILED{Fore.RESET}): "
             ).strip().upper()
 
             if not status:

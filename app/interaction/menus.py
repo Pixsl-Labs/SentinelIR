@@ -1,6 +1,14 @@
 from colorama import Fore
 
 
+from app.utils.display import (
+    print_section_header,
+    print_empty_message,
+    print_total_count,
+    print_separator
+)
+
+
 def display_log_analysis_menu() -> None:
     """
     Prints the display menu for Log Analysis
@@ -8,28 +16,26 @@ def display_log_analysis_menu() -> None:
     Returns:
         None
     """
-
-    print(
+    
+    print_section_header(
+        "Log Analysis Menu",
         Fore.GREEN
-        + "\n=== Log Analysis Menu ===\n"
     )
 
     print("1. Show full report")
     print("2. Show attack summary")
     print("3. Show attack statistics")
 
-    print(
-        Fore.CYAN
-        + "\n=== Investigation ===\n"
+    print_section_header(
+        "Investigation"
     )
 
     print("4. Show activity timeline")
     print("5. Show suspicious activity")
     print("6. Show failed login details")
 
-    print(
-        Fore.CYAN
-        + "\n=== Detection ===\n"
+    print_section_header(
+        "Detection"
     )
 
     print("7. Show suspicious IPs")
@@ -38,18 +44,16 @@ def display_log_analysis_menu() -> None:
     print("10. Show suspicious success")
     print("11. Show user-targeted attacks")
 
-    print(
-        Fore.CYAN
-        + "\n=== General Information ===\n"
+    print_section_header(
+        "General Information"
     )
 
     print("12. Show successful logins")
     print("13. Show total failed logins")
     print("14. Show unique IP count")
 
-    print(
-        Fore.CYAN
-        + "\n=== Configuration ===\n"
+    print_section_header(
+        "Configuration"
     )
 
     print("15. Export report to file")
@@ -58,9 +62,9 @@ def display_log_analysis_menu() -> None:
     print("18. Show current configuration")
     print("19. Exit")
 
-    print(
+    print_section_header(
+        "End of Menu",
         Fore.MAGENTA
-        + "\n=== End of Menu ==="
     )
 
 def display_configuration_menu(threshold: int, window_seconds: int) -> None:
@@ -70,9 +74,10 @@ def display_configuration_menu(threshold: int, window_seconds: int) -> None:
     Returns:
         None
     """
-    print(
+
+    print_section_header(
+        "Configuration Menu",
         Fore.GREEN
-        + "\n=== Configuration Menu ===\n"
     )
 
     print(f"1. Maximum number of attempts (current = {threshold})")
@@ -80,9 +85,9 @@ def display_configuration_menu(threshold: int, window_seconds: int) -> None:
     print("3. Convert back to original")
     print("4. Exit")
 
-    print(
+    print_section_header(
+        "End of Menu",
         Fore.MAGENTA
-        + "\n=== End of Menu === "
     )
 
 def current_config(threshold: int, window_seconds: int) -> None:
@@ -92,25 +97,28 @@ def current_config(threshold: int, window_seconds: int) -> None:
     Returns:
         None
     """
-    print(
-    Fore.CYAN
-    + "\n" + "-" * 37
+    
+    print_separator(
+        37
     )
 
-    print(
+    print_section_header(
+        "Current Configuration",
         Fore.GREEN
-        + "\n=== Current Configuration ===\n"
     )
 
     print(f"- Threshold: {threshold}")
     print(f"- Time window: {window_seconds}")
 
+    print_section_header(
+        "End of Configuration Settings",
+        Fore.MAGENTA
+    )
     print(
         Fore.MAGENTA
         + "\n=== End of Configuration Settings ===\n"
     )
 
-    print(
-    Fore.CYAN
-    + "-" * 37
+    print_separator(
+        37
     )

@@ -1,6 +1,9 @@
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
-from app.config import MAX_ATTEMPTS, TIME_WINDOW_SECONDS
+from app.config.security_config import (
+    BRUTE_FORCE_THRESHOLD, 
+    BRUTE_FORCE_TIME_WINDOW
+)
 
 from app.interaction.menus import display_log_analysis_menu, current_config
 from app.interaction.filters import integer_validation, handle_filter_menu, get_time_range
@@ -31,8 +34,8 @@ class Interaction:
         self.analyser: LogAnalyser = analyser
         self.reporter: LogReporter = reporter
         self.running = True
-        self.threshold = MAX_ATTEMPTS
-        self.window_seconds = TIME_WINDOW_SECONDS
+        self.threshold = BRUTE_FORCE_THRESHOLD
+        self.window_seconds = BRUTE_FORCE_TIME_WINDOW
 
     def run(self) -> None:
         """
@@ -85,7 +88,7 @@ class Interaction:
 
                 self.reporter.print_suspicious_ips()
 
-                self.reporter.print_failed_logins()
+                self.reporter.print_failed_logins_summary()
 
                 self.reporter.print_brute_force_results(self.threshold, self.window_seconds)
 
@@ -138,9 +141,12 @@ class Interaction:
                     filters=["ip", "username", "severity", "status"]
                 )
 
+            elif choice == "7":
+                self.reporter.print_failed_logins_summary()
+
             # === Detection ===
             
-            elif choice == "7":
+            elif choice == "8":
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Suspicious IPs",
@@ -148,7 +154,7 @@ class Interaction:
                     filters=["ip", "severity"]
                 )
 
-            elif choice == "8":
+            elif choice == "9":
 
                 threshold = integer_validation(
                     f"\nEnter threshold (default = {self.threshold}): ",
@@ -167,13 +173,13 @@ class Interaction:
                     window_seconds
                 )
 
-            elif choice == "9":
+            elif choice == "10":
                 self.reporter.print_most_targeted_user()
 
-            elif choice == "10":
+            elif choice == "11":
                 self.reporter.print_suspicious_success()
 
-            elif choice == "11":
+            elif choice == "12":
 
                 threshold = integer_validation(
                     f"\nEnter threshold (default = {self.threshold}): ",
@@ -185,7 +191,7 @@ class Interaction:
 
             # === General Information ===
 
-            elif choice == "12":
+            elif choice == "13":
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Successful Logins",
@@ -193,7 +199,7 @@ class Interaction:
                     filters=["ip", "username", "severity", "status"]
                 )
 
-            elif choice == "13":
+            elif choice == "14":
 
                 total_failed_ = self.reporter.get_total_failed_login_attempts()
 
@@ -204,7 +210,7 @@ class Interaction:
                     f"{total_colour_failed}{total_failed_}"
                 )
 
-            elif choice == "14":
+            elif choice == "15":
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
 
@@ -217,7 +223,7 @@ class Interaction:
 
             # === Configuration ===
 
-            elif choice == "15":
+            elif choice == "16":
                 
                 print_section_header(
                     "Export Options",
@@ -301,19 +307,19 @@ class Interaction:
                         "Invalid file extension."
                     )
 
-            elif choice == "16":
+            elif choice == "17":
                 file_path = input("Enter log file path: ")
                 self.analyser.reset()
                 file_path = "log_files/" + file_path
                 self.analyser.analyse(file_path)
 
-            elif choice == "17":
+            elif choice == "18":
                 configure(self)
 
-            elif choice == "18":
+            elif choice == "19":
                 current_config(self.threshold, self.window_seconds)
             
-            elif choice == "19":
+            elif choice == "20":
                 print("Goodbye!")
                 self.running = False           
 

@@ -1,4 +1,4 @@
-from app.config import MAX_ATTEMPTS
+from app.config.security_config import BRUTE_FORCE_THRESHOLD
 
 
 def get_risk_level(count: int) -> str:
@@ -8,4 +8,4 @@ def get_risk_level(count: int) -> str:
     Returns:
         str: Risk level
     """
-    return "Investigate" if count >= MAX_ATTEMPTS else "Low risk"
+    return "Investigate" if count >= BRUTE_FORCE_THRESHOLD else "Low risk"

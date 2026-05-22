@@ -10,7 +10,7 @@ def test_export_txt_creates_file(brute_force_reporter):
 
     data = brute_force_reporter.get_failed_logins()
 
-    brute_force_reporter.export_json(
+    brute_force_reporter.export_txt(
         output_file,
         "Failed Logins",
         data

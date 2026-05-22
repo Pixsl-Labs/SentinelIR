@@ -1,0 +1,19 @@
+BRUTE_FORCE_THRESHOLD = 5
+
+BRUTE_FORCE_TIME_WINDOW = 10
+
+USER_TARGETING_THRESHOLD = 5
+
+SEVERITY_LEVELS = {
+    "LOW": 5,
+    "MEDIUM": 10,
+    "HIGH": 20
+}
+
+SUSPICIOUS_HOURS = [
+    0,
+    1,
+    2,
+    3,
+    4
+]

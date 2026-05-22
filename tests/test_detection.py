@@ -1,3 +1,5 @@
+from app.detection.detection_engine import DetectionEngine
+
 from conftest import (
     brute_force_reporter,
     empty_reporter,
@@ -59,10 +61,7 @@ def test_get_bruteforce_returns_results(
         brute_force_reporter
     ):
 
-    results = brute_force_reporter.get_bruteforce(
-        5,
-        10
-    )
+    results = DetectionEngine.get_brute_force(brute_force_reporter.analyser, 5, 10)
 
     assert len(results) > 0
 
@@ -71,10 +70,7 @@ def test_get_bruteforce_no_results(
         empty_reporter
     ):
 
-    results = empty_reporter.get_bruteforce(
-        5,
-        10
-    )
+    results = DetectionEngine.get_brute_force(empty_reporter.analyser, 5, 10)
 
     assert results == []
 
@@ -83,9 +79,7 @@ def test_get_user_targeting_returns_results(
         distributed_reporter
     ):
 
-    results = distributed_reporter.get_user_targeting(
-        5
-    )
+    results = DetectionEngine.get_user_targeting(distributed_reporter.analyser, 5)
 
     assert len(results) > 0
 
@@ -94,8 +88,6 @@ def test_get_user_targeting_no_results(
         empty_reporter
     ):
 
-    results = empty_reporter.get_user_targeting(
-        5
-    )
+    results = DetectionEngine.get_user_targeting(empty_reporter.analyser, 5)
 
     assert results == []

@@ -2,7 +2,7 @@ from datetime import time, datetime
 from colorama import Fore
 
 from app.log_analyser.log_entry import LogEntry
-from app.utils.filtering import filter_log_entries
+from app.log_analyser.filtering import LogFilter
 from app.utils.colours import get_status_colour, get_severity_colour
 from app.utils.display import (
     print_section_header,
@@ -30,7 +30,7 @@ class Investigation:
             + self.analyser.successful_logins
         )
 
-        results = filter_log_entries(
+        results = LogFilter.apply_filters(
             results_,
             ip=ip,
             username=username,
@@ -129,7 +129,7 @@ class Investigation:
             + self.analyser.successful_logins
         )
 
-        results = filter_log_entries(
+        results = LogFilter.apply_filters(
             results,
             ip=ip,
             username=username,

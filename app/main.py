@@ -13,9 +13,17 @@ import os
 import logging
 from colorama import init
 
+os.makedirs("logs", exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(levelname)s: %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(
+            "logs/application.log"
+        )
+    ]
 )
 
 init(autoreset=True)

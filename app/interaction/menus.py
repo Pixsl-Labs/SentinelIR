@@ -33,34 +33,35 @@ def display_log_analysis_menu() -> None:
     print("4. Show activity timeline")
     print("5. Show suspicious activity")
     print("6. Show failed login details")
+    print("7. Show failed login summary")
 
     print_section_header(
         "Detection"
     )
 
-    print("7. Show suspicious IPs")
-    print("8. Show brute force detection")
-    print("9. Show most targeted users")
-    print("10. Show suspicious success")
-    print("11. Show user-targeted attacks")
+    print("8. Show suspicious IPs")
+    print("9. Show brute force detection")
+    print("10. Show most targeted users")
+    print("11. Show suspicious success")
+    print("12. Show user-targeted attacks")
 
     print_section_header(
         "General Information"
     )
 
-    print("12. Show successful logins")
-    print("13. Show total failed logins")
-    print("14. Show unique IP count")
+    print("13. Show successful logins")
+    print("14. Show total failed logins")
+    print("15. Show unique IP count")
 
     print_section_header(
         "Configuration"
     )
 
-    print("15. Export report to file")
-    print("16. Analyse new file")
-    print("17. Configure settings")
-    print("18. Show current configuration")
-    print("19. Exit")
+    print("16. Export report to file")
+    print("17. Analyse new file")
+    print("18. Configure settings")
+    print("19. Show current configuration")
+    print("20. Exit")
 
     print_section_header(
         "End of Menu",

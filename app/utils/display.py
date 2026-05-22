@@ -1,4 +1,5 @@
 from colorama import Fore
+import logging
 
 
 def print_section_header(
@@ -39,4 +40,14 @@ def print_separator(
     print(
     colour
     + "-" * count
+    )
+
+def logging_info(
+    message: str,
+    colour: str=Fore.YELLOW
+) -> None:
+
+    logging.info(
+        colour
+        + f"{message}"
     )

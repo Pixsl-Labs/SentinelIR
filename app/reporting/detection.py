@@ -2,9 +2,9 @@ from collections import defaultdict
 from colorama import Fore
 from datetime import time
 
-from app.config import (
-    MAX_ATTEMPTS,
-    TIME_WINDOW_SECONDS
+from app.config.security_config import (
+    BRUTE_FORCE_THRESHOLD,
+    BRUTE_FORCE_TIME_WINDOW
 )
 from app.utils.colours import (
     get_severity_colour, 
@@ -28,57 +28,24 @@ from app.models.detection_results import (
     SuspiciousSuccessResult
 )
 
+from app.detection.detection_engine import (
+    DetectionEngine
+)
+
 
 class Detection:
 
-    def get_bruteforce(
-            self,
-            threshold=MAX_ATTEMPTS,
-            window_seconds=TIME_WINDOW_SECONDS
-        ) -> list[BruteForceResult]:
-        """
-        Detects brute force attacks based on failed login attempts
-        within a specified time window
-        """
-
-        ip_attempts = self.analyser.group_attempts_by_ip()
-
-        results = []
-
-        for ip, time_stamps in ip_attempts.items():
-            time_stamps.sort()
-
-            for i in range(len(time_stamps) - threshold + 1):
-                start = time_stamps[i]
-                end = time_stamps[i + threshold - 1]
-
-                diff = (end - start).total_seconds()
-
-                if diff <= window_seconds:
-                    severity = get_severity_level(threshold)
-
-                    results.append(
-                        BruteForceResult(
-                            ip=ip,
-                            attempts=threshold,
-                            time_window=diff,
-                            severity=severity
-                            )
-                        )
-                    break
-
-        return results
-
     def print_brute_force_results(
             self,
-            threshold=MAX_ATTEMPTS,
-            window_seconds=TIME_WINDOW_SECONDS
+            threshold=BRUTE_FORCE_THRESHOLD,
+            window_seconds=BRUTE_FORCE_TIME_WINDOW
         ) -> None:
         """
         Prints detected brute force attacks.
         """
 
-        results = self.get_bruteforce(
+        results = DetectionEngine.get_brute_force(
+            self.analyser,
             threshold,
             window_seconds
         )
@@ -125,51 +92,44 @@ class Detection:
                 + format_column(result.severity, 12)
             )
 
-    def get_suspicious_success(
-        self
-    ) -> list[SuspiciousIPResult]:
-        """
-        Returns successful logins that occurred after failed login attempts.
-        """
+    def print_brute_force(
+        self,
+        threshold,
+        window_seconds
+    ):
+        
+        results = DetectionEngine.get_brute_force(
+            self.analyser,
+            threshold,
+            window_seconds
+        )
 
-        failed_ips = {
-            entry.ip
-            for entry in self.analyser.failed_logins
-        }
-
-        results = []
-
-        for entry in self.analyser.successful_logins:
-
-            if entry.ip not in failed_ips:
-                continue
-
-            failed_attempts = sum(
-                1
-                for failed_entry in self.analyser.failed_logins
-                if failed_entry.ip == entry.ip
+        if not results:
+            print_empty_message(
+                "No brute force attacks found."
             )
 
-            severity = get_severity_level(
-                failed_attempts
-            )
+            return
+        
+        for result in results:
 
-            results.append(
-                SuspiciousSuccessResult(
-                    ip=entry.ip,
-                    attempts=failed_attempts,
-                    severity=severity
-                )
+            print(
+                f"""
+IP: {result.ip}
+Attempts: {result.attempts}
+Window: {result.time_window}
+Severity: {result.severity}
+"""
             )
-
-        return results
 
     def print_suspicious_success(self) -> None:
         """
         Detects successful logins following failed attempts.
         """
 
-        results = self.get_suspicious_success()
+        results = DetectionEngine.get_suspicious_success(
+            self.analyser
+        )
 
         if not results:
             print_empty_message(
@@ -220,46 +180,18 @@ class Detection:
                 + format_column(result.severity, 12)
             )
 
-    def get_user_targeting(
-            self,
-            threshold=MAX_ATTEMPTS
-        ) -> list[UserTargetingResult]:
-        """
-        Detects users being targeted by multiple IPs.
-        """
-
-        user_attempts = defaultdict(list)
-
-        for entry in self.analyser.failed_logins:
-            user_attempts[entry.user].append(entry.ip)
-
-        results = []
-
-        for user, ips in user_attempts.items():
-            unique_ips = set(ips)
-
-            if len(unique_ips) >= threshold:
-                severity = get_severity_level(len(unique_ips))
-
-                results.append(
-                    UserTargetingResult(
-                        username=user, 
-                        unique_ips=len(unique_ips), 
-                        attempts=len(ips),
-                        severity=severity)
-                )
-
-        return results
-
     def print_user_targeting(
             self,
-            threshold=MAX_ATTEMPTS
+            threshold=BRUTE_FORCE_THRESHOLD
         ) -> None:
         """
         Prints distributed user-targeting attacks.
         """
 
-        results = self.get_user_targeting(threshold)
+        results = DetectionEngine.get_user_targeting(
+            self.analyser,
+            threshold
+        )
 
         if not results:
             print_empty_message(

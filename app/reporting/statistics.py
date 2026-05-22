@@ -1,5 +1,5 @@
 from app.log_analyser.log_entry import LogEntry
-from app.utils.filtering import filter_log_entries
+from app.log_analyser.filtering import LogFilter
 from app.utils.colours import (
     get_severity_colour, 
     get_attempt_colour,
@@ -13,7 +13,11 @@ from app.utils.display import (
     print_total_count
 )
 
-from app.models.statistics_results import TargetedUserResult
+from app.models.statistics_results import (
+    TargetedUserResult,
+    FailedLoginSummaryResult
+)
+from app.detection.detection_engine import DetectionEngine
 
 from datetime import time, datetime
 from colorama import Fore
@@ -33,7 +37,7 @@ class Statistics:
         Returns filtered failed login attempts.
         """
 
-        results = filter_log_entries(
+        results = LogFilter.apply_filters(
             self.analyser.failed_logins,
             ip=ip,
             username=username,
@@ -46,6 +50,51 @@ class Statistics:
         return sorted(
             results,
             key=lambda entry: entry.timestamp or datetime.min
+        )
+    
+    def get_failed_login_summary(
+        self
+    ) -> list[FailedLoginSummaryResult]:
+        """
+        Returns summarised failed login results grouped
+        by username and IP address.
+        """
+
+        grouped_results = {}
+
+        for entry in self.analyser.failed_logins:
+
+            key = (
+                entry.user,
+                entry.ip
+            )
+
+            grouped_results[key] = (
+                grouped_results.get(key, 0) + 1
+            )
+
+        results = []
+
+        for (
+            username,
+            ip
+        ), attempts in grouped_results.items():
+            
+            severity = get_severity_level(attempts)
+
+            results.append(
+                FailedLoginSummaryResult(
+                    username=username,
+                    ip=ip,
+                    attempts=attempts,
+                    severity=severity
+                )
+            )
+
+        return sorted(
+            results,
+            key=lambda result: result.attempts,
+            reverse=True
         )
     
     def print_failed_logins(
@@ -114,6 +163,60 @@ class Statistics:
                 + format_column(entry.ip, 15)
             )
 
+    def print_failed_logins_summary(
+        self
+    ) -> None:
+        """
+        Prints summarised failed login summary.
+        """
+
+        results = self.get_failed_login_summary()
+
+        if not results:
+
+            print_empty_message(
+                "No failed login summary found."
+            )
+
+            return
+        
+        print_section_header(
+            "Failed Login Summary",
+            Fore.YELLOW
+        )
+
+        count_colour = get_count_colour(len(results))
+
+        print_total_count(
+            "Unique Failed Login Entries",
+            len(results),
+            count_colour
+        )
+
+        columns = [
+            ("User", 10),
+            ("IP Address", 12),
+            ("Attempts", 14, "^"),
+            ("Severity", 10)
+        ]
+
+        print_table_header(columns)
+
+        for result in results:
+            attempt_colour = get_attempt_colour(result.attempts)
+
+            severity_colour = get_severity_colour(result.severity)            
+
+            print(
+                "   "
+                + attempt_colour
+                + format_column(result.username, 10)
+                + format_column(result.ip, 12)
+                + format_column(result.attempts, 14, "^")
+                + severity_colour
+                + format_column(result.severity, 10)
+            )
+
     def get_successful_logins(
         self,
         ip: str | None=None,
@@ -127,7 +230,7 @@ class Statistics:
         Returns filtered successful logins.
         """
 
-        results = filter_log_entries(
+        results = LogFilter.apply_filters(
             self.analyser.successful_logins,
             ip=ip,
             username=username,
@@ -267,7 +370,7 @@ class Statistics:
 
         total_suspicious_ips = self.get_total_suspicious_ips()
 
-        total_brute_force = len(self.get_bruteforce())
+        total_brute_force = len(DetectionEngine.get_brute_force(self.analyser))
 
         total_targeted_users = len(self.get_most_targeted_users())
 

@@ -1,4 +1,7 @@
-from app.config import MAX_ATTEMPTS, TIME_WINDOW_SECONDS
+from app.config.security_config import (
+    BRUTE_FORCE_THRESHOLD,
+    BRUTE_FORCE_TIME_WINDOW
+)
 from app.interaction.menus import display_configuration_menu
 from app.interaction.filters import integer_validation
 
@@ -34,8 +37,8 @@ def configure(self) -> None:
                 print("\nSettings Updated.")
         
         elif choice == "3":
-            self.threshold = MAX_ATTEMPTS
-            self.window_seconds = TIME_WINDOW_SECONDS
+            self.threshold = BRUTE_FORCE_THRESHOLD
+            self.window_seconds = BRUTE_FORCE_TIME_WINDOW
 
             print(f"\nConfigured settings have now been set back to default (threshold={self.threshold}, time window={self.window_seconds})")
         

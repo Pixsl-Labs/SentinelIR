@@ -1,7 +1,0 @@
-MAX_ATTEMPTS = 5
-TIME_WINDOW_SECONDS = 10
-SEVERITY_LEVEL = {
-    "LOW": 5,
-    "MEDIUM": 10,
-    "HIGH": 20
-}

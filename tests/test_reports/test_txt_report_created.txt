@@ -1,41 +1,9 @@
-{
-    "generated_at": "2026-05-21 13:57:25",
-    "title": "Failed Logins",
-    "results": [
-        {
-            "ip": "192.168.1.10",
-            "user": "root",
-            "timestamp": "2024-06-10 12:00:01",
-            "status": "FAILED",
-            "severity": "LOW"
-        },
-        {
-            "ip": "192.168.1.10",
-            "user": "root",
-            "timestamp": "2024-06-10 12:00:02",
-            "status": "FAILED",
-            "severity": "LOW"
-        },
-        {
-            "ip": "192.168.1.10",
-            "user": "root",
-            "timestamp": "2024-06-10 12:00:03",
-            "status": "FAILED",
-            "severity": "LOW"
-        },
-        {
-            "ip": "192.168.1.10",
-            "user": "root",
-            "timestamp": "2024-06-10 12:00:04",
-            "status": "FAILED",
-            "severity": "LOW"
-        },
-        {
-            "ip": "192.168.1.10",
-            "user": "root",
-            "timestamp": "2024-06-10 12:00:05",
-            "status": "FAILED",
-            "severity": "LOW"
-        }
-    ]
-}
+=== Failed Logins ===
+
+Generated: 2026-05-22 12:13:02
+
+[FAILED ] 2024-06-10 12:00:01 root         192.168.1.10    [LOW]
+[FAILED ] 2024-06-10 12:00:02 root         192.168.1.10    [LOW]
+[FAILED ] 2024-06-10 12:00:03 root         192.168.1.10    [LOW]
+[FAILED ] 2024-06-10 12:00:04 root         192.168.1.10    [LOW]
+[FAILED ] 2024-06-10 12:00:05 root         192.168.1.10    [LOW]

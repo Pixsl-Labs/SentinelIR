@@ -1,4 +1,4 @@
-from app.config import SEVERITY_LEVEL
+from app.config.security_config import SEVERITY_LEVELS
 
 
 def get_severity_level(count: int) -> str:
@@ -6,10 +6,10 @@ def get_severity_level(count: int) -> str:
     Returns severity level based on attempt count.
     """
 
-    if count >= SEVERITY_LEVEL["HIGH"]:
+    if count >= SEVERITY_LEVELS["HIGH"]:
         return "HIGH"
 
-    elif count >= SEVERITY_LEVEL["MEDIUM"]:
+    elif count >= SEVERITY_LEVELS["MEDIUM"]:
         return "MEDIUM"
 
     return "LOW"

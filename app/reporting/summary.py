@@ -1,13 +1,17 @@
 from datetime import datetime
 from colorama import Fore
 
-from app.config import MAX_ATTEMPTS
+from app.config.security_config import (
+    BRUTE_FORCE_THRESHOLD
+)
 from app.utils.colours import get_attempt_colour
 from app.utils.display import (
     print_section_header,
     print_empty_message,
     print_total_count
 )
+
+from app.detection.detection_engine import DetectionEngine
 
 
 class Summary:
@@ -67,7 +71,7 @@ class Summary:
                 f"None"
             )
 
-        targeted = self.get_user_targeting()
+        targeted = DetectionEngine.get_user_targeting(self.analyser)
 
         if targeted:
 
@@ -93,7 +97,7 @@ class Summary:
                 f"None"
             )
 
-        brute = self.get_bruteforce()
+        brute = DetectionEngine.get_brute_force(self.analyser)
 
         brute_colour = get_attempt_colour(
             len(brute)
@@ -105,8 +109,9 @@ class Summary:
             f"{len(brute) if brute else 'None'}"
         )
 
-        targeting = self.get_user_targeting(
-            MAX_ATTEMPTS
+        targeting = DetectionEngine.get_user_targeting(
+            self.analyser,
+            BRUTE_FORCE_THRESHOLD
         )
 
         targeting_colour = get_attempt_colour(

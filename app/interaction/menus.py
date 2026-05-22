@@ -123,3 +123,32 @@ def current_config(threshold: int, window_seconds: int) -> None:
     print_separator(
         37
     )
+
+def select_analysis_mode() -> str:
+    """
+    Allows user to select analysis mode.
+    """
+
+    while True:
+
+        print_section_header(
+            "Analysis Mode",
+            Fore.LIGHTGREEN_EX
+        )
+
+        print("1. Static Analysis")
+        print("2. Dynamic Monitoring")
+
+        choice = input("\nSelect option (1-2): ").strip()
+
+        if choice == "1":
+            return "static"
+        
+        elif choice == "2":
+            return "dynamic"
+        
+        else:
+
+            print_empty_message(
+                "Invalid choice."
+            )

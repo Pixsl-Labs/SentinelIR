@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW
@@ -12,6 +10,12 @@ from app.models.detection_results import (
 )
 
 from app.utils.severity import get_severity_level
+from app.utils.display import (
+    print_alert
+)
+
+from collections import defaultdict
+from colorama import Fore
 
 
 class DetectionEngine:
@@ -116,3 +120,36 @@ class DetectionEngine:
                 )
 
         return results
+    
+    def process_live_detection(
+        self
+    ) -> None:
+        """
+        Runs live detections against current state.
+        """
+
+        self.detect_live_brute_force()
+
+        # self.detect_live_suspicious_success()
+
+    def detect_live_brute_force(
+        self
+    ) -> None:
+        """
+        Detects live brute-force activity.
+        """
+
+        threshold = (BRUTE_FORCE_THRESHOLD)
+
+        for ip, attempts in self.failed_ip_counts.items():
+
+            if attempts >= threshold:
+
+                print_alert(
+                    severity="HIGH",
+                    title="Brute Force Detected",
+                    message=(
+                        f"IP: {ip} | "
+                        f"Attempts: {attempts}"
+                    )
+                )

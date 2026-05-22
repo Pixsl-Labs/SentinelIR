@@ -51,3 +51,40 @@ def logging_info(
         colour
         + f"{message}"
     )
+
+def print_alert(
+        severity: str,
+        title: str,
+        message: str
+    ) -> None:
+    """
+    Displays formatted alerts.
+    """
+
+    severity = severity.upper()
+
+    colour = Fore.WHITE
+
+    if severity == "LOW":
+        colour = Fore.LIGHTYELLOW_EX
+
+    elif severity == "MEDIUM":
+        colour = Fore.LIGHTMAGENTA_EX
+
+    elif severity == "HIGH":
+        colour = Fore.LIGHTRED_EX
+
+    elif severity == "CRITICAL":
+        colour = Fore.RED
+
+    print()
+
+    print(
+        colour
+        + f"[{severity}] {title}"
+    )
+
+    print(
+        colour
+        + message
+    )

@@ -11,7 +11,15 @@
 import argparse
 import os
 import logging
-from colorama import init
+from colorama import init, Fore
+
+from app.utils.display import (
+    print_section_header,
+    print_empty_message
+)
+from app.interaction.menus import (
+    select_analysis_mode
+)
 
 os.makedirs("logs", exist_ok=True)
 
@@ -83,9 +91,13 @@ def run_cli(args):
         print("\nAnalysis stopped due to missing file.")
 
 def run_interactive():
-    print("\n=== Interaction Mode ===\n")
+    print_section_header(
+        "Interaction Mode"
+    )
 
     analyser = LogAnalyser()
+
+    mode = select_analysis_mode()
 
     while True:
         file_name = input("Enter log file name (e.g. auth.log): ").strip()
@@ -107,12 +119,21 @@ def run_interactive():
             print("File not found. Try again.\n")
             continue
 
-        success = analyser.analyse(log_file)
+        if mode == "static":
+            success = analyser.analyse(log_file)
+
+        elif mode == "dynamic":
+            success = analyser.monitor(log_file)
+            
+        else:
+
+            success = False
+            print_empty_message(
+                "Failed to analyse file. Try again."
+            )
 
         if success:
             break
-        else:
-            print("Failed to analyse file. Try again.\n")
     
     reporter = LogReporter(analyser)
 

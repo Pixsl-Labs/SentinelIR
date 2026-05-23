@@ -88,7 +88,14 @@ def run_interactive():
             print("File not found. Try again.\n")
             continue
 
+        success = analyser.analyse(log_file)
 
+        if not success:
+            print_empty_message(
+                "Analysis failed. Try again\n"
+            )
+            
+            continue
         
         break
     

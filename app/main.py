@@ -17,9 +17,7 @@ from app.utils.display import (
     print_section_header,
     print_empty_message
 )
-from app.interaction.menus import (
-    select_analysis_mode
-)
+
 
 os.makedirs("logs", exist_ok=True)
 
@@ -37,6 +35,7 @@ logging.basicConfig(
 init(autoreset=True)
 
 from app.interaction.interaction import Interaction
+from app.runtime.runtime_controller import RunTimeController
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
@@ -44,51 +43,23 @@ from app.log_analyser.log_reporter import LogReporter
 
 def run_cli(args):
     analyser = LogAnalyser()
-    log_file = os.path.join("log_files", args.file)
     
-    success = analyser.analyse(log_file)
+    reporter = LogReporter(
+        analyser
+    )
 
-    if success:
-        reporter = LogReporter(analyser)
+    log_file = os.path.join(
+        "log_files",
+        args.file
+    )
 
-        reporter.print_analysis_summary()
+    controller = RunTimeController(
+        analyser,
+        reporter,
+        log_file
+    )
 
-        os.makedirs("reports", exist_ok=True)
-
-        if args.txt:
-            output_path = os.path.join("reports", args.txt)
-
-            reporter.export_txt(output_path)
-
-            print(f"\nFile exported to: {output_path}")
-
-        if args.json:
-            output_path = os.path.join("reports", args.json)
-
-            reporter.export_json(output_path)
-
-            print(f"\nFile exported to: {output_path}")
-
-        if args.report:
-            print("\n--- Log Analysis Report ---\n")
-            print("!!! Attention Needed !!! \n")
-
-            report_steps = [
-                reporter.print_suspicious_ips,
-                reporter.print_brute_force_results,
-                reporter.print_most_targeted_user,
-                reporter.print_suspicious_success,
-                reporter.print_user_targeting
-            ]
-
-            for step in report_steps:
-                step()
-                print()
-        elif not args.json and not args.txt:
-            interaction = Interaction(analyser, reporter)
-            interaction.run()
-    else:
-        print("\nAnalysis stopped due to missing file.")
+    controller.start()
 
 def run_interactive():
     print_section_header(
@@ -96,8 +67,6 @@ def run_interactive():
     )
 
     analyser = LogAnalyser()
-
-    mode = select_analysis_mode()
 
     while True:
         file_name = input("Enter log file name (e.g. auth.log): ").strip()
@@ -119,21 +88,9 @@ def run_interactive():
             print("File not found. Try again.\n")
             continue
 
-        if mode == "static":
-            success = analyser.analyse(log_file)
 
-        elif mode == "dynamic":
-            success = analyser.monitor(log_file)
-            
-        else:
-
-            success = False
-            print_empty_message(
-                "Failed to analyse file. Try again."
-            )
-
-        if success:
-            break
+        
+        break
     
     reporter = LogReporter(analyser)
 

@@ -12,6 +12,7 @@ from app.utils.parser import (
 import logging
 from collections import defaultdict
 from colorama import Fore
+import time
 
 
 class LogAnalyser:
@@ -29,11 +30,14 @@ class LogAnalyser:
         self.failed_logins: list[LogEntry] = []
         self.successful_logins: list[LogEntry] = []
         self.failed_ip_counts: dict[str, int] = {}
+        self.detection_engine = DetectionEngine()
 
     def reset(self) -> None:
         self.failed_logins = []
         self.successful_logins = []
         self.failed_ip_counts = {}
+        self.detection_engine.alerted_ips.clear()
+        self.detection_engine.alerted_success_ips.clear()
 
     def group_attempts_by_ip(
         self
@@ -103,66 +107,24 @@ class LogAnalyser:
             )
 
             return False
-        
+
     def monitor(
         self,
         file_path: str
     ) -> bool:
         """
-        Monitors a log file in real-time.
+        Legacy monitoring method.
+
+        Replaced by:
+        app.monitoring.file_monitor.FileMonitor
+        app.monitoring.live_event_processor.LiveEventProcessor
         """
 
-        try:
+        print_empty_message(
+            "Legacy monitor() is no longer used. Use LiveRuntime instead."
+        )
 
-            logging.info(
-                f"Monitoring file: {file_path}"
-            )
-
-            print("\nMonitoring started...")
-            print("Press CTRL+C to stop.\n")
-
-            with open(file_path, "r") as file:
-
-                file.seek(0, 2)
-
-                while True:
-
-                    line = file.readline()
-
-                    if not line:
-                        continue
-
-                    line = line.strip()
-
-                    print(f"[NEW LOG] {line}")
-
-                    if "failed password" in line.lower():
-                        self.extract_failed_ip(line)
-
-                        DetectionEngine.process_live_detection()
-
-                    elif (
-                        "accepted passsword" in line.lower()
-                        or "session opened" in line.lower()
-                    ):
-                        self.extract_successful_login(line)
-
-                        DetectionEngine.process_live_detection()
-
-        except FileNotFoundError:
-
-            logging.error(
-                f"Error: File '{file_path}' not found."
-            )
-
-            return False
-        
-        except KeyboardInterrupt:
-
-            print_empty_message(
-                "Monitoring stopped.",
-                Fore.LIGHTMAGENTA_EX
-            )
+        return False
 
     def extract_failed_ip(
             self, 

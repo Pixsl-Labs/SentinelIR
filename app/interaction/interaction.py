@@ -314,13 +314,19 @@ class Interaction:
                 self.analyser.analyse(file_path)
 
             elif choice == "18":
+                
                 configure(self)
 
             elif choice == "19":
+
                 current_config(self.threshold, self.window_seconds)
             
             elif choice == "20":
-                print("Goodbye!")
+
+                print(
+                    Fore.LIGHTGREEN_EX
+                    +"Goodbye!"
+                )
                 self.running = False           
 
             else:

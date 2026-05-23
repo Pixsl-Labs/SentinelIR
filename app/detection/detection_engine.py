@@ -20,6 +20,10 @@ from colorama import Fore
 
 class DetectionEngine:
 
+    def __init__(self):
+        self.alerted_ips = set()
+        self.alerted_success_ips = set()
+
     @staticmethod
     def get_brute_force(
         analyser,
@@ -122,28 +126,30 @@ class DetectionEngine:
         return results
     
     def process_live_detection(
-        self
+        self,
+        analyser
     ) -> None:
         """
         Runs live detections against current state.
         """
 
-        self.detect_live_brute_force()
+        self.detect_live_brute_force(analyser)
 
-        # self.detect_live_suspicious_success()
+        self.detect_live_suspicious_success(analyser)
 
     def detect_live_brute_force(
-        self
-    ) -> None:
+            self,
+            analyser
+        ) -> None:
         """
         Detects live brute-force activity.
         """
 
-        threshold = (BRUTE_FORCE_THRESHOLD)
+        threshold = BRUTE_FORCE_THRESHOLD
 
-        for ip, attempts in self.failed_ip_counts.items():
+        for ip, attempts in analyser.failed_ip_counts.items():
 
-            if attempts >= threshold:
+            if attempts >= threshold and ip not in self.alerted_ips:
 
                 print_alert(
                     severity="HIGH",
@@ -153,3 +159,37 @@ class DetectionEngine:
                         f"Attempts: {attempts}"
                     )
                 )
+
+                self.alerted_ips.add(ip)
+
+    def detect_live_suspicious_success(
+            self,
+            analyser
+        ) -> None:
+        """
+        Detects successful logins from IPs that previously failed authentication.
+        """
+
+        failed_ips = {
+            entry.ip
+            for entry in analyser.failed_logins
+        }
+
+        for entry in analyser.successful_logins:
+
+            if (
+                entry.ip in failed_ips
+                and entry.ip not in self.alerted_success_ips
+            ):
+                
+                print_alert(
+                    severity="MEDIUM",
+                    title="Suspicious Success Detected",
+                    message=(
+                        f"IP: {entry.ip} | "
+                        f"User: {entry.user} | "
+                        f"Successful login after failure"
+                    )
+                )
+
+                self.alerted_success_ips.add(entry.ip)

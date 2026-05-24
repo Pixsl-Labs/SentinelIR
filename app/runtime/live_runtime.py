@@ -11,6 +11,12 @@ from app.utils.colours import (
     get_live_status_colour
 )
 
+from app.detection.alert_types import (
+    BRUTE_FORCE_ALERT,
+    SUSPICIOUS_SUCCESS_ALERT,
+    USER_TARGETING_ALERT
+)
+
 
 class LiveRuntime:
 
@@ -70,15 +76,15 @@ class LiveRuntime:
         alerts_raised = self.analyser.detection_engine.get_total_alerts()
 
         brute_force_alerts = self.analyser.detection_engine.get_alert_count(
-            "BRUTE_FORCE"
+            BRUTE_FORCE_ALERT
         )
 
         suspicious_success_alerts = self.analyser.detection_engine.get_alert_count(
-            "SUSPICIOUS_SUCCESS"
+            SUSPICIOUS_SUCCESS_ALERT
         )
 
         user_targeting_alerts = self.analyser.detection_engine.get_alert_count(
-            "USER_TARGETING"
+            USER_TARGETING_ALERT
         )
 
         print_section_header(            
@@ -102,7 +108,7 @@ class LiveRuntime:
         
         user_targeting_colour = get_live_status_colour("user_targeting", user_targeting_alerts)
 
-        print(f"{'Event processed:':<28} {event_colour}{processor.events_processed}")
+        print(f"{'Events processed:':<28} {event_colour}{processor.events_processed}")
         print(f"{'Failed logins:':<28} {failed_colour}{failed_logins}")
         print(f"{'Successful logins:':<28} {succesful_colour}{successful_logins}")
         print(f"{'Unique IPs:':<28} {unique_ips_colour}{unique_ips}")

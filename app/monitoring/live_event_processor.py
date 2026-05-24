@@ -83,10 +83,7 @@ class LiveEventProcessor:
 
         unique_ips = len(self.analyser.failed_ip_counts)
 
-        alerts_raised = sum(
-            len(alerted_entries)
-            for alerted_entries in self.analyser.detection_engine.alert_state.values()
-        )
+        alerts_raised = self.analyser.detection_engine.get_total_alerts()
 
         print_section_header(            
             "Live Monitoring Status",

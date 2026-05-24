@@ -3,6 +3,11 @@ from app.config.security_config import (
     BRUTE_FORCE_TIME_WINDOW,
     USER_TARGETING_THRESHOLD
 )
+from app.detection.alert_types import (
+    BRUTE_FORCE_ALERT,
+    SUSPICIOUS_SUCCESS_ALERT,
+    USER_TARGETING_ALERT
+)
 
 from app.models.detection_results import (
     BruteForceResult,
@@ -16,16 +21,15 @@ from app.utils.display import (
 )
 
 from collections import defaultdict
-from colorama import Fore
 
 
 class DetectionEngine:
 
     def __init__(self):
         self.alert_state = {
-            "BRUTE_FORCE": set(),
-            "SUSPICIOUS_SUCCESS": set(),
-            "USER_TARGETING": set()
+            BRUTE_FORCE_ALERT: set(),
+            SUSPICIOUS_SUCCESS_ALERT: set(),
+            USER_TARGETING_ALERT: set()
         }
 
     def has_alerted(
@@ -233,7 +237,7 @@ class DetectionEngine:
 
             if (
                 attempts >= threshold 
-                and not self.has_alerted("BRUTE_FORCE", ip)
+                and not self.has_alerted(BRUTE_FORCE_ALERT, ip)
             ):
 
                 print_alert(
@@ -246,7 +250,7 @@ class DetectionEngine:
                 )
 
                 self.mark_alerted(
-                    "BRUTE_FORCE",
+                    BRUTE_FORCE_ALERT,
                     ip
                 )
 
@@ -267,7 +271,7 @@ class DetectionEngine:
 
             if (
                 entry.ip in failed_ips
-                and not self.has_alerted("SUSPICIOUS_SUCCESS", entry.ip)
+                and not self.has_alerted(SUSPICIOUS_SUCCESS_ALERT, entry.ip)
             ):
                 
                 print_alert(
@@ -281,7 +285,7 @@ class DetectionEngine:
                 )
 
                 self.mark_alerted(
-                    "SUSPICIOUS_SUCCESS",
+                    SUSPICIOUS_SUCCESS_ALERT,
                     entry.ip
                 )
 
@@ -305,7 +309,7 @@ class DetectionEngine:
 
             if (
                 unique_ip_count >= USER_TARGETING_THRESHOLD
-                and not self.has_alerted("USER_TARGETING", user)
+                and not self.has_alerted(USER_TARGETING_ALERT, user)
             ):
                 
                 print_alert(
@@ -319,6 +323,6 @@ class DetectionEngine:
                 )
 
                 self.mark_alerted(
-                    "USER_TARGETING",
+                    USER_TARGETING_ALERT,
                     user
                 )

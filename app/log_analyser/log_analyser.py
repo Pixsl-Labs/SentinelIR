@@ -36,8 +36,8 @@ class LogAnalyser:
         self.failed_logins = []
         self.successful_logins = []
         self.failed_ip_counts = {}
-        self.detection_engine.alerted_ips.clear()
-        self.detection_engine.alerted_success_ips.clear()
+
+        self.detection_engine.reset_alert_state()
 
     def group_attempts_by_ip(
         self

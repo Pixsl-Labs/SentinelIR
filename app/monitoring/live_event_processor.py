@@ -72,7 +72,7 @@ class LiveEventProcessor:
 
             self.track_processed_event()
 
-    def print_live_status(self) -> None:
+    def print_live_stats(self) -> None:
         """
         Prints a lightweight live monitoring status summary.
         """
@@ -85,11 +85,6 @@ class LiveEventProcessor:
 
         alerts_raised = self.analyser.detection_engine.get_total_alerts()
 
-        print_section_header(            
-            "Live Monitoring Status",
-            Fore.GREEN
-        )
-
         event_colour = get_live_status_colour("events_processed", self.events_processed)
 
         failed_colour = get_live_status_colour("failed_logins", failed_logins)
@@ -100,8 +95,20 @@ class LiveEventProcessor:
 
         alerts_colour = get_live_status_colour("alerts_raised", alerts_raised)
 
-        print(f"{'Event processed:':<25} {event_colour}{self.events_processed}")
+        print(f"{'Events processed:':<25} {event_colour}{self.events_processed}")
         print(f"{'Failed logins:':<25} {failed_colour}{failed_logins}")
         print(f"{'Successful logins:':<25} {succesful_colour}{successful_logins}")
         print(f"{'Unique IPs:':<25} {unique_ips_colour}{unique_ips}")
         print(f"{'Alerts raised:':<25} {alerts_colour}{alerts_raised}\n")
+
+    def print_live_status(self) -> None:
+        """
+        Prints a lightweight live monitoring status summary.
+        """
+
+        print_section_header(            
+            "Live Monitoring Status",
+            Fore.GREEN
+        )
+
+        self.print_live_stats()

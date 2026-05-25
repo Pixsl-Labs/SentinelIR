@@ -22,25 +22,28 @@ import os
 
 class GeneratorRuntime:
 
-    def start(
-        self
-    ) -> None:
+    def start(self) -> None:
         """
         Runs the scenario generator workflow.
         """
 
-        lines = self.select_scenario()
+        selected_scenario = self.select_scenario()
 
-        if lines is None:
-
+        if selected_scenario is None:
             return
-        
+
+        scenario_name, lines = selected_scenario
+
+        self.preview_scenario(
+            scenario_name,
+            lines
+        )
+
         output_file = self.select_output_file()
 
         if output_file is None:
-
             return
-        
+
         self.select_stream_or_write(
             output_file,
             lines
@@ -48,7 +51,7 @@ class GeneratorRuntime:
 
     def select_scenario(
             self
-    ) -> list[str]:
+    ) -> tuple[str, list[str]]:
         """
         Allows the user to select which log scenario to generate.
         """
@@ -71,23 +74,23 @@ class GeneratorRuntime:
 
             if choice == "1":
 
-                return generate_brute_force_scenario()
+                return "Brute force", generate_brute_force_scenario()
             
             elif choice == "2":
 
-                return generate_suspicious_success_scenario()
+                return "Suspicious success", generate_suspicious_success_scenario()
             
             elif choice == "3":
 
-                return generate_user_targeting_scenario()
+                return "User targeting", generate_user_targeting_scenario()
             
             elif choice == "4":
 
-                return generate_normal_activity()
+                return "Normal activity", generate_normal_activity()
             
             elif choice == "5":
 
-                return generate_mixed_attack_scenario()
+                return "Mixed attack", generate_mixed_attack_scenario()
             
             elif choice == "6":
 
@@ -98,6 +101,46 @@ class GeneratorRuntime:
                 print_empty_message(
                     "Invalid scenario choice."
                 )
+
+    def preview_scenario(
+            self,
+            scenario_name: str,
+            lines: list[str]
+    ) -> None:
+        """
+        Prints a short preview of the generated scenario.
+        """
+
+        confirm = input("\nContinue with this scenario? (y/n): ").strip().lower()
+        print()
+
+        if confirm != "y":
+            print_empty_message(
+                "Scenario generation cancelled."
+            )
+
+            return
+
+        print_section_header(
+            "Scenario Preview",
+            Fore.LIGHTGREEN_EX
+        )
+
+        print(f"{'Scenario selected:':<18} {scenario_name}\n")
+        print(f"{'Generated lines:':<18} {len(lines)}\n")
+
+        if not lines:
+            print_empty_message(
+                "No lines generated."
+            )
+
+        print(f"{'First line:':<18} {lines[0]}\n")
+        print(f"{'Last line:':<18} {lines[-1]}")
+
+        print_section_header(
+            "End of Scenario Preview",
+            Fore.LIGHTGREEN_EX
+        )
 
     def select_output_file(
             self

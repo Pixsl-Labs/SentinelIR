@@ -42,3 +42,5 @@
 2026-05-24 12:52:25,013 - INFO - Monitoring file: log_files/brute_force.log
 2026-05-24 16:11:03,783 - INFO - Monitoring file: log_files/brute_force.log
 2026-05-25 13:20:04,828 - INFO - Monitoring file: log_files/generated.log
+2026-05-25 13:57:30,729 - INFO - Monitoring file: log_files/generated.log
+2026-05-25 13:58:26,138 - INFO - Analysing File: log_files/generated.log

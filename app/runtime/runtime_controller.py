@@ -1,5 +1,6 @@
 from app.runtime.static_runtime import StaticRuntime
 from app.runtime.live_runtime import LiveRuntime
+from app.runtime.generator_runtime import GeneratorRuntime
 
 from app.utils.display import (
     print_section_header,
@@ -33,9 +34,10 @@ class RunTimeController:
             )
             print("1. Static Analysis")
             print("2. Live Monitoring")
-            print("3. Exit")
+            print("3. Generate Scenario")
+            print("4. Exit")
 
-            choice = input("\nSelect mode: (1-3) ").strip()
+            choice = input("\nSelect mode: (1-4) ").strip()
 
             if choice == "1":
 
@@ -58,6 +60,12 @@ class RunTimeController:
                 runtime.start()
 
             elif choice == "3":
+
+                generatetime = GeneratorRuntime()
+
+                generatetime.start()
+
+            elif choice == "4":
 
                 print("\nExiting application...")
                 break

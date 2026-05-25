@@ -39,19 +39,27 @@ class GeneratorRuntime:
             lines
         )
 
+        if not self.confirm_scenario():
+            print_empty_message(
+                "Scenario generation cancelled."
+            )
+
         output_file = self.select_output_file()
 
         if output_file is None:
             return
+        
+        append = self.select_append_mode()
 
         self.select_stream_or_write(
             output_file,
-            lines
+            lines,
+            append
         )
 
     def select_scenario(
             self
-    ) -> tuple[str, list[str]]:
+        ) -> tuple[str, list[str]] | None:
         """
         Allows the user to select which log scenario to generate.
         """
@@ -111,16 +119,7 @@ class GeneratorRuntime:
         Prints a short preview of the generated scenario.
         """
 
-        confirm = input("\nContinue with this scenario? (y/n): ").strip().lower()
         print()
-
-        if confirm != "y":
-            print_empty_message(
-                "Scenario generation cancelled."
-            )
-
-            return
-
         print_section_header(
             "Scenario Preview",
             Fore.LIGHTGREEN_EX
@@ -141,6 +140,33 @@ class GeneratorRuntime:
             "End of Scenario Preview",
             Fore.LIGHTGREEN_EX
         )
+
+    def confirm_scenario(self) -> bool:
+        """
+        Asks the user to confirm whether to continue with the selected scenario.
+        """
+
+        confirm = input(
+            "\nContinue with this scenario? (y/n): "
+        ).strip().lower()
+
+        return confirm == "y"
+    
+    def prepare_output_file(
+            self,
+            output_file: str,
+            append: bool
+        ) -> None:
+        """
+        Prepares the output file before streaming.
+        
+        If append is False, the file is cleared before new log lines
+        are streamed to it.
+        """
+
+        if not append:
+            with open(output_file, "w"):
+                pass
 
     def select_output_file(
             self
@@ -167,8 +193,9 @@ class GeneratorRuntime:
     def select_stream_or_write(
             self,
             output_file: str,
-            lines: list[str]
-    )-> None:
+            lines: list[str],
+            append: bool
+        )-> None:
         """
         Allows the user to write or stream generated log lines.
         """
@@ -191,7 +218,7 @@ class GeneratorRuntime:
                 write_lines_to_file(
                     output_file,
                     lines,
-                    append=True
+                    append=append
                 )
 
                 print(
@@ -202,6 +229,11 @@ class GeneratorRuntime:
                 return
             
             if choice == "2":
+
+                self.prepare_output_file(
+                    output_file,
+                    append
+                )
 
                 stream_lines_to_file(
                     output_file,
@@ -224,4 +256,39 @@ class GeneratorRuntime:
 
                 print_empty_message(
                     "Invalid output mode."
+                )
+
+    def select_append_mode(self) -> bool:
+        """
+        Allows the user to choose whether to append to or overwrite
+        the output log file.
+
+        Returns:
+            bool: True if appending, False if overwriting.
+        """
+
+        while True:
+
+            print_section_header(
+                "File Write Mode",
+                Fore.GREEN
+            )
+
+            print("1. Append to existing file")
+            print("2. Overwrite to existing file")
+
+            choice = input("\nSelect write mode (1-2): ").strip()
+
+            if choice == "1":
+
+                return True
+            
+            elif choice == "2":
+
+                return False
+            
+            else:
+
+                print_empty_message(
+                    "Invalid write mode."
                 )

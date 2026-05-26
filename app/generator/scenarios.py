@@ -248,16 +248,3 @@ def generate_mixed_attack_scenario(
     )
 
     return lines
-
-# Testing myself!
-if __name__ == "__main__":
-    # for line in generate_brute_force_scenario():
-    #     print(line)
-    # for line in generate_suspicious_success_scenario():
-    #     print(line)
-    # for line in generate_user_targeting_scenario():
-    #     print(line)
-    # for line in generate_normal_activity():
-    #     print(line)
-    for line in generate_mixed_attack_scenario():
-        print(line)

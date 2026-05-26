@@ -29,8 +29,8 @@ def stream_lines_to_file(
     """
     Streams generated log lines into a file one at a time.
     
-    This stimulates real-time log activity while the live monitoring
-    mode wathces the same file.
+    This simulates real-time log activity while the live monitoring
+    mode watches the same file.
     
     
     Returns:
@@ -46,14 +46,3 @@ def stream_lines_to_file(
             file.flush()
 
             time.sleep(delay_seconds)
-
-if __name__ == "__main__":
-    from app.generator.scenarios import generate_mixed_attack_scenario
-
-    lines = generate_mixed_attack_scenario()
-
-    stream_lines_to_file(
-        file_path="log_files/generated.log",
-        lines=lines,
-        delay_seconds=0.5
-    )

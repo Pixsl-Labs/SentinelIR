@@ -61,9 +61,9 @@ class RunTimeController:
 
             elif choice == "3":
 
-                generatetime = GeneratorRuntime()
+                runtime = GeneratorRuntime()
 
-                generatetime.start()
+                runtime.start()
 
             elif choice == "4":
 

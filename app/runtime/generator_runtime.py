@@ -231,7 +231,7 @@ class GeneratorRuntime:
 
                 print(
                     Fore.LIGHTCYAN_EX
-                    + f"Generated {len(lines)} into {output_file}"
+                    + f"Generated {len(lines)} lines into {output_file}"
                 )
 
                 print(
@@ -270,7 +270,7 @@ class GeneratorRuntime:
 
                 print(
                     Fore.LIGHTCYAN_EX
-                    + f"Streamed {len(lines)} into {output_file}"
+                    + f"Streamed {len(lines)} lines into {output_file}"
                 )
 
                 print(

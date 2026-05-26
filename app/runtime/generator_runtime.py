@@ -44,6 +44,8 @@ class GeneratorRuntime:
                 "Scenario generation cancelled."
             )
 
+            return
+
         output_file = self.select_output_file()
 
         if output_file is None:
@@ -126,6 +128,7 @@ class GeneratorRuntime:
         )
 
         print(f"{'Scenario selected:':<18} {scenario_name}\n")
+
         print(f"{'Generated lines:':<18} {len(lines)}\n")
 
         if not lines:
@@ -221,9 +224,24 @@ class GeneratorRuntime:
                     append=append
                 )
 
+                print_section_header(
+                    "Scenario Generation Summary",
+                    Fore.LIGHTGREEN_EX
+                )
+
                 print(
-                    Fore.GREEN
-                    + f"\nGenerated {len(lines)} into {output_file}"
+                    Fore.LIGHTCYAN_EX
+                    + f"Generated {len(lines)} into {output_file}"
+                )
+
+                print(
+                    Fore.LIGHTCYAN_EX
+                    + f"{'Mode:'} {self.get_write_mode_label(append)}"
+                )
+
+                print_section_header(
+                    "End of Scenario Generation Summary",
+                    Fore.LIGHTGREEN_EX
                 )
 
                 return
@@ -235,15 +253,39 @@ class GeneratorRuntime:
                     append
                 )
 
+                delay_seconds = self.select_stream_delay()
+
                 stream_lines_to_file(
                     output_file,
                     lines,
-                    delay_seconds=0.5
+                    delay_seconds=delay_seconds
+                )
+
+                print()
+
+                print_section_header(
+                    "Scenario Generation Summary",
+                    Fore.LIGHTGREEN_EX
                 )
 
                 print(
-                    Fore.GREEN
-                    + f"\nStreamed {len(lines)} into {output_file}"
+                    Fore.LIGHTCYAN_EX
+                    + f"Streamed {len(lines)} into {output_file}"
+                )
+
+                print(
+                    Fore.LIGHTCYAN_EX
+                    + f"{'Delay:'} {delay_seconds} seconds"
+                )
+
+                print(
+                    Fore.LIGHTCYAN_EX
+                    +f"{'Mode:'} {self.get_write_mode_label(append)}"
+                )
+
+                print_section_header(
+                    "End of Scenario Generation Summary",
+                    Fore.LIGHTGREEN_EX
                 )
 
                 return
@@ -292,3 +334,58 @@ class GeneratorRuntime:
                 print_empty_message(
                     "Invalid write mode."
                 )
+
+    def get_write_mode_label(
+            self,
+            append: bool
+    ) -> str:
+        """
+        Converts the boolean into a readable word.
+        """
+
+        if append == True:
+
+            return "append"
+
+        elif append == False:
+
+            return "overwrite"
+        
+        else:
+
+            print_empty_message(
+                "Error in write mdoe selection."
+            )
+
+    def select_stream_delay(self) -> float:
+        """
+        Asks the user how fast logs should stream into the file.
+        """
+
+        choice = input("\nEnter stream delay seconds (default: 0.5): ").strip()
+
+        if not choice:
+            
+            return 0.5
+        
+        try:
+
+            delay = float(choice)
+
+        except ValueError:
+
+            print_empty_message(
+                "Invalid input. Using default: 0.5"
+            )
+
+            return 0.5
+        
+        if delay < 0:
+
+            print_empty_message(
+                "Negative input. Using default: 0.5"
+            )
+
+            return 0.5
+
+        return delay

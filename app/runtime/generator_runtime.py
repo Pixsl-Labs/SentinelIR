@@ -317,7 +317,7 @@ class GeneratorRuntime:
             )
 
             print("1. Append to existing file")
-            print("2. Overwrite to existing file")
+            print("2. Overwrite existing file")
 
             choice = input("\nSelect write mode (1-2): ").strip()
 

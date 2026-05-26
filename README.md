@@ -4,7 +4,7 @@
 
 # SentinelIR
 
-SentinelIR is a Python-based incident response and SOC investigatioon toolkit for analysing authenticated logs, monitoring security activity in real-time, generating attack scenarios, and supporting defensive investigation workflows.
+SentinelIR is a Python-based incident response and SOC investigation toolkit for analysing authentication logs, monitoring security activity in real time, generating attack scenarios, and supporting defensive investigation workflows.
 
 The project started as a Linux authentication log analyser and is evolving into a lightweight live incident response tool. It is designed around clean software architecture, modular detection logic, configurable thresholds, live monitoring, and test-driven development.
 
@@ -22,7 +22,7 @@ SentinelIR focuses on helping a security analyst investigate authentication-base
 - Live log changes during monitoring
 - Generated attack scenarios for testing detections
 
-The long-term direction is to expand SentinelIR into a broader investigation platform that can support log analysis, file triage, hash/signature scanning, IOC enrichement, and a future GUI.
+The long-term direction is to expand SentinelIR into a broader investigation platform that can support log analysis, file triage, hash/signature scanning, IOC enrichment, and a future GUI.
 
 ---
 
@@ -184,7 +184,7 @@ app/detection/detection_engine.py
 app/detection/alert_types.py
 ```
 
-Current detections incldue:
+Current detections include:
 
 - Brute-force detection
 - Suspicious success detection
@@ -196,7 +196,7 @@ Current detections incldue:
 
 ## Monitoring Layer
 
-Responsible for real-time file monitoring and event processing.
+Responsible for real time file monitoring and event processing.
 
 Key files:
 
@@ -205,7 +205,7 @@ app/monitoring/file_monitor.py
 app/monitoring/live_event_processor.py
 ```
 
-This allows SentinelIR to simulate realistic attack activity and stream into a monitored log file.
+The monitoring layer watches a target log file, processes new lines as they arrive, and passes live events into the detection engine.
 
 ---
 
@@ -252,7 +252,7 @@ Example:
 192.168.1.10 -> 5 attempts within 10 seconds
 ```
 
-In live monitoring mdoe, the alert fires once for the attacking IP and is then suppressed to prevent duplicate alert spam.
+In live monitoring mode, the alert fires once for the attacking IP and is then suppressed to prevent duplicate alert spam.
 
 ---
 
@@ -304,7 +304,7 @@ Select:
 Terminal 2:
 
 ```bash
-python3 -m main.app generated.log
+python3 -m app.main generated.log
 ```
 
 Select:
@@ -340,7 +340,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/Pixsl-Labs/SentinelIR.git
-cd Log-Analyser
+cd SentinelIR
 ```
 
 Install dependencies:

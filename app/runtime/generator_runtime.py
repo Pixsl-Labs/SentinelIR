@@ -354,7 +354,7 @@ class GeneratorRuntime:
         else:
 
             print_empty_message(
-                "Error in write mdoe selection."
+                "Error in write mode selection."
             )
 
     def select_stream_delay(self) -> float:

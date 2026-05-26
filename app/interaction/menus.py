@@ -70,7 +70,7 @@ def display_log_analysis_menu() -> None:
 
 def display_configuration_menu(threshold: int, window_seconds: int) -> None:
     """
-    Prints the configuration menu for alerations to Log Analysis
+    Prints the configuration menu for alterations to Log Analysis
     
     Returns:
         None

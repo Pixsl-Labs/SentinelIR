@@ -7,7 +7,7 @@ from app.interaction.filters import integer_validation
 
 def configure(self) -> None:
     """
-    Allows the user to configurate the current configuration settings.
+    Allows the user to configure the current configuration settings.
     """
     while True:
         display_configuration_menu(self.threshold, self.window_seconds)

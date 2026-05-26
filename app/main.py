@@ -1,4 +1,4 @@
-# Activating virutal environment
+# Activating virtual environment
 # source venv/bin/activate
 
 # Instantly pull all installed modules into requirements.txt

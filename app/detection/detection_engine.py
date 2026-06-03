@@ -332,7 +332,19 @@ class DetectionEngine:
             self,
             analyser
         ) -> None:
+        """
+        Detects live brute-force activity and prints an alert when triggered.
 
+        Checks failed login counts by IP address against the configured brute-force
+        threshold. Alerts are only printed once per IP address to prevent duplicate
+        alert spam during live monitoring.
+
+        Args:
+            analyser: Log analyser instance containing live failed IP counts.
+
+        Returns:
+            None
+        """
 
         threshold = BRUTE_FORCE_THRESHOLD
 
@@ -362,7 +374,18 @@ class DetectionEngine:
             analyser
         ) -> None:
         """
-        Detects successful logins from IPs that previously failed authentication.
+        Detects live successful logins from IPs that previously failed authentication.
+
+        If a successful login comes from an IP address already seen in failed login
+        activity, a suspicious-success alert is printed. Each IP address only triggers
+        this alert once during the live session.
+
+        Args:
+            analyser: Log analyser instance containing live failed and successful
+            login entries.
+
+        Returns:
+            None
         """
 
         failed_ips = {
@@ -397,7 +420,17 @@ class DetectionEngine:
             analyser
     ) -> None:
         """
-        Detects live user targeting activity.
+        Detects live distributed user-targeting activity.
+
+        Builds a mapping of usernames to unique attacking IP addresses. If a username
+        is targeted by enough unique IPs to meet the configured threshold, an alert
+        is printed once for the user.
+
+        Args:
+            analyser: Log analyser instance containing live failed login entries.
+
+        Returns:
+            None
         """
 
         user_to_ips = defaultdict(set)

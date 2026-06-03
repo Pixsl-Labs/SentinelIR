@@ -6,4 +6,4 @@
 
 # Docstring Cheat Sheet
 
-analyser: Log analyser instance containing failed login entries.
+analyser: Log analyser instance containing

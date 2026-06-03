@@ -271,13 +271,15 @@ class DetectionEngine:
         analyser
     ) -> list[SuspiciousSuccessResult]:
         """
-        Detects successful logins from 
+        Detects successful logins from IP addresses that previously failed authentication.
 
         Args:
-            analyser (_type_): _description_
+            analyser: Log analyser instance containing failed and successful login
+            entries.
 
         Returns:
-            list[SuspiciousSuccessResult]: _description_
+            list[SuspiciousSuccessResult]: Suspicious success results containing
+            the IP address, attempt count, and severity.
         """
 
         failed_ips = set(
@@ -308,7 +310,16 @@ class DetectionEngine:
         analyser
     ) -> None:
         """
-        Runs live detections against current state.
+        Runs all live detection checks against the current analyser state.
+
+        This method is called during live monitoring after a new relevant log event
+        has been processed.
+
+        Args:
+            analyser: Log analyser instance containing the current live login state.
+
+        Returns:
+            None
         """
 
         self.detect_live_brute_force(analyser)
@@ -321,9 +332,7 @@ class DetectionEngine:
             self,
             analyser
         ) -> None:
-        """
-        Detects live brute-force activity.
-        """
+
 
         threshold = BRUTE_FORCE_THRESHOLD
 

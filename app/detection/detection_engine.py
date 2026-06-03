@@ -24,8 +24,23 @@ from collections import defaultdict
 
 
 class DetectionEngine:
+    """
+    Handles static and live detection logic for authentication log analysis.
+
+    The detection engine identifies suspicious authentication behaviour such as
+    brute-force attacks, successful logins after failed attempts, and distributed
+    user-targeting activity. It also tracks live alert state so repeated alerts
+    for the same entity can be suppressed during real-time monitoring.
+    """
 
     def __init__(self):
+        """
+        Initialises the detection engine alert state.
+
+        The alert state stores which entities have already triggered each live alert
+        type. This prevents duplicate alerts from being raised repeatedly during
+        live monitoring.
+        """
         self.alert_state = {
             BRUTE_FORCE_ALERT: set(),
             SUSPICIOUS_SUCCESS_ALERT: set(),
@@ -38,8 +53,16 @@ class DetectionEngine:
             entity: str
     ) -> bool:
         """
-        Checks whether an alert has already been raised
-        for a specific alert type and entity.
+        Checks whether an alert has already been raised for an entity.
+
+        Args:
+            alert_type (str): The type of alert being checked.
+            entity (str): The entity being checked, such as an IP address
+            or username.
+
+        Returns:
+            bool: True if the entity has already triggered the alert type,
+            otherwise False.
         """
 
         return entity in self.alert_state.get(alert_type, set())
@@ -50,8 +73,15 @@ class DetectionEngine:
             entity: str
     ) -> None:
         """
-        Records that an alert has been raised
-        for a specific alert type and entity.
+        Records that an entity has triggered a specific alert type.
+
+        Args:
+            alert_type: The type of alert being recorded.
+            entity (str): The entity that triggered the alert, such as an
+            IP address or username.
+
+        Returns:
+            None
         """
 
         if alert_type not in self.alert_state:
@@ -61,7 +91,13 @@ class DetectionEngine:
 
     def reset_alert_state(self) -> None:
         """
-        Clears all live alert states.
+        Clears all live alert tracking state.
+
+        This is used when the analyser is reset so that future monitoring
+        sessions or analyses do not reuse alert state from previous runs.
+
+        Returns:
+            None
         """
 
         for alert_entries in self.alert_state.values():
@@ -73,7 +109,13 @@ class DetectionEngine:
             alert_type: str
     ) -> int:
         """
-        Returns the number of alerts raised for a specific alert type.
+        Returns the number of entities that triggered a specific alert type.
+
+        Args:
+            alert_type (str): The alert type to count.
+
+        Returns:
+            int: Number of unique entities that have triggered the alert type.
         """
 
         return len(
@@ -87,7 +129,10 @@ class DetectionEngine:
             self
     ) -> int:
         """
-        Returns the total number of live alerts raised.
+        Returns the total number of live alerts raised across all alert types.
+
+        Returns:
+            int:
         """
 
         return sum(
@@ -114,6 +159,15 @@ class DetectionEngine:
         threshold=BRUTE_FORCE_THRESHOLD,
         window_seconds=BRUTE_FORCE_TIME_WINDOW
     ) -> list[BruteForceResult]:
+        """
+        Detects brute-force activity from failed login timestamps.
+
+        Groups failed login attempts by IP address and checks whether an IP reaches
+        the configured threshold within the configured time window.
+
+        Args:
+            analyser: Log analyser instance containing 
+        """
 
         ip_attempts = analyser.group_attempts_by_ip()
 

@@ -4,6 +4,15 @@ from colorama import Fore
 def get_severity_colour(
     severity: str
 ) -> str:
+    """
+    Returns a display colour for a severity level.
+
+    Args:
+        severity (str): Severity value, such as LOW, MEDIUM, or HIGH.
+
+    Returns:
+        str: Colorama colour matching the severity level.
+    """
 
     if severity == "HIGH":
         return Fore.LIGHTRED_EX
@@ -20,6 +29,15 @@ def get_severity_colour(
 def get_status_colour(
     status: str
 ) -> str:
+    """
+    Returns a display colour for a login status.
+
+    Args:
+        status (str): Login status, such as FAILED or SUCCESS.
+
+    Returns:
+        str: Colorama colour matching the login status.
+    """
 
     if status.upper() == "FAILED":
         return Fore.LIGHTRED_EX
@@ -32,6 +50,18 @@ def get_status_colour(
 def get_attempt_colour(
     count: int
 ) -> str:
+    """
+    Returns a display colour based on an attempt count.
+
+    Higher attempts counts return stronger warning colours so suspicious activity
+    stands out in reports.
+
+    Args:
+        count (int): Number of attempts to evaluate.
+
+    Returns:
+        str: Colorama colour matching the attempt count.
+    """
     
     if count >= 15:
         return Fore.LIGHTRED_EX
@@ -47,6 +77,18 @@ def get_attempt_colour(
 def get_count_colour(
     count: int
 ) -> str:
+    """
+    Returns a display colour based on a general count value.
+
+    This is used for totals such as detected alerts, suspicious IPs, or grouped
+    result counts.
+
+    Args:
+        count (int): Count value to evaluate.
+
+    Returns:
+        str: Colorama colour matching the count level.
+    """
 
     if count >= 20:
         return Fore.LIGHTRED_EX
@@ -63,6 +105,20 @@ def get_live_status_colour(
         label: str,
         value: int
 ) -> str:
+    """
+    Returns a display colour for live monitoring status values.
+
+    The colour is selected using the status label and its numeric value so live
+    monitoring summaries can highlight events, failures, successes, unique IPs,
+    and alerts clearly.
+
+    Args:
+        label (str): Live status label being displayed.
+        value (int): Numeric value linked to the label.
+
+    Returns:
+        str: Colorama colour matching the live status type and value.
+    """
     
     label = label.lower()
 

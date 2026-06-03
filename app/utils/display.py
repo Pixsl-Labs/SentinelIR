@@ -12,7 +12,7 @@ def print_section_header(
     Args:
         title (str): Header title to display.
         colour (str, optional): Colorama colour used for the header text. 
-        Defaults to Fore.CYAN.
+            Defaults to Fore.CYAN.
 
     Returns:
         None
@@ -73,7 +73,7 @@ def print_separator(
     Args:
         count (int): Number of separator characters to print.
         colour (str, optional): Colorama colour used for the separator.
-        Defaults to Fore.CYAN.
+            Defaults to Fore.CYAN.
 
     Returns:
         None
@@ -94,7 +94,7 @@ def logging_info(
     Args:
         message (str): Message to write to the log.
         colour (str, optional): Colorama colour prefix applied to the logged message. 
-        Defaults to Fore.YELLOW.
+            Defaults to Fore.YELLOW.
 
     Returns:
         None

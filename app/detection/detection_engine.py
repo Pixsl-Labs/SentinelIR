@@ -132,7 +132,7 @@ class DetectionEngine:
         Returns the total number of live alerts raised across all alert types.
 
         Returns:
-            int:
+            int: Total number of live alerts recorded by the detection engine.
         """
 
         return sum(
@@ -145,6 +145,12 @@ class DetectionEngine:
     ) -> dict[str, int]:
         """
         Returns alert counts grouped by alert type.
+
+        Each alert type is mapped to the number of unique entities that have
+        triggered that alert during live monitoring.
+
+        Returns:
+            dict[str, int]: Dictionary containing alert types and their counts.
         """
 
         return {
@@ -166,7 +172,16 @@ class DetectionEngine:
         the configured threshold within the configured time window.
 
         Args:
-            analyser: Log analyser instance containing 
+            analyser: Log analyser instance containing failed login data and
+            grouped timestamp access.
+            threshold (int): Number of failed attempts required to trigger a
+            brute-force result.
+            window_seconds (int): Maximum time window, in seconds, allowed between
+            the first and final failed attempt.
+
+        Returns:
+            list[BruteForceResult]: Brute-force detection results containing the
+            attacking IP address, attempt count, time window, and severity.
         """
 
         ip_attempts = analyser.group_attempts_by_ip()
@@ -206,6 +221,22 @@ class DetectionEngine:
         analyser,
         threshold=BRUTE_FORCE_THRESHOLD
     ) -> list[UserTargetingResult]:
+        """
+        Detects distributed user-targeting activity.
+
+        Groups failed login attempts by username and checks whether a user has been
+        targeted by enough unique IP addresses to meet the configured threshold.
+        This can indicate password spraying or coordinated account targeting.
+
+        Args:
+            analyser: Log analyser instance containing failed login entries.
+            threshold (int): Number of unique IP addresses required to trigger a
+            user-targeting result.
+
+        Returns:
+            list[UserTargetingResult]: User-targeting results containing the
+            username, total attempts, unique IP count, and severity.
+        """
 
         user_attempts = defaultdict(list)
 
@@ -239,6 +270,15 @@ class DetectionEngine:
     def get_suspicious_success(
         analyser
     ) -> list[SuspiciousSuccessResult]:
+        """
+        Detects successful logins from 
+
+        Args:
+            analyser (_type_): _description_
+
+        Returns:
+            list[SuspiciousSuccessResult]: _description_
+        """
 
         failed_ips = set(
             entry.ip

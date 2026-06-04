@@ -1,6 +1,7 @@
 from app.log_analyser.log_entry import LogEntry
 from app.detection.detection_engine import DetectionEngine
 
+
 from app.utils.severity import get_severity_level
 from app.utils.display import print_empty_message
 from app.utils.parser import (
@@ -9,30 +10,46 @@ from app.utils.parser import (
     extract_timestamp
 )
 
+
 import logging
 from collections import defaultdict
 from colorama import Fore
-import time
 
 
 class LogAnalyser:
     """
-    Analyses authentication log files to extract information about
-    failed and successful login attempts.
+    Analyses authentication logs and stores structured login events.
 
-    Tracks:
-    - Failed login attempts (IP, user, timestamp)
-    - Successful logins
-    - Failed login counts per IP
+    The analyser extracts failed and successful authentication activity from log
+    files, stores parsed LogEntry objects, tracks failed login counts by IP
+    address, and owns the detection engine used for live alerting.
     """
 
     def __init__(self):
+        """
+        Initialises the log analyser state.
+
+        Creates empty containers for failed logins, successful logins, failed IP
+        counts, and the detection engine used during static and live analysis.
+
+        Returns:
+            None
+        """
         self.failed_logins: list[LogEntry] = []
         self.successful_logins: list[LogEntry] = []
         self.failed_ip_counts: dict[str, int] = {}
         self.detection_engine = DetectionEngine()
 
     def reset(self) -> None:
+        """
+        Clears all stored analysis state.
+
+        Removes failed logins, successful logins, failed IP counts, and resets the
+        detection engine alert state so the analyser can process a new file cleanly.
+
+        Returns:
+            None
+        """
         self.failed_logins = []
         self.successful_logins = []
         self.failed_ip_counts = {}
@@ -43,11 +60,14 @@ class LogAnalyser:
         self
     ) -> dict[str, list]:
         """
-        Groups failed logins timestamps by IP address.
-        
+        Groups failed login timestamps by IP address.
+
+        Builds a dictionary where each IP address maps to the timestamp of its failed
+        login attempts. This supports brute-force detection across time windows.
+
         Returns:
-            dict[str, list]: Dictionary mapping IP addresses
-            to lists of timestamps
+            dict[str, list]: Dictionary mapping IP addresses to failed login
+                timestamps.
         """
 
         grouped_attempts = defaultdict(list)
@@ -62,11 +82,17 @@ class LogAnalyser:
             file_path: str
         ) -> bool:
         """
-        Reads and processes a log file, extracting failed and successful
-        login attempts
+        Reads and processes an authentication log file.
+
+        Scans the selected file line by line, extracts failed login events, extracts
+        successful login events, and stores valid parsed entries. Missing files are
+        handled safely and reported through logging.
+
+        Args:
+            file_path (str): Path to the log file being analysed.
 
         Returns:
-            bool: True if file was successfully processed, False otherwise
+            bool: True if the file was processed successfully, otherwise False.
         """
 
         found_failed = False
@@ -81,11 +107,16 @@ class LogAnalyser:
 
             with open(file_path, 'r') as file:
                 for line in file:
+
                     if "failed password" in line.lower():
                         found_failed = True
                         self.extract_failed_ip(line)
                         
-                    elif "accepted password" in line.lower() or "session opened" in line.lower():
+                    elif (
+                        "accepted password" in line.lower() 
+                        or "session opened" in line.lower()
+                        ):
+
                         found_success = True
                         self.extract_successful_login(line)            
 
@@ -102,6 +133,7 @@ class LogAnalyser:
             return True
 
         except FileNotFoundError:
+
             logging.error(
                 f"Error: The file '{file_path}' was not found."
             )
@@ -113,11 +145,17 @@ class LogAnalyser:
         file_path: str
     ) -> bool:
         """
-        Legacy monitoring method.
+        Handles legacy monitoring calls.
 
-        Replaced by:
-        app.monitoring.file_monitor.FileMonitor
-        app.monitoring.live_event_processor.LiveEventProcessor
+        This method is retained for compatability but is no longer used by the current
+        live monitoring workflow. Live monitoring now uses FilterMonitor and
+        LiveEventProcessor.
+
+        Args:
+            file_path (str): Path to the log file that would have been monitored.
+
+        Returns:
+            bool: False because this legacy method is no longer active.
         """
 
         print_empty_message(
@@ -131,8 +169,17 @@ class LogAnalyser:
             line: str
         ) -> None:
         """
-        Extracts IP address, username, and timestamp from a failed login line
-        and stores the result.
+        Extracts and stores a failed login event from a log line.
+
+        Parses the IP address, username, and timestamp from a failed authentication
+        line. Invalid lines with missing IP addresses or timestamps are skipped. Valid
+        entries update the failed IP count and are stored with a calculated severity.
+
+        Args:
+            line (str): Raw failed login log line to parse.
+
+        Returns:
+            None
         """
 
         ip = extract_ip(line)
@@ -142,6 +189,7 @@ class LogAnalyser:
         timestamp = extract_timestamp(line)
 
         if not ip:
+
             logging.warning(
                 f"Skipping failed login line with missing IP: {line.strip()}"
             )
@@ -149,6 +197,7 @@ class LogAnalyser:
             return        
 
         if not timestamp:
+
             logging.warning(
                 f"Skipping failed login line with missing timestamp: {line.strip()}"
             )
@@ -178,8 +227,17 @@ class LogAnalyser:
             line: str
         ) -> None:
         """
-        Extracts IP address and username from a successful login line
-        and stores the result.
+        Extracts and stores a successful login event from a log line.
+
+        Parses the IP address, username, and timestamp from a successful authentication
+        line. Invalid lines with missing IP addresses or timestamp are skipped. Valid
+        entries are stored as successful login events. 
+
+        Args:
+            line (str): Raw successful login log line to parse.
+
+        Returns:
+            None
         """
 
         ip = extract_ip(line)
@@ -189,6 +247,7 @@ class LogAnalyser:
         timestamp = extract_timestamp(line)
 
         if not ip:
+
             logging.warning(
                 f"Skipping successful login line with missing IP: {line.strip()}"
             )
@@ -196,6 +255,7 @@ class LogAnalyser:
             return
         
         if not timestamp:
+
             logging.warning(
                 f"Skipping successful login line with missing timestamp: {line.strip()}"
             )

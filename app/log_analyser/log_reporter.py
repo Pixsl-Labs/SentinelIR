@@ -13,13 +13,24 @@ class LogReporter(
     Summary
 ):
     """
-    Generates reports and summaries based on analysed log data.
+    Combines reporting, detection, investigation, export, and summary features.
 
-    Responsible for:
-    - Displaying login statistics
-    - Detecting suspicious activity
-    - Exporting reports to file
+    LogReporter uses multiple mixins to provide a single interface for
+    printing analysis reults, exporting data, viewing statistics, and running
+    detection-focused reports against the analyser state.
     """
 
     def __init__(self, analyser):
+        """
+        Initialises the log reporter.
+
+        Stores the analyser instance used by the inherited reporting, detection,
+        investigation, export, and summary methods.
+
+        Args:
+            analyser (_type_): Log analyser instance containing parsed authentication data.
+
+        Returns:
+            None
+        """
         self.analyser = analyser

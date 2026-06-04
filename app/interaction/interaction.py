@@ -23,14 +23,29 @@ from datetime import datetime
 
 class Interaction:
     """
-    Provides a command-line interface for interacting with the log analyser.
+    Provides the main command-line interaction layer for SentinelIR.
 
-    Handles:
-    - User input
-    - Menu display
-    - Triggering analysis and report functions
+    The interaction layer display menus, collects user choice, triggers
+    reporting and detection actions, applies filters, handles exports, and allows
+    configuration changes during static analysis mode.
     """
+    
     def __init__(self, analyser, reporter):
+        """
+        Initialises the interaction controller.
+
+        Stores the analyser and reporter instances used throughout the CLI workflow,
+        sets the running state, and loads the default detection threshold and time
+        window settings.
+
+        Args:
+            analyser: Log analyser instance containing parsed authentication data.
+            reporter: Log reporter instance used to print reports, summaries, and
+                investigation results.
+
+        Returns:
+            None
+        """
         self.analyser: LogAnalyser = analyser
         self.reporter: LogReporter = reporter
         self.running = True
@@ -39,20 +54,27 @@ class Interaction:
 
     def run(self) -> None:
         """
-        Runs the main interaction loop for the application.
+        Runs the main interaction loop.
 
-        Displays the menu, processes user input, and executes the
-        corresponding actions until the user chooses to exit.
+        Displays the log analysis menu, processes the selected option, and calls the
+        matching report, investigation, detection, export, or configuration workflow.
+        The loop continues until the user chooses to exit.
 
         Returns:
             None
         """
+
         while self.running:
+
             display_log_analysis_menu()
-            choice = input("\nSelect an option (1-19): ").strip()
+
+            choice = input(
+                "\nSelect an option (1-20): "
+            ).strip()
 
             if choice == "1":
                 current_config(self.threshold, self.window_seconds)
+
                 print_section_header(
                     "Log Analysis Report",
                     Fore.GREEN
@@ -66,7 +88,9 @@ class Interaction:
                 )
 
                 if not self.analyser.failed_logins and not self.analyser.successful_logins:
-                    print("Log file contained no relevant login activity.\n")
+                    print_empty_message(
+                        "Log file contained no relevant login activity.\n"
+                    )
 
                 print_section_header(
                     "Attention Needed",
@@ -110,14 +134,17 @@ class Interaction:
                 )
 
             elif choice == "2":
+
                 self.reporter.print_attack_summary()
 
             elif choice == "3":
+
                 self.reporter.print_attack_statistics()
 
             # === Investigation ===
 
             elif choice == "4":
+
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Timeline",
@@ -126,6 +153,7 @@ class Interaction:
                 )
 
             elif choice == "5":
+
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Suspicious Activity",
@@ -134,6 +162,7 @@ class Interaction:
                 )
 
             elif choice == "6":
+
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Failed Logins",
@@ -142,11 +171,13 @@ class Interaction:
                 )
 
             elif choice == "7":
+
                 self.reporter.print_failed_logins_summary()
 
             # === Detection ===
             
             elif choice == "8":
+
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Suspicious IPs",
@@ -174,9 +205,11 @@ class Interaction:
                 )
 
             elif choice == "10":
+
                 self.reporter.print_most_targeted_user()
 
             elif choice == "11":
+
                 self.reporter.print_suspicious_success()
 
             elif choice == "12":
@@ -192,6 +225,7 @@ class Interaction:
             # === General Information ===
 
             elif choice == "13":
+
                 handle_filter_menu(
                     reporter=self.reporter,
                     title="Successful Logins",
@@ -205,9 +239,10 @@ class Interaction:
 
                 total_colour_failed = get_attempt_colour(total_failed_)
 
-                print(
-                    f"\nTotal failed logins: "
-                    f"{total_colour_failed}{total_failed_}"
+                print_total_count(
+                    "Total failed logins",
+                    total_failed_,
+                    total_colour_failed
                 )
 
             elif choice == "15":
@@ -216,9 +251,10 @@ class Interaction:
 
                 total_colour_ips = get_attempt_colour(total_ips)
 
-                print(
-                    f"\nUnique IP count: "
-                    f"{total_colour_ips}{total_ips}"
+                print_total_count(
+                    "Unique IP count",
+                    total_ips,
+                    total_colour_ips
                 )
 
             # === Configuration ===
@@ -238,6 +274,7 @@ class Interaction:
                 ).strip()
 
                 data = []
+
                 title = ""
 
                 if export_choice == "1":
@@ -272,9 +309,11 @@ class Interaction:
                     title = "Activity Timeline"
 
                 else:
+
                     print_empty_message(
                         "Invalid export option."
                     )
+
                     continue
 
                 file_path = input(
@@ -303,14 +342,19 @@ class Interaction:
                     )
 
                 else:
+
                     print_empty_message(
                         "Invalid file extension."
                     )
 
             elif choice == "17":
+
                 file_path = input("Enter log file path: ")
+
                 self.analyser.reset()
+
                 file_path = "log_files/" + file_path
+
                 self.analyser.analyse(file_path)
 
             elif choice == "18":
@@ -327,9 +371,11 @@ class Interaction:
                     Fore.LIGHTGREEN_EX
                     +"Goodbye!"
                 )
+
                 self.running = False           
 
             else:
+
                 print_empty_message(
                     "Invalid choice. Please try again."
                 )

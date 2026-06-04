@@ -11,7 +11,11 @@ from app.utils.display import (
 
 def display_log_analysis_menu() -> None:
     """
-    Prints the display menu for Log Analysis
+    Prints the main log analysis menu.
+
+    Displays available static analysis actions grouped by report type,
+    investigation features, detection features, general information, and
+    configuration options.
 
     Returns:
         None
@@ -68,10 +72,20 @@ def display_log_analysis_menu() -> None:
         Fore.MAGENTA
     )
 
-def display_configuration_menu(threshold: int, window_seconds: int) -> None:
+def display_configuration_menu(
+        threshold: int, 
+        window_seconds: int
+    ) -> None:
     """
-    Prints the configuration menu for alterations to Log Analysis
-    
+    Prints the configuration menu.
+
+    Shows the current brute-force threshold and time window values, and displays
+    options for changing settings, restoring defaults, or exiting the menu.
+
+    Args:
+        threshold (int): Current brute-force attempt threshold.
+        window_seconds (int): Current brute-force tiem window in seconds.
+
     Returns:
         None
     """
@@ -91,14 +105,24 @@ def display_configuration_menu(threshold: int, window_seconds: int) -> None:
         Fore.MAGENTA
     )
 
-def current_config(threshold: int, window_seconds: int) -> None:
+def current_config(
+        threshold: int, 
+        window_seconds: int
+    ) -> None:
     """
-    Prints the current configurations
-    
+    Prints the current detection configuration.
+
+    Displays the active brute-force threshold and time window values so the user
+    can confirm which settings are currently being used.
+
+    Args:
+        threshold (int): Current brute-force attempt threshold.
+        window_seconds (int): Current brute-force time window in seconds.
+
     Returns:
         None
     """
-    
+
     print_separator(
         37
     )
@@ -108,16 +132,16 @@ def current_config(threshold: int, window_seconds: int) -> None:
         Fore.GREEN
     )
 
-    print(f"- Threshold: {threshold}")
-    print(f"- Time window: {window_seconds}")
+    print(
+        Fore.LIGHTYELLOW_EX
+        + f"- Threshold: {threshold}")
+    print(
+        Fore.LIGHTYELLOW_EX
+        + f"- Time window: {window_seconds}")
 
     print_section_header(
         "End of Configuration Settings",
         Fore.MAGENTA
-    )
-    print(
-        Fore.MAGENTA
-        + "\n=== End of Configuration Settings ===\n"
     )
 
     print_separator(

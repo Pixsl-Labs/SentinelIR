@@ -1,6 +1,12 @@
 import logging
 
 
+from app.utils.display import (
+    print_default_message,
+    print_empty_message
+)
+
+
 from datetime import datetime, time
 from colorama import Fore
 
@@ -29,7 +35,10 @@ def integer_validation(
     value = input(prompt).strip()
 
     if value == "":
-        print(f"Using default {label} ({default})\n")
+        print_default_message(
+            label,
+            default
+        )
 
         return default
     
@@ -41,11 +50,25 @@ def integer_validation(
 
         logging.error(f"Error: Invalid input, using default.")
 
-        print(f"Using default {label} ({default})\n")
-        
+        print_default_message(
+            label,
+            default
+        )
+
         return default
     
 def get_time_range() -> tuple[time | None, time | None]:
+    """
+    Prompts the user for an optional time range filter.
+
+    If the user chooses to apply a time filter, start and end times are collected
+    in HH:MM:SS format and converted into time objects. Invalid or skipped input
+    returns no time range.
+
+    Returns:
+        tuple[time | None, time | None]: Start and end time values, or None values
+        when no valid time range is supplied.
+    """
 
     use_time_filter = input(
         "\nApply time range? (y/n): "
@@ -89,13 +112,19 @@ def handle_filter_menu(
         filters
     ) -> None:
     """
-    Handles reusable filtering menu for investigation features.
-    
+    Handles a reusable filtering menu for report and investigation views.
+
+    Builds a dynamic filter menu from the supplied filter names, collects the
+    required filter value from the user, optionally applies a time range, and then
+    calls the selected display function with the matching keyword arguments.
+
     Args:
-        title (str): Menu title.
-        show_all_function (callable): Function for showing all results.
-        ip_function (callable): Function for IP filtering.
-        user_function (callable): Function for username filtering.
+        reporter: Log reporter instance used to display available IP addresses
+            and usernames.
+        title: Title of the filter menu being displayed.
+        show_function: Function called after a filter option is selected.
+        filters: List of available filter names, such as ip, username, severity,
+            or status.
 
     Returns:
         None
@@ -105,11 +134,14 @@ def handle_filter_menu(
         print(f"\nFilter {title} by:\n")
 
         options = {}
+
         option_number = 1
 
         # Show all
         print(f"{option_number}. None")
+
         options[str(option_number)] = "none"
+        
         option_number += 1
 
         # Dynamic filters
@@ -117,11 +149,14 @@ def handle_filter_menu(
             display_name = filter_name.upper() if filter_name == "ip" else filter_name.title()
 
             print(f"{option_number}. {display_name}")
+
             options[str(option_number)] = filter_name
+
             option_number += 1
 
         # Back
         print(f"{option_number}. Back")
+
         options[str(option_number)] = "back"
 
         choice = input("\nSelect option: ").strip()
@@ -145,7 +180,10 @@ def handle_filter_menu(
             ip = input("\nEnter IP address: ").strip()
 
             if not ip:
-                print("\nNo IP entered.")
+                print_empty_message(
+                    "No IP entered."
+                )
+
                 continue
 
             start_time, end_time = get_time_range()
@@ -165,7 +203,10 @@ def handle_filter_menu(
             username = input("\nEnter username: ").strip()
 
             if not username:
-                print("\nNo username entered.")
+                print_empty_message(
+                    "No username entered."
+                )
+
                 continue
 
             start_time, end_time = get_time_range()
@@ -181,11 +222,18 @@ def handle_filter_menu(
         elif selected_filter == "severity":
 
             severity = input(
-                f"\nEnter severity ({Fore.GREEN}LOW/{Fore.YELLOW}MEDIUM/{Fore.LIGHTRED_EX}HIGH{Fore.RESET}): "
+                f"\nEnter severity "
+                f"({Fore.GREEN}LOW/"
+                f"{Fore.YELLOW}MEDIUM/"
+                f"{Fore.LIGHTRED_EX}HIGH"
+                f"{Fore.RESET}): "
             ).strip().upper()
 
             if not severity:
-                print("\nNo severity entered.")
+                print_empty_message(
+                    "No severity entered."
+                )
+
                 continue
 
             start_time, end_time = get_time_range()
@@ -201,11 +249,17 @@ def handle_filter_menu(
         elif selected_filter == "status":
 
             status = input(
-                f"\nEnter status ({Fore.GREEN}SUCCESS/{Fore.LIGHTRED_EX}FAILED{Fore.RESET}): "
+                f"\nEnter status "
+                f"({Fore.GREEN}SUCCESS/"
+                f"{Fore.LIGHTRED_EX}FAILED"
+                f"{Fore.RESET}): "
             ).strip().upper()
 
             if not status:
-                print("\nNo status entered.")
+                print_empty_message(
+                    "No status entered."
+                )
+
                 continue
 
             start_time, end_time = get_time_range()
@@ -219,7 +273,11 @@ def handle_filter_menu(
             break
 
         elif selected_filter == "back":
+
             break
 
         else:
-            print(f"\n'{choice}' is an invalid choice.")
+
+            print_empty_message(
+                f"'{choice}' is an invalid choice."
+            )

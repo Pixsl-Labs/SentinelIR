@@ -124,15 +124,15 @@ def generate_user_targeting_scenario(
     Args:
         user (str): Username targeted by the generated failed logins.
             Defaults to "admin".
-        base_ip (str): _description_
+        base_ip (str): Base IP prefix used to generate unique source IPs.
             Defaults to "10.20.0.".
-        unique_ips (int): _description_
+        unique_ips (int): Number of unqiue source IP addresses to generate.
             Defaults to 5.
-        start_time (datetime | None): _description_
-            Defaults to None.
+        start_time (datetime | None): Timestamp for the first generated
+            log line. Defaults to None.
 
     Returns:
-        list[str]: _description_
+        list[str]: Generated SSH authentication log lines.
     """
 
     if start_time is None:
@@ -169,12 +169,22 @@ def generate_normal_activity(
     """
     Generates normal SSH authentication activity.
 
-    This creates benign authentication events such as successful logins
-    from expected users and IP addresses. It can be used to test that
-    the live detection engine does not alert on normal behaviour.
+    Creates successful login events from expected users and IP addresses.
+    This can be used to test that detection logic does not raise alerts for normal
+    authentication behaviour.
+
+    Args:
+        users (list[str] | None): Usernames to rotate through when
+            generating successful login events. Defaults to None.
+        ips (list[str] | None): IP addresses to rotate through when
+            generating successful login events. Defaults to None.
+        events (int): Number of normal login events to generate.
+            Defaults to 5.
+        start_time (datetime | None): Timestamp for the first generated
+            log line. Defaults to None.
 
     Returns:
-        list[str]: Fake SSH authentication log lines.
+        list[str]: Generated SSH authentication log lines.
     """
 
     if users is None:
@@ -212,14 +222,18 @@ def generate_mixed_attack_scenario(
         start_time: datetime | None = None
     ) -> list[str]:
     """
-    Generates a mixed SSH attack scenario.
+    Generates a mixed SSH authentication scenario.
 
-    This combines normal activity, brute-force behaviour, suspicious
-    success behaviour, and distributed user-targeting activity into one
-    realistic sequence of authentication events.
+    Combines normal login activity, brute-force behaviour, suspicious-success
+    behaviour, and distributed user-targeting activity into one realistic test
+    sequence.
+
+    Args:
+        start_time (datetime | None): Timestamp used as the base time for
+            the generated scenario. Defaults to None.
 
     Returns:
-        list[str]: Fake SSH authentication log lines.
+        list[str]: Generated SSH authentication log lines.
     """
 
     if start_time is None:

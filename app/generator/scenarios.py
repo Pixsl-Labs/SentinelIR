@@ -9,12 +9,23 @@ def generate_brute_force_scenario(
     ) -> list[str]:
     """
     Generates a brute-force SSH login scenario.
-    
-    This creates multiple failed login attempts from the same IP
-    against the same username.
-    
+
+    Creates multiple failed login attempts from the same IP address against the
+    same username. This can be used to test brute-force detection rules and
+    alerting behaviour.
+
+    Args:
+        ip (str): Source IP address used in the generated attack.
+            Defaults to "192.168.1.10".
+        user (str): Username targeted by the failed login attempts.
+            Defaults to "root".
+        attempts (int): Number of failed login attempts to generate.
+            Defaults to 5.
+        start_time (datetime | None): Timestamp for the first generated
+            log lines. Defaults to None.
+
     Returns:
-        list[str]: Fake SSH authentication log lines.
+        list[str]: Generated SSH authentication log lines.
     """
 
     if start_time is None:
@@ -45,14 +56,24 @@ def generate_suspicious_success_scenario(
         start_time: datetime | None = None
     ) -> list[str]:
     """
-    Generates a suspicious successful SSH login scenario.
-    
-    This creates several failed login attempts from one IP address,
-    followed by a successful login from the same IP address. This
-    simulates a possible credential compromise after repeated failures.
-    
+    Generates a suspicious-success SSH login scenario.
+
+    Creates several failed login attempts from one IP address followed by a
+    successful login from the same IP address. This simulates possible credential
+    compromise after repeated authentication failures.
+
+    Args:
+        ip (str): Source IP address used for the failed and successful
+            login events. Defaults to "192.168.1.20".
+        user (str): Username used in the generated authentication events.
+            Defaults to "deploy".
+        failed_attempts (int): Number of failed login attemtps to generate
+            before the successful login. Defaults to 3.
+        start_time (datetime | None): Timestamp for the first generated
+            log line. Defaults to None.
+
     Returns:
-        list[str]: Fake SSH authentication log lines.
+        list[str]: Generated SSH authentication log lines.
     """
 
     if start_time is None:
@@ -94,14 +115,24 @@ def generate_user_targeting_scenario(
         start_time: datetime | None = None
     ) -> list[str]:
     """
-    Generates a user-targeting SSH login scenario.
+    Generates a distributed user-targeting SSH login scenario.
 
-    This creates failed login attempts against the same username from
-    multiple different IP addresses. This simulates distributed user
-    targeting or password-spraying behaviour.
+    Creates failed login attempts against the same username from multiple unqiue
+    IP addressses. This simulates password spraying or coordinated account
+    targeting behaviour.
+
+    Args:
+        user (str): Username targeted by the generated failed logins.
+            Defaults to "admin".
+        base_ip (str): _description_
+            Defaults to "10.20.0.".
+        unique_ips (int): _description_
+            Defaults to 5.
+        start_time (datetime | None): _description_
+            Defaults to None.
 
     Returns:
-        list[str]: Fake SSH authentication log lines.
+        list[str]: _description_
     """
 
     if start_time is None:

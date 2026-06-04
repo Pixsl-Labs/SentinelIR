@@ -1,7 +1,9 @@
 import logging
 
+
 from datetime import datetime, time
 from colorama import Fore
+
 
 def integer_validation(
         prompt, 
@@ -11,27 +13,36 @@ def integer_validation(
     """
     Prompts the user for an integer input.
 
-    If the input is empty or invalid, returns the provided default value.
+    If the user enters a valid integer, that value is returned. If the input is
+    empty or invalid, the provided default value is used instead.
 
     Args:
         prompt (str): Input prompt to display to the user.
-        default (int): Default value to use if input is invalid.
-        label (str): Name of the value (for user messaging).
+        default (int): Default value to use when input is empty or invalid.
+        label (str, optional): Name of the value being requested, used in
+            user-facing messages. Defaults to "value".
 
     Returns:
-        int: Valid integer input or default value.
+        int: Valid integer entered by the user, or the default value.
     """
+
     value = input(prompt).strip()
 
     if value == "":
         print(f"Using default {label} ({default})\n")
+
         return default
     
     try:
+
         return int(value)
+    
     except ValueError:
+
         logging.error(f"Error: Invalid input, using default.")
+
         print(f"Using default {label} ({default})\n")
+        
         return default
     
 def get_time_range() -> tuple[time | None, time | None]:

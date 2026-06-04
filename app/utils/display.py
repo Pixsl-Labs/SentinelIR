@@ -41,6 +41,32 @@ def print_empty_message(
         + f"\n{message}"
     )
 
+def print_default_message(
+    label: str,
+    default
+) -> None:
+    """
+    Prints a formatted message when a default value is used.
+
+    Args:
+        label (str): Name of the value using the default.
+        default: Default value being used.
+
+    Returns:
+        None
+    """
+
+    print(
+        Fore.YELLOW
+        + "\nUsing default "
+        + Fore.CYAN
+        + f"{label}"
+        + Fore.YELLOW
+        + " value "
+        + Fore.LIGHTGREEN_EX
+        + f"({default})\n"
+    )
+
 def print_total_count(
     label: str,
     count: int,

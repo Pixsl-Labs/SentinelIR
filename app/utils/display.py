@@ -67,6 +67,27 @@ def print_default_message(
         + f"({default})\n"
     )
 
+def print_info(
+    message: str,
+    colour: str = Fore.CYAN
+) -> None:
+    """
+    Prints a formatted informational message.
+
+    Args:
+        message (str): Message to display to the user.
+        colour (str, optional): Colorama colour used for the message.
+            Defaults to Fore.CYAN.
+
+    Returns:
+        None
+    """
+
+    print(
+        colour
+        + message
+    )
+
 def print_total_count(
     label: str,
     count: int,
@@ -131,6 +152,27 @@ def logging_info(
         + f"{message}"
     )
 
+def logging_error(
+    message: str,
+    colour: str=Fore.LIGHTRED_EX
+) -> None:
+    """
+    Writes a formatted error message to the application log.
+
+    Args:
+        message (str): Message to write to the log.
+        colour (str, optional): Colorama colour prefix applied to the logged message. 
+            Defaults to Fore.LIGHTRED_EX.
+
+    Returns:
+        None
+    """
+
+    logging.error(
+        colour
+        + f"{message}"
+    )
+
 def print_alert(
         severity: str,
         title: str,
@@ -177,4 +219,29 @@ def print_alert(
     print(
         colour
         + message
+    )
+
+def print_status_line(
+    label: str,
+    value,
+    colour: str,
+    width: int = 25
+) -> None:
+    """
+    Prints a formatted labelled status line.
+
+    Args:
+        label (str): Label displayed on the left.
+        value: Value displayed on the right.
+        colour (str): Colorama colour used for the value.
+        width (int, optional): Width used to align the label.
+            Defaults to 25.
+
+    Returns:
+        None
+    """
+
+    print(
+        f"{label + ':':<{width}} "
+        f"{colour}{value}"
     )

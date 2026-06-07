@@ -147,7 +147,7 @@ class LogAnalyser:
         """
         Handles legacy monitoring calls.
 
-        This method is retained for compatability but is no longer used by the current
+        This method is retained for compatibility but is no longer used by the current
         live monitoring workflow. Live monitoring now uses FileMonitor and
         LiveEventProcessor.
 

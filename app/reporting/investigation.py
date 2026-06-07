@@ -295,9 +295,9 @@ class Investigation:
 
     def print_all_usernames(self) -> None:
         """
-        Prints all unique IP addresses found in the activity timeline.
+        Prints all usernames found in the activity timeline.
 
-        Collects IP addresses from analysed failed and successful login events, removes
+        Collects usernames from analysed failed and successful login events, removes
         duplicates, sorts them, and displays the available values for filtering.
 
         Returns:
@@ -328,12 +328,15 @@ class Investigation:
 
     def print_all_ips(self) -> None:
         """
-        Provides statistics and summary reporting methods.
+        Prints all unique IP addresses found in the activity timeline.
 
-        This mixin returns and prints failed login statistics, successful login
-        statistics, targeted user summaries, attack statistics, and condensed analysis
-        summaries.
+        Collects IP addresses from analysed failed and successful login events, removes
+        duplicates, sorts them, and displays the available values for filtering.
+
+        Returns:
+            None
         """
+
 
         timeline = self.get_activity_timeline()
 

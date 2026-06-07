@@ -27,7 +27,7 @@ class LogFilter:
         Applies optional filters to a list of log entries.
 
         Filters can be combined to narrow results by IP address, username, severity,
-        status, start time, and end time. Entries that do no match all selected
+        status, start time, and end time. Entries that do not match all selected
         criteria are skipped.
 
         Args:

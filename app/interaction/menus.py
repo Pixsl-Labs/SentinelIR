@@ -84,7 +84,7 @@ def display_configuration_menu(
 
     Args:
         threshold (int): Current brute-force attempt threshold.
-        window_seconds (int): Current brute-force tiem window in seconds.
+        window_seconds (int): Current brute-force time window in seconds.
 
     Returns:
         None

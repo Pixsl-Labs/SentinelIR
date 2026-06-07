@@ -53,7 +53,7 @@ def get_attempt_colour(
     """
     Returns a display colour based on an attempt count.
 
-    Higher attempts counts return stronger warning colours so suspicious activity
+    Higher attempt counts return stronger warning colours so suspicious activity
     stands out in reports.
 
     Args:

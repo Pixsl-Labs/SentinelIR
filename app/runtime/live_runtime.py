@@ -31,8 +31,12 @@ class LiveRuntime:
             self,
             analyser,
             reporter,
-            log_file
-        ):
+            log_file,
+            show_new_logs: bool = True,
+            status_interval: int = 10,
+            poll_interval: float = 0.2,
+            mode_title: str = "Live Monitoring Mode"
+        ) -> None:
         """
         Initialises the live runtime.
 
@@ -40,6 +44,14 @@ class LiveRuntime:
             analyser: Log analyser instance updated during live monitoring.
             reporter: Log reporter instance available for reporting workflows.
             log_file: Path to the log file being monitored.
+            show_new_logs (bool): Whether new log lines should be printed while
+                monitoring. Defaults to True.
+            status_interval (int): Number of processed events between live status
+                updates. Defaults to 10.
+            poll_interval (float): Delay between checks for new file content.
+                Defaults to 0.2.
+            mode_title (str): Header title displayed when live monitoring starts.
+                Defaults to "Live Monitoring Mode".
 
         Returns:
             None
@@ -48,8 +60,12 @@ class LiveRuntime:
         self.analyser = analyser
         self.reporter = reporter
         self.log_file = log_file
+        self.show_new_logs = show_new_logs
+        self.status_interval = status_interval
+        self.poll_interval = poll_interval
+        self.mode_title = mode_title
 
-    def start(self):
+    def start(self) -> None:
         """
         Starts live monitoring mode.
 
@@ -61,17 +77,20 @@ class LiveRuntime:
         """
 
         print_section_header(
-            "Live Monitoring Mode",
+            self.mode_title,
             Fore.GREEN
         )
 
         processor = LiveEventProcessor(
-            analyser=self.analyser
+            analyser=self.analyser,
+            show_new_logs=self.show_new_logs,
+            status_interval=self.status_interval
         )
 
         monitor = FileMonitor(
             file_path=self.log_file,
-            processor=processor
+            processor=processor,
+            poll_interval=self.poll_interval
         )
 
         success = monitor.watch()

@@ -1,17 +1,9 @@
-from collections import defaultdict
-from colorama import Fore
-from datetime import time
-
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW
 )
-from app.utils.colours import (
-    get_severity_colour, 
-    get_status_colour, 
-    get_attempt_colour, 
-    get_count_colour
-)
+
+
 from app.utils.formatting import format_column, print_table_header
 from app.utils.severity import get_severity_level
 from app.utils.risk import get_risk_level
@@ -20,6 +12,12 @@ from app.utils.display import (
     print_empty_message,
     print_total_count
 )
+from app.utils.colours import (
+    get_severity_colour,
+    get_attempt_colour, 
+    get_count_colour
+)
+
 
 from app.models.detection_results import (
     SuspiciousIPResult, 
@@ -28,12 +26,25 @@ from app.models.detection_results import (
     SuspiciousSuccessResult
 )
 
+
 from app.detection.detection_engine import (
     DetectionEngine
 )
 
 
+from collections import defaultdict
+from colorama import Fore
+from datetime import time
+
+
 class Detection:
+    """
+    Provides detection-focused reporting methods.
+
+    This mixin prints and returns detection results for brute-force activity,
+    suspicious IP addresses, suspicious successful logins, and distributed
+    user-targeting behaviour.
+    """
 
     def print_brute_force_results(
             self,
@@ -41,7 +52,20 @@ class Detection:
             window_seconds=BRUTE_FORCE_TIME_WINDOW
         ) -> None:
         """
-        Prints detected brute force attacks.
+        Prints detected brute-force login activity.
+
+        Runs brute-force detection using the selected threshold and time window,
+        then prints the results in a formatted table. If no results are found, an empty
+        message is displayed.
+
+        Args:
+            threshold (int): Failed login threshold required to trigger a
+                brute-force result. Defaults to BRUTE_FORCE_THRESHOLD.
+            window_seconds (int): Maximum detection time window in seconds.
+                Defaults to BRUTE_FORCE_TIME_WINDOW.
+
+        Returns:
+            None
         """
 
         results = DetectionEngine.get_brute_force(
@@ -96,8 +120,20 @@ class Detection:
         self,
         threshold,
         window_seconds
-    ):
-        
+    ) -> None:
+        """
+        Prints brute-force detection results in a simple text format.
+
+        Runs brute-force detection and displays each result with its IP address,
+        attempt count, time window, and severity.
+
+        Args:
+            threshold (int): Failed login threshold required to trigger a result.
+            window_seconds (int): Maximum detection time window in seconds.
+
+        Returns:
+            None
+        """
         results = DetectionEngine.get_brute_force(
             self.analyser,
             threshold,
@@ -114,17 +150,21 @@ class Detection:
         for result in results:
 
             print(
-                f"""
-IP: {result.ip}
-Attempts: {result.attempts}
-Window: {result.time_window}
-Severity: {result.severity}
-"""
+                f"IP: {result.ip}"
+                f"Attempts: {result.attempts}"
+                f"Window: {result.time_window}"
+                f"Severity: {result.severity}"
             )
 
     def print_suspicious_success(self) -> None:
         """
-        Detects successful logins following failed attempts.
+        Prints suspicious successful login results.
+
+        Detects successful logins from IP addresses that previously failed
+        authentication and displays the results in a formatted table.
+
+        Returns:
+            None
         """
 
         results = DetectionEngine.get_suspicious_success(
@@ -185,7 +225,18 @@ Severity: {result.severity}
             threshold=BRUTE_FORCE_THRESHOLD
         ) -> None:
         """
-        Prints distributed user-targeting attacks.
+        Prints distributed user-targeting detection results.
+
+        Detects usernames targeted by multiple unique IP addresses and displays each
+        matching result with its username, unique IP count, total attempts, and
+        severity.
+
+        Args:
+            threshold (int): Number of unique IP addresses required to trigger
+                a user-targeting result. Defaults to BRUTE_FORCE_THRESHOLD.
+
+        Returns:
+            None
         """
 
         results = DetectionEngine.get_user_targeting(
@@ -246,12 +297,26 @@ Severity: {result.severity}
             )
 
     def get_suspicious_ips(
-        self,
-        ip: str | None=None,
-        severity: str | None=None,
-    ) -> list[SuspiciousIPResult]:
+            self,
+            ip: str | None=None,
+            severity: str | None=None,
+        ) -> list[SuspiciousIPResult]:
         """
-        Returns filtered suspicious IP addresses.
+        Returns suspicious IP results with optional filtering.
+
+        Builds suspicious IP results from failed login counts, calculates severity and
+        risk status for each IP address, and optionally filters by IP address or
+        severity level.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+
+        Returns:
+            list[SuspiciousIPResult]: Suspicious IP results matching the selected
+            filters.
         """
 
         results = []
@@ -286,14 +351,31 @@ Severity: {result.severity}
         return results
     
     def print_suspicious_ips(
-        self,
-        ip: str | None=None,
-        severity: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> None:
+            self,
+            ip: str | None=None,
+            severity: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> None:
         """
-        Prints filtered suspicious IP addresses.
+        Prints suspicious IP results.
+
+        Displays suspicious IP addresses based on failed login counts, including
+        attempt count, risk status, and severity. Time arguments are accepted for menu
+        compatibility but are not currently applied by this method.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            start_time (time | None): Optional start time accepted for shared filter
+                compatibility. Defaults to None.
+            end_time (time | None): Optional end time accepted for shared filter
+                compatibility. Defaults to None.
+
+        Returns:
+            None
         """
 
         results = self.get_suspicious_ips(

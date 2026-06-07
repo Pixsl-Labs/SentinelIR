@@ -1,8 +1,7 @@
-from datetime import time, datetime
-from colorama import Fore
-
 from app.log_analyser.log_entry import LogEntry
 from app.log_analyser.filtering import LogFilter
+
+
 from app.utils.colours import get_status_colour, get_severity_colour
 from app.utils.display import (
     print_section_header,
@@ -11,18 +10,42 @@ from app.utils.display import (
 )
 
 
+from datetime import time, datetime
+from colorama import Fore
+
+
 class Investigation:    
     def get_suspicious_activity(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> list[LogEntry]:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> list[LogEntry]:
         """
         Returns filtered suspicious activity.
+
+        Combines failed and successful login entries, applies the selected filters, and
+        returns the results sorted by timestamp.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            list[LogEntry]: Filtered suspicious activity sorted by timestamp.
         """
 
         results_ = (
@@ -46,16 +69,36 @@ class Investigation:
         )
     
     def print_suspicious_activity(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> None:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> None:
         """
         Prints filtered suspicious activity.
+
+        Displays failed and successful login events matching the selected filters,
+        including status timestamp, username, IP address, and severity.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            None
         """
 
         results = self.get_suspicious_activity(
@@ -112,16 +155,36 @@ class Investigation:
             )
 
     def get_activity_timeline(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> list[LogEntry]:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> list[LogEntry]:
         """
-        Returns filtered activity timeline.
+        Returns a filtered activity timeline.
+
+        Combines failed and successful login events, applies the selected filters,
+        and returns matching entries in chronological order.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            list[LogEntry]: Filtered activity timeline sorted by timestamp.
         """
 
         results = (
@@ -147,17 +210,38 @@ class Investigation:
         )
     
     def print_activity_timeline(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> None:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> None:
         """
-        Prints filtered activity timeline.
+        Prints a filtered activity timeline.
+
+        Displays matching authentication events in chronological order, including
+        status, timestamp, username, and IP address.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            None
         """
+
         results = self.get_activity_timeline(
             ip=ip,
             username=username,
@@ -211,7 +295,13 @@ class Investigation:
 
     def print_all_usernames(self) -> None:
         """
-        Prints all unique usernames.
+        Prints all unique IP addresses found in the activity timeline.
+
+        Collects IP addresses from analysed failed and successful login events, removes
+        duplicates, sorts them, and displays the available values for filtering.
+
+        Returns:
+            None
         """
 
         timeline = self.get_activity_timeline()
@@ -238,7 +328,11 @@ class Investigation:
 
     def print_all_ips(self) -> None:
         """
-        Prints all unique IP addresses.
+        Provides statistics and summary reporting methods.
+
+        This mixin returns and prints failed login statistics, successful login
+        statistics, targeted user summaries, attack statistics, and condensed analysis
+        summaries.
         """
 
         timeline = self.get_activity_timeline()

@@ -1,5 +1,6 @@
-from colorama import Fore
 import logging
+from datetime import datetime
+from colorama import Fore
 
 
 def print_section_header(
@@ -11,7 +12,7 @@ def print_section_header(
 
     Args:
         title (str): Header title to display.
-        colour (str, optional): Colorama colour used for the header text. 
+        colour (str): Colorama colour used for the header text. 
             Defaults to Fore.CYAN.
 
     Returns:
@@ -76,7 +77,7 @@ def print_info(
 
     Args:
         message (str): Message to display to the user.
-        colour (str, optional): Colorama colour used for the message.
+        colour (str): Colorama colour used for the message.
             Defaults to Fore.CYAN.
 
     Returns:
@@ -119,7 +120,7 @@ def print_separator(
 
     Args:
         count (int): Number of separator characters to print.
-        colour (str, optional): Colorama colour used for the separator.
+        colour (str): Colorama colour used for the separator.
             Defaults to Fore.CYAN.
 
     Returns:
@@ -140,7 +141,7 @@ def logging_info(
 
     Args:
         message (str): Message to write to the log.
-        colour (str, optional): Colorama colour prefix applied to the logged message. 
+        colour (str): Colorama colour prefix applied to the logged message. 
             Defaults to Fore.YELLOW.
 
     Returns:
@@ -161,7 +162,7 @@ def logging_error(
 
     Args:
         message (str): Message to write to the log.
-        colour (str, optional): Colorama colour prefix applied to the logged message. 
+        colour (str): Colorama colour prefix applied to the logged message. 
             Defaults to Fore.LIGHTRED_EX.
 
     Returns:
@@ -234,7 +235,7 @@ def print_status_line(
         label (str): Label displayed on the left.
         value: Value displayed on the right.
         colour (str): Colorama colour used for the value.
-        width (int, optional): Width used to align the label.
+        width (int): Width used to align the label.
             Defaults to 25.
 
     Returns:
@@ -244,4 +245,49 @@ def print_status_line(
     print(
         f"{label + ':':<{width}} "
         f"{colour}{value}"
+    )
+
+def print_generated_timestamp() -> None:
+    """
+    Prints the current report generation timestamp.
+
+    Returns:
+        None
+    """
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    print(
+        Fore.CYAN
+        + f"Generated: {now}\n"
+    )
+
+
+def print_stat_row(
+    label: str,
+    value,
+    colour: str = Fore.WHITE,
+    width: int = 25
+) -> None:
+    """
+    Prints a formatted statistic row.
+
+    Args:
+        label (str): Statistic label to display.
+        value: Statistic value to display.
+        colour (str): Colorama colour used for the value.
+            Defaults to Fore.WHITE.
+        width (int): Width used to align the label.
+            Defaults to 25.
+
+    Returns:
+        None
+    """
+
+    display_value = value if value is not None else "None"
+
+    print(
+        f"{label + ':':<{width}} "
+        f"{colour}"
+        f"{display_value}"
     )

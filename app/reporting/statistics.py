@@ -1,17 +1,22 @@
 from app.log_analyser.log_entry import LogEntry
 from app.log_analyser.filtering import LogFilter
-from app.utils.colours import (
-    get_severity_colour, 
-    get_attempt_colour,
-    get_count_colour
-)
+
+
 from app.utils.formatting import print_table_header, format_column
 from app.utils.severity import get_severity_level
 from app.utils.display import (
     print_section_header,
     print_empty_message,
-    print_total_count
+    print_total_count,
+    print_generated_timestamp,
+    print_stat_row
 )
+from app.utils.colours import (
+    get_severity_colour, 
+    get_attempt_colour,
+    get_count_colour
+)
+
 
 from app.models.statistics_results import (
     TargetedUserResult,
@@ -19,22 +24,50 @@ from app.models.statistics_results import (
 )
 from app.detection.detection_engine import DetectionEngine
 
+
 from datetime import time, datetime
 from colorama import Fore
 
 
 class Statistics:
+    """
+    Provides statistics and summary reporting methods.
+
+    This mixin returns and prints failed login statistics, successful login
+    statistics, targeted user summaries, attack statistics, and condensed analysis
+    summaries.
+    """
     def get_failed_logins(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> list[LogEntry]:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> list[LogEntry]:
         """
         Returns filtered failed login attempts.
+
+        Applies optional filters to failed login entries and returns matching results
+        sorted by timestamp.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            list[LogEntry]: Filtered failed login entries sorted by timestamp.
         """
 
         results = LogFilter.apply_filters(
@@ -53,11 +86,17 @@ class Statistics:
         )
     
     def get_failed_login_summary(
-        self
-    ) -> list[FailedLoginSummaryResult]:
+            self
+        ) -> list[FailedLoginSummaryResult]:
         """
-        Returns summarised failed login results grouped
-        by username and IP address.
+        Returns failed login results grouped by username and IP address.
+
+        Groups failed login entries by username and source IP address, counts attempts
+        for each pair, calculates severity, and returns the results sorted by attempt
+        count.
+
+        Returns:
+            list[FailedLoginSummaryResult]: Grouped failed login summary results.
         """
 
         grouped_results = {}
@@ -98,16 +137,36 @@ class Statistics:
         )
     
     def print_failed_logins(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> None:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> None:
         """
-        Prints filtered failed logins.
+        Prints filtered failed login attempts.
+
+        Displays failed login entries matching the selected filters in a formatted
+        table, including severity, username, and IP address.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            None
         """
 
         results = self.get_failed_logins(
@@ -164,10 +223,16 @@ class Statistics:
             )
 
     def print_failed_logins_summary(
-        self
-    ) -> None:
+            self
+        ) -> None:
         """
-        Prints summarised failed login summary.
+        Prints grouped failed login summary results.
+
+        Displays failed login counts grouped by username and IP address, including
+        attempt count and calculated severity.
+
+        Returns:
+            None
         """
 
         results = self.get_failed_login_summary()
@@ -218,16 +283,36 @@ class Statistics:
             )
 
     def get_successful_logins(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
         ) -> list[LogEntry]:
         """
-        Returns filtered successful logins.
+        Returns filtered successful login entries.
+
+        Applies optional filters to successful login entries and returns matching
+        results sorted by timestamp.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | None): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            list[LogEntry]: Filtered successful login entries sorted by timestamp.
         """
 
         results = LogFilter.apply_filters(
@@ -246,16 +331,36 @@ class Statistics:
         )
 
     def print_successful_logins(
-        self,
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
-    ) -> None:
+            self,
+            ip: str | None=None,
+            username: str | None=None,
+            severity: str | None=None,
+            status: str | None=None,
+            start_time: time | None=None,
+            end_time: time | None=None
+        ) -> None:
         """
-        Prints filtered successful logins.
+        Prints filtered successful login entries.
+
+        Displays successful authentication events matching the selected filters,
+        including status, timestamp, username, and IP address.
+
+        Args:
+            ip (str | None): IP address to match.
+                Defaults to None.
+            username (str | None): Username to match.
+                Defaults to None.
+            severity (str | None): Severity level to match.
+                Defaults to None.
+            status (str | None): Login status to match.
+                Defaults to None.
+            start_time (time | None): Earliest event time to include.
+                Defaults to None.
+            end_time (time | Non): Latest event time to include.
+                Defaults to None.
+
+        Returns:
+            None
         """
 
         results = self.get_successful_logins(
@@ -314,11 +419,14 @@ class Statistics:
 
     def get_total_failed_login_attempts(self) -> int:
         """
-        Returns the total number of failed logins detected
+        Returns the total number of failed login attempts.
+
+        Adds together all failed login counts stored by IP address.
 
         Returns:
-            int: Total number of failed login attempts
+            int: Total number of failed login attempts.
         """
+
         return sum(self.analyser.failed_ip_counts.values())
 
     def get_total_successful_logins(self) -> int:
@@ -328,24 +436,32 @@ class Statistics:
         Returns:
             int: Total number of successful logins
         """
+
         return len(self.analyser.successful_logins)
 
     def get_total_suspicious_ips(self) -> int:
         """
-        Returns the total number of suspicious IPs detected.
+        Returns the total number of suspicious IP addresses.
+
+        Counts the unique IP addresses that have recorded failed login attempts.
 
         Returns:
-            int: Total number of suspicious IPs
+            int: Total number of suspicious IP addresses.
         """
+
         return len(self.analyser.failed_ip_counts)
 
     def get_total_number_of_unique_ip_addresses(self) -> int:
         """
-        Returns the total number of unique IP addresses detected
+        Returns the total number of unique IP addresses.
+
+        Combines IP addresses from failed and successful login entries, removes
+        duplicates, and returns the total count.
 
         Returns:
-            int: Total number of unique IP addresses identified
+            int: Total number of unique IP addresses identified.
         """
+
         all_ips = set()
 
         for entry in self.analyser.failed_logins:
@@ -356,13 +472,21 @@ class Statistics:
 
         return len(all_ips)
 
-    def get_attack_statistics(self) -> dict:
+    def get_attack_statistics(self) -> dict[str, int | str | None]:
         """
-        Returns a high-level summary of attack statistics.
+        Returns high-level attack statistics.
+
+        Builds a summary of analysed authentication activity, including failed
+        attempts, successful logins, suspicious IPs, brute-force alerts, targeted
+        users, highest severity, top attacker, and most targeted user.
 
         Returns:
-            dict: Summary statistics for analysed log data
+            dict[str, int | str | None]: Summary statistics for analysed log data.
         """
+
+        failed_ip_counts = self.analyser.failed_ip_counts
+
+        targeted_users = self.get_most_targeted_users()
 
         total_failed = self.get_total_failed_login_attempts()
 
@@ -370,44 +494,52 @@ class Statistics:
 
         total_suspicious_ips = self.get_total_suspicious_ips()
 
-        total_brute_force = len(DetectionEngine.get_brute_force(self.analyser))
+        total_brute_force = len(
+            DetectionEngine.get_brute_force(
+                self.analyser
+            )
+        )
 
-        total_targeted_users = len(self.get_most_targeted_users())
+        top_attacker_entry = max(
+            failed_ip_counts.items(),
+            key=lambda item: item[1],
+            default=None
+        )
 
-        highest_severity = "NONE"
+        if top_attacker_entry:
+            top_ip, highest_attempts = top_attacker_entry
 
-        if self.analyser.failed_ip_counts:
-            highest_attempts = max(self.analyser.failed_ip_counts.values())
-            highest_severity = get_severity_level(highest_attempts)
-
-        top_attacker = None
-
-        if self.analyser.failed_ip_counts:
-            top_ip, attempts = max(
-                self.analyser.failed_ip_counts.items(),
-                key=lambda x: x[1]
+            highest_severity = get_severity_level(
+                highest_attempts
             )
 
-            top_attacker = f"{top_ip} ({attempts} attempts)"
+            top_attacker = (
+                f"{top_ip} "
+                f"({highest_attempts} attempts)"
+            )
 
-        most_targeted_user = None
+        else:
+            highest_severity = "NONE"
 
-        targeted_users = self.get_most_targeted_users()
+            top_attacker = None
 
         if targeted_users:
-            top_result = targeted_users[0]
-            
-            top_user = top_result.username
-            attempts = top_result.attempts
+            top_targeted_user = targeted_users[0]
 
-            most_targeted_user = f"{top_user} ({attempts} attempts)"
+            most_targeted_user = (
+                f"{top_targeted_user.username} "
+                f"({top_targeted_user.attempts} attempts)"
+            )
+
+        else:
+            most_targeted_user = None
 
         return {
             "failed_attempts": total_failed,
             "successful_logins": total_successful,
             "suspicious_ips": total_suspicious_ips,
             "brute_force_alerts": total_brute_force,
-            "targeted_users": total_targeted_users,
+            "targeted_users": len(targeted_users),
             "highest_severity": highest_severity,
             "top_attacker": top_attacker,
             "most_targeted_user": most_targeted_user
@@ -416,6 +548,12 @@ class Statistics:
     def get_most_targeted_users(self) -> list[TargetedUserResult]:
         """
         Returns users sorted by failed login attempts.
+
+        Counts failed login attempts per username, calculates severity for each user,
+        and returns the results sorted from most targeted to least targeted.
+
+        Returns:
+            list[TargetedUserResult]: Targeted user results sorted by attempt count.
         """
 
         user_counts = {}
@@ -448,6 +586,12 @@ class Statistics:
     def print_most_targeted_user(self) -> None:
         """
         Prints the most targeted users.
+
+        Displays usernames with failed login activity, including attempt count and
+        calculated severity.
+
+        Returns:
+            None
         """
 
         sorted_users = self.get_most_targeted_users()
@@ -500,7 +644,14 @@ class Statistics:
 
     def print_attack_statistics(self) -> None:
         """
-        Prints a high-level summary of detected attack statistics.
+        Prints high-level attack statistics.
+
+        Displays a summary of failed attempts, successful logins, suspicious IPs,
+        brute-force alerts, targeted users, highest severity, top attacker, and most
+        targeted user.
+
+        Returns:
+            None
         """
 
         stats = self.get_attack_statistics()
@@ -510,81 +661,57 @@ class Statistics:
             Fore.GREEN
         )
 
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print_generated_timestamp()
 
-        print(
-            Fore.CYAN
-            + f"Generated: {now}\n"
-        )
+        rows = [
+            (
+                "Failed attempts",
+                stats["failed_attempts"],
+                get_attempt_colour(stats["failed_attempts"])
+            ),
+            (
+                "Successful logins",
+                stats["successful_logins"],
+                Fore.GREEN
+            ),
+            (
+                "Suspicious IPs",
+                stats["suspicious_ips"],
+                Fore.YELLOW
+            ),
+            (
+                "Brute-force alerts",
+                stats["brute_force_alerts"],
+                get_attempt_colour(stats["brute_force_alerts"])
+            ),
+            (
+                "Targeted users",
+                stats["targeted_users"],
+                get_attempt_colour(stats["targeted_users"])
+            ),
+            (
+                "Highest severity",
+                stats["highest_severity"],
+                get_severity_colour(stats["highest_severity"])
+            ),
+            (
+                "Top attacker",
+                stats["top_attacker"],
+                get_attempt_colour(stats["failed_attempts"])
+            ),
+            (
+                "Most targeted user",
+                stats["most_targeted_user"],
+                get_attempt_colour(stats["targeted_users"])
+            )
+        ]
 
-        severity_colour = get_severity_colour(
-            stats['highest_severity']
-        )
-
-        failed_colour = get_attempt_colour(
-            stats['failed_attempts']
-        )
-
-        brute_colour = get_attempt_colour(
-            stats['brute_force_alerts']
-        )
-
-        targeted_colour = get_attempt_colour(
-            stats['targeted_users']
-        )
-
-        print(
-            f"{'Failed attempts:':<25} "
-            f"{failed_colour}"
-            f"{stats['failed_attempts']}"
-        )
-
-        print(
-            f"{'Successful logins:':<25} "
-            f"{Fore.GREEN}"
-            f"{stats['successful_logins']}"
-        )
-
-        print(
-            f"{'Suspicious IPs:':<25} "
-            f"{Fore.YELLOW}"
-            f"{stats['suspicious_ips']}"
-        )
-
-        print(
-            f"{'Brute-force alerts:':<25} "
-            f"{brute_colour}"
-            f"{stats['brute_force_alerts']}"
-        )
-
-        print(
-            f"{'Targeted users:':<25} "
-            f"{targeted_colour}"
-            f"{stats['targeted_users']}"
-        )
-        print(
-            f"{'Highest severity:':<25} "
-            f"{severity_colour}"
-            f"{stats['highest_severity']}"
-        )
-        top_attacker_colour = get_attempt_colour(
-            stats['failed_attempts']
-        )
-
-        print(
-            f"{'Top attacker:':<25} "
-            f"{top_attacker_colour}"
-            f"{stats['top_attacker']}"
-        )
-        most_targeted_colour = get_attempt_colour(
-            stats['targeted_users']
-        )
-
-        print(
-            f"{'Most targeted user:':<25} "
-            f"{most_targeted_colour}"
-            f"{stats['most_targeted_user']}"
-        )
+        for label, value, colour in rows:
+            print_stat_row(
+                label,
+                value,
+                colour
+            )
 
         print_section_header(
             "End of Report",
@@ -594,6 +721,12 @@ class Statistics:
     def print_analysis_summary(self) -> None:
         """
         Prints a condensed analysis summary.
+
+        Displays the key totals from the analysed log file, including failed attempts,
+        successful logins, suspicious IPs, and brute-force alerts.
+
+        Returns:
+            None
         """
 
         stats = self.get_attack_statistics()
@@ -603,52 +736,37 @@ class Statistics:
             Fore.GREEN
         )
 
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print_generated_timestamp()
 
-        print(
-            Fore.CYAN
-            + f"Generated: {now}\n"
-        )
+        rows = [
+            (
+                "Failed attempts",
+                stats["failed_attempts"],
+                get_attempt_colour(stats["failed_attempts"])
+            ),
+            (
+                "Successful logins",
+                stats["successful_logins"],
+                get_count_colour(stats["successful_logins"])
+            ),
+            (
+                "Suspicious IPs",
+                stats["suspicious_ips"],
+                get_count_colour(stats["suspicious_ips"])
+            ),
+            (
+                "Brute-force alerts",
+                stats["brute_force_alerts"],
+                get_attempt_colour(stats["brute_force_alerts"])
+            )
+        ]
 
-        failed_colour = get_attempt_colour(
-            stats['failed_attempts']
-        )
-
-        successful_colour = get_count_colour(
-            stats['successful_logins']
-        )
-
-        suspicious_colour = get_count_colour(
-            stats['suspicious_ips']
-        )
-
-        brute_colour = get_attempt_colour(
-            stats['brute_force_alerts']
-        )
-
-        print(
-            f"{'Failed attempts:':<25} "
-            f"{failed_colour}"
-            f"{stats['failed_attempts']}"
-        )
-
-        print(
-            f"{'Successful logins:':<25} "
-            f"{successful_colour}"
-            f"{stats['successful_logins']}"
-        )
-
-        print(
-            f"{'Suspicious IPs:':<25} "
-            f"{suspicious_colour}"
-            f"{stats['suspicious_ips']}"
-        )
-
-        print(
-            f"{'Brute-force alerts:':<25} "
-            f"{brute_colour}"
-            f"{stats['brute_force_alerts']}"
-        )
+        for label, value, colour in rows:
+            print_stat_row(
+                label,
+                value,
+                colour
+            )
 
         print_section_header(
             "End of Report",

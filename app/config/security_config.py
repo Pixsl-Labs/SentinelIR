@@ -1,3 +1,11 @@
+"""
+Stores default security detection configuration values.
+
+This module defines threshold values used across SentinelIR detection logic,
+including brute-force attempts limits, time window, user-targeting thresholds,
+severity boundaries, and suspicious login hours.
+"""
+
 BRUTE_FORCE_THRESHOLD = 5
 
 BRUTE_FORCE_TIME_WINDOW = 10

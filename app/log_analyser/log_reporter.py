@@ -16,7 +16,7 @@ class LogReporter(
     Combines reporting, detection, investigation, export, and summary features.
 
     LogReporter uses multiple mixins to provide a single interface for
-    printing analysis reults, exporting data, viewing statistics, and running
+    printing analysis results, exporting data, viewing statistics, and running
     detection-focused reports against the analyser state.
     """
 

@@ -360,7 +360,7 @@ class GeneratorRuntime:
 
     def select_append_mode(self) -> bool:
         """
-        Prompts the suer to choose append or overwrite mode.
+        Prompts the user to choose append or overwrite mode.
 
         Returns:
             bool: True if appending to the existing file, otherwise False.

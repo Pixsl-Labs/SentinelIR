@@ -100,7 +100,7 @@ def print_total_count(
     Args:
         label (str): Name of the value being counted.
         count (int): Numeric total to display.
-        colour (str): Colorama colour used for the ouput text.
+        colour (str): Colorama colour used for the output text.
 
     Returns:
         None
@@ -180,7 +180,7 @@ def print_alert(
         message: str
     ) -> None:
     """
-    Prints a formatted securityy alert.
+    Prints a formatted security alert.
 
     The alert colour is selected from severity level before printing the
     alert title and message.

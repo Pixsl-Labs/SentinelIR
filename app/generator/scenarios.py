@@ -67,7 +67,7 @@ def generate_suspicious_success_scenario(
             login events. Defaults to "192.168.1.20".
         user (str): Username used in the generated authentication events.
             Defaults to "deploy".
-        failed_attempts (int): Number of failed login attemtps to generate
+        failed_attempts (int): Number of failed login attempts to generate
             before the successful login. Defaults to 3.
         start_time (datetime | None): Timestamp for the first generated
             log line. Defaults to None.
@@ -117,8 +117,8 @@ def generate_user_targeting_scenario(
     """
     Generates a distributed user-targeting SSH login scenario.
 
-    Creates failed login attempts against the same username from multiple unqiue
-    IP addressses. This simulates password spraying or coordinated account
+    Creates failed login attempts against the same username from multiple unique
+    IP addresses. This simulates password spraying or coordinated account
     targeting behaviour.
 
     Args:
@@ -126,7 +126,7 @@ def generate_user_targeting_scenario(
             Defaults to "admin".
         base_ip (str): Base IP prefix used to generate unique source IPs.
             Defaults to "10.20.0.".
-        unique_ips (int): Number of unqiue source IP addresses to generate.
+        unique_ips (int): Number of unique source IP addresses to generate.
             Defaults to 5.
         start_time (datetime | None): Timestamp for the first generated
             log line. Defaults to None.

@@ -54,7 +54,7 @@ class UserTargetingResult(DetectionResult):
 @dataclass
 class SuspiciousSuccessResult(DetectionResult):
     """
-    Represents a supsicious-success detection result.
+    Represents a suspicious-success detection result.
 
     Stores the IP address, attempt count, and severity level for a successful login
     that occurred after previous failed authentication activity from the same IP.

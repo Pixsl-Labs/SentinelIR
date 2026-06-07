@@ -2,6 +2,8 @@ from app.runtime.static_runtime import StaticRuntime
 from app.runtime.live_runtime import LiveRuntime
 from app.runtime.generator_runtime import GeneratorRuntime
 
+from app.runtime.config_runtime import ConfigRuntime
+
 from app.utils.display import (
     print_section_header,
     print_empty_message
@@ -61,9 +63,10 @@ class RunTimeController:
             print("1. Static Analysis")
             print("2. Live Monitoring")
             print("3. Generate Scenario")
-            print("4. Exit")
+            print("4. Config Monitoring")
+            print("5. Exit")
 
-            choice = input("\nSelect mode: (1-4) ").strip()
+            choice = input("\nSelect mode: (1-5) ").strip()
 
             if choice == "1":
 
@@ -92,6 +95,15 @@ class RunTimeController:
                 runtime.start()
 
             elif choice == "4":
+
+                runtime = ConfigRuntime(
+                    self.analyser,
+                    self.reporter
+                )
+
+                runtime.start()
+
+            elif choice == "5":
 
                 print("\nExiting application...")
                 break

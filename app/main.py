@@ -7,16 +7,30 @@
 # Standard running command for personal testing
 # python3 -m app.main brute_force.log
 
+"""
+Entry point for SentinelIR command-line application.
 
-import argparse
-import os
-import logging
-from colorama import init, Fore
+This module configures logging, initialises Colorama, parses command-line
+arguments, and starts either CLI runtime mode or interactive file selection
+mode.
+"""
+
 
 from app.utils.display import (
     print_section_header,
     print_empty_message
 )
+
+from app.interaction.interaction import Interaction
+from app.runtime.runtime_controller import RunTimeController
+
+from app.log_analyser.log_analyser import LogAnalyser
+from app.log_analyser.log_reporter import LogReporter
+
+import argparse
+import os
+import logging
+from colorama import init
 
 
 os.makedirs("logs", exist_ok=True)
@@ -34,14 +48,22 @@ logging.basicConfig(
 
 init(autoreset=True)
 
-from app.interaction.interaction import Interaction
-from app.runtime.runtime_controller import RunTimeController
 
-from app.log_analyser.log_analyser import LogAnalyser
-from app.log_analyser.log_reporter import LogReporter
+def run_cli(args) -> None:
+    """
+    Runs SentinelIR in command-line mode using parsed arguments.
 
+    Creates the analyser, reporter, target log file path, and runtime controller.
+    The runtime controller then handles static analysis, live monitoring, scenario
+    generation, or application exit.
 
-def run_cli(args):
+    Args:
+        args: Parsed command-line arguments containing the selected log file name.
+
+    Returns:
+        None
+    """
+
     analyser = LogAnalyser()
     
     reporter = LogReporter(
@@ -61,7 +83,18 @@ def run_cli(args):
 
     controller.start()
 
-def run_interactive():
+def run_interactive() -> None:
+    """
+    Runs SentinelIR in interactive mode.
+
+    Prompts the user to select a log file, validates the file path, analyses the
+    selected file, prints an initial summary, and starts the interactive log
+    analysis menu.
+
+    Returns:
+        None
+    """
+
     print_section_header(
         "Interaction Mode"
     )

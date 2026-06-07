@@ -3,6 +3,7 @@ from app.utils.display import (
     print_empty_message
 )
 
+
 from app.generator.scenarios import (
     generate_brute_force_scenario,
     generate_mixed_attack_scenario,
@@ -21,10 +22,23 @@ import os
 
 
 class GeneratorRuntime:
+    """
+    Handles the scenario generation runtime workflow.
+
+    This runtime allows the user to select a log scenario, preview the generated
+    lines, confirm generation, choose an output file, and write or stream the logs
+    into the selected file.
+    """
 
     def start(self) -> None:
         """
         Runs the scenario generator workflow.
+
+        Coordinates scenario selection, preview, confirmation, output file selection,
+        write mode selection, and final write or stream behaviour.
+
+        Returns:
+            None
         """
 
         selected_scenario = self.select_scenario()
@@ -63,7 +77,14 @@ class GeneratorRuntime:
             self
         ) -> tuple[str, list[str]] | None:
         """
-        Allows the user to select which log scenario to generate.
+        Prompts the user to select a log generation scenario.
+
+        Displays available scenario options and returns the selected scenario name with
+        its generated log lines. The user can also exit without selecting a scenario.
+
+        Returns:
+            tuple[str, list[str]] | None: Selected scenario name and generated log
+                lines, or None if the user exist.
         """
 
         while True:
@@ -113,12 +134,22 @@ class GeneratorRuntime:
                 )
 
     def preview_scenario(
-            self,
-            scenario_name: str,
-            lines: list[str]
-    ) -> None:
+                self,
+                scenario_name: str,
+                lines: list[str]
+        ) -> None:
         """
-        Prints a short preview of the generated scenario.
+        Prints a preview of the selected generated scenario.
+
+        Displays the scenario name, number of generated lines, first generated line,
+        and last generated line before the user confirms whether to continue.
+
+        Args:
+            scenario_name (str): Name of the selected scenario.
+            lines (list[str]): Generated log lines to preview.
+
+        Returns:
+            None
         """
 
         print()
@@ -146,7 +177,10 @@ class GeneratorRuntime:
 
     def confirm_scenario(self) -> bool:
         """
-        Asks the user to confirm whether to continue with the selected scenario.
+        Ask the user to confirm scenario generation.
+
+        Returns:
+            bool: True if the user confirms, otherwise False.
         """
 
         confirm = input(
@@ -161,10 +195,17 @@ class GeneratorRuntime:
             append: bool
         ) -> None:
         """
-        Prepares the output file before streaming.
-        
-        If append is False, the file is cleared before new log lines
-        are streamed to it.
+        Prepares the output file before streaming generated logs.
+
+        If append mode is disabled, the output file is cleared before streamed log
+        lines are written to it.
+
+        Args:
+            output_file (str): Path to the output log file.
+            append (bool): Whether generated lines should be appended to the file.
+
+        Returns:
+            None
         """
 
         if not append:
@@ -172,10 +213,16 @@ class GeneratorRuntime:
                 pass
 
     def select_output_file(
-            self
-    ) -> str | None:
+                self
+        ) -> str | None:
         """
-        Gets the output log file path from the user.
+        Prompts the user for the output log file path.
+
+        Uses generated.log as the default file name if no input is provided and ensures
+        the selected file name ends with the .log extension.
+
+        Returns:
+            str | None: Output log file path.
         """
 
         file_name = input(
@@ -200,7 +247,18 @@ class GeneratorRuntime:
             append: bool
         )-> None:
         """
-        Allows the user to write or stream generated log lines.
+        Prompts the user to write or stream generated log lines.
+
+        Allows generated lines to be written instantly, streamed slowly into the output
+        file, or cancelled before writing.
+
+        Args:
+            output_file (str): Path to the output log file.
+            lines (list[str]): Generated log lines to write or stream.
+            append (bool): Whether generated lines should be appended to the file.
+
+        Returns:
+            None
         """
 
         while True:
@@ -302,11 +360,10 @@ class GeneratorRuntime:
 
     def select_append_mode(self) -> bool:
         """
-        Allows the user to choose whether to append to or overwrite
-        the output log file.
+        Prompts the suer to choose append or overwrite mode.
 
         Returns:
-            bool: True if appending, False if overwriting.
+            bool: True if appending to the existing file, otherwise False.
         """
 
         while True:
@@ -336,11 +393,17 @@ class GeneratorRuntime:
                 )
 
     def get_write_mode_label(
-            self,
-            append: bool
-    ) -> str:
+                self,
+                append: bool
+        ) -> str:
         """
-        Converts the boolean into a readable word.
+        Converts a write mode boolean into a readable label.
+
+        Args:
+            append (bool): Whether append mode is enabled.
+
+        Returns:
+            str: Write mode label, either append or overwrite.
         """
 
         if append == True:
@@ -359,7 +422,13 @@ class GeneratorRuntime:
 
     def select_stream_delay(self) -> float:
         """
-        Asks the user how fast logs should stream into the file.
+        Prompts the user for the stream delay between generated log lines.
+
+        If the user provides no value, an invalid value, or a negative value, the
+        default delay is used instead.
+
+        Returns:
+            float: Delay in seconds between streamed log lines.
         """
 
         choice = input("\nEnter stream delay seconds (default: 0.5): ").strip()

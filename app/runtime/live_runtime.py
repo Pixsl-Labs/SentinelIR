@@ -1,11 +1,10 @@
-from colorama import Fore
-
 from app.monitoring.file_monitor import FileMonitor
 from app.monitoring.live_event_processor import LiveEventProcessor
 
 from app.utils.display import (
     print_section_header,
-    print_empty_message
+    print_empty_message,
+    print_stat_row
 )
 from app.utils.colours import (
     get_live_status_colour
@@ -17,8 +16,16 @@ from app.detection.alert_types import (
     USER_TARGETING_ALERT
 )
 
+from colorama import Fore
+
 
 class LiveRuntime:
+    """
+    Handles live monitoring runtime mode.
+
+    This runtime starts live log monitoring, connects the file monitor to the live
+    event processor, and prints a session summary when monitoring ends.
+    """
 
     def __init__(
             self,
@@ -26,12 +33,32 @@ class LiveRuntime:
             reporter,
             log_file
         ):
+        """
+        Initialises the live runtime.
+
+        Args:
+            analyser: Log analyser instance updated during live monitoring.
+            reporter: Log reporter instance available for reporting workflows.
+            log_file: Path to the log file being monitored.
+
+        Returns:
+            None
+        """
 
         self.analyser = analyser
         self.reporter = reporter
         self.log_file = log_file
 
     def start(self):
+        """
+        Starts live monitoring mode.
+
+        Creates a live event processor and file monitor, watches the configured log
+        file, and prints a live monitoring summary when monitoring stops successfully.
+
+        Returns:
+            None
+        """
 
         print_section_header(
             "Live Monitoring Mode",
@@ -60,11 +87,20 @@ class LiveRuntime:
             )
 
     def print_live_session_summary(
-            self,
-            processor
-    ) -> None:
+                self,
+                processor
+        ) -> None:
         """
-        Prints a live session summary when the user exits the live monitoring mode.
+        Prints a summary of the live monitoring session.
+
+        Displays processed event statistics and alert count for brute-force,
+        suspicious-success, and user-targeting detections.
+
+        Args:
+            processor: Live event processor containing processed event statistics.
+
+        Returns:
+            None
         """
 
         brute_force_alerts = self.analyser.detection_engine.get_alert_count(
@@ -92,6 +128,23 @@ class LiveRuntime:
 
         processor.print_live_stats()
 
-        print(f"{'Brute-force alerts:':<28} {brute_force_colour}{brute_force_alerts}")
-        print(f"{'Suspicious-success alerts:':<28} {suspicious_colour}{suspicious_success_alerts}")
-        print(f"{'User-targeting alerts:':<28} {user_targeting_colour}{user_targeting_alerts}")
+        print_stat_row(
+            "Brute-force alerts",
+            brute_force_alerts,
+            brute_force_colour,
+            28
+        )
+
+        print_stat_row(
+            "Suspicious-success alerts",
+            suspicious_success_alerts,
+            suspicious_colour,
+            28
+        )
+
+        print_stat_row(
+            "User-targeting alerts",
+            user_targeting_alerts,
+            user_targeting_colour,
+            28
+        )

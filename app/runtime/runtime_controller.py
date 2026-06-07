@@ -11,20 +11,46 @@ from colorama import Fore
 
 
 class RunTimeController:
+    """
+    Controls the selected application runtime mode.
+
+    The runtime controller displays the top-level runtime menu and routes the user
+    to the static analysis, live monitoring, scenario generation, or application exit.
+    """
 
     def __init__(
             self,
             analyser,
             reporter,
             log_file
-        ):
+        ) -> None:
+        """
+        Initialises the runtime controller.
+
+        Args:
+            analyser: Log analyser instance shared between runtime modes.
+            reporter: Log reporter instance used by analysis workflows.
+            log_file: Path to the selected log file.
+
+        Returns:
+            None
+        """
         self.analyser = analyser
         self.reporter = reporter
         self.log_file = log_file
 
     def start(
-        self
-    ):
+            self
+        ) -> None:
+        """
+        Runs the runtime mode selection loop.
+
+        Displays available runtime mode and starts the selected workflow. The loop
+        continues until the user chooses to exit.
+
+        Returns:
+            None
+        """
         
         while True:
 

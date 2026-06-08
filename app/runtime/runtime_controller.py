@@ -60,6 +60,7 @@ class RunTimeController:
                 "Runtime Mode",
                 Fore.GREEN                
             )
+            
             print("1. Static Analysis")
             print("2. Live Monitoring")
             print("3. Generate Scenario")

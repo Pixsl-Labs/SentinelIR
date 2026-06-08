@@ -4,7 +4,8 @@ from pathlib import Path
 from app.config.config_loader import load_config
 from app.config.config_manager import (
     list_available_log_files,
-    add_watched_files
+    add_watched_files,
+    remove_watched_files
 )
 from app.runtime.live_runtime import LiveRuntime
 
@@ -213,6 +214,24 @@ class ConfigRuntime:
 
                 continue
 
+            if action == "remove":
+
+                removed = self.remove_watched_file_from_config(
+                    config
+                )
+
+                if removed:
+
+                    config = load_config(
+                        self.config_path
+                    )
+
+                    self.print_config_summary(
+                        config
+                    )
+
+                continue
+
             if action == "cancel":
 
                 print_empty_message(
@@ -273,13 +292,15 @@ class ConfigRuntime:
         if missing_files:
 
             print_empty_message(
-                "One or more configured watched files do not exist."
+                "One or more configured watched files do not exist.",
+                Fore.LIGHTRED_EX
             )
 
             for file_path in missing_files:
 
                 print_empty_message(
-                    f"- {file_path}"
+                    f"- {file_path}",
+                    Fore.LIGHTRED_EX
                 )
 
             return False
@@ -476,6 +497,10 @@ class ConfigRuntime:
             unconfigured_files
         )
 
+        if selected_file == "BACK":
+
+            return False
+
         if selected_file is None:
 
             print_empty_message(
@@ -504,6 +529,145 @@ class ConfigRuntime:
 
         return False
     
+    def selected_watched_file_to_remove(
+                self,
+                watched_files: list[str]
+        ) -> str | None:
+        """
+        Prompts the user to select a watched file to remove.
+
+        Displays the currently configured watched files and returns the selected
+        file path. The selected fiel is removed from the configuration only, not
+        deleted from disk.
+
+        Args:
+            watched_files (list[str]): File paths currently stored in watched_files.
+
+        Returns:
+            str | None: Selected file path to remove, "BACK" if the user goes back,
+                or None if the user cancels.
+        """
+
+        try:
+
+            while True:
+
+                print_section_header(
+                    "Remove Watched File",
+                    Fore.GREEN
+                )
+
+                for index, file_path in enumerate(watched_files, start=1):
+
+                    print(f"{index}. {file_path}")
+
+                back_option = len(watched_files) + 1
+                cancel_option = len(watched_files) + 2
+                
+
+                print(f"{back_option}. Back")
+                print(f"{cancel_option}. Cancel\n")
+
+                choice = input(
+                    f"Select watched file to remove: (1-{cancel_option}) "
+                ).strip()
+
+                if not choice.isdigit():
+
+                    print_empty_message(
+                        "Invalid choice."
+                    )
+
+                    continue
+
+                choice_number = int(choice)
+
+                if choice_number == back_option:
+
+                    return "BACK"
+                
+                if choice_number == cancel_option:
+
+                    return None
+                
+                if 1 <= choice_number <= len(watched_files):
+
+                    return watched_files[choice_number - 1]
+                
+                print_empty_message(
+                    "Invalid watched file choice."
+                )
+
+        except KeyboardInterrupt:
+
+            print_empty_message(
+                "Returning to config monitoring menu.",
+                Fore.LIGHTRED_EX
+            )
+
+            return "BACK"
+        
+    def remove_watched_file_from_config(
+                self,
+                config
+        ) -> bool:
+        """
+        Removes a selected watched file from the configuration.
+
+        Prompts the user to choose one of the currently configured watched files,
+        removes it from sentinel_config.json, and keeps the actual log file on disk.
+
+        Args:
+            config: Application configuration object loaded from JSON.
+
+        Returns:
+            bool: True if a watched file was removed, otherwise False.
+        """
+
+        if not config.watched_files:
+
+            print_empty_message(
+                "No watched file configured."
+            )
+
+            return False
+        
+        selected_file = self.selected_watched_file_to_remove(
+            config.watched_files
+        )
+
+        if selected_file == "BACK":
+
+            return False
+        
+        if selected_file is None:
+
+            print_empty_message(
+                "Remove watched file cancelled."
+            )
+
+            return False
+        
+        removed = remove_watched_files(
+            self.config_path,
+            selected_file
+        )
+
+        if removed:
+
+            print_info(
+                f"\nRemoved watched file from config: {selected_file}",
+                Fore.LIGHTGREEN_EX
+            )
+
+            return True
+        
+        print_empty_message(
+            f"Watched file not found in config: {selected_file}"
+        )
+
+        return False
+    
     def select_config_monitoring_action(self) -> str:
         """
         Prompts the user to choose a config monitoring action.
@@ -512,7 +676,7 @@ class ConfigRuntime:
         or cancel config monitoring.
 
         Returns:
-            str: Selected action, either "monitor", "add", or "cancel"
+            str: Selected action, either "monitor", "add", "remove", or "cancel"
         """
 
         while True:
@@ -524,10 +688,11 @@ class ConfigRuntime:
 
             print("1. Monitor watched file")
             print("2. Add a watched file")
-            print("3. Cancel")
+            print("3. Remove a watched file")
+            print("4. Cancel")
 
             choice = input(
-                "\nSelect action: (1-3) "
+                "\nSelect action: (1-4) "
             ).strip()
 
             if choice == "1":
@@ -539,6 +704,10 @@ class ConfigRuntime:
                 return "add"
             
             if choice == "3":
+
+                return "remove"
+            
+            if choice == "4":
 
                 return "cancel"
             

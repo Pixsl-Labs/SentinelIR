@@ -98,3 +98,45 @@ def add_watched_files(
     )
 
     return True
+
+def remove_watched_files(
+            config_path: str,
+            file_path: str
+    ) -> bool:
+    """
+    Removes a file path from the watched_files configuration list.
+
+    The file is only removed from the SentinelIR configuration. This does not
+    delete the actual log file from disk.
+
+    Args:
+        config_path (str): Path to SentinelIR configuration file.
+        file_path (str): Watched file path to remove from the configuration.
+
+    Returns:
+        bool: True if the file was removed, otherwise False if it was not found.
+    """
+
+    config_data = load_config_dict(
+        config_path
+    )
+
+    watched_files = config_data.setdefault(
+        "watched_files",
+        []
+    )
+
+    if file_path not in watched_files:
+
+        return False
+    
+    watched_files.remove(
+        file_path
+    )
+
+    save_config_dict(
+        config_path,
+        config_data
+    )
+
+    return True

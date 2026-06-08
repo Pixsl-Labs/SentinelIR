@@ -78,7 +78,7 @@ def build_app_config(
     default_config = AppConfig()
 
     thresholds = config_data.get(
-        "threshold",
+        "thresholds",
         {}
     )
 

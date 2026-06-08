@@ -98,7 +98,7 @@ class ConfigRuntime:
 
         watched_file = config.watched_files[0]
 
-        if not Path(watched_file).exists:
+        if not Path(watched_file).exists():
 
             print_empty_message(
                 f"Watched file does not exist: {watched_file}"

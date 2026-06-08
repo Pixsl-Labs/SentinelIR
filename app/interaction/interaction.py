@@ -1,5 +1,10 @@
+import os
+from colorama import Fore
+from datetime import datetime
+
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
+
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD, 
     BRUTE_FORCE_TIME_WINDOW
@@ -14,11 +19,6 @@ from app.utils.display import (
     print_empty_message,
     print_total_count
 )
-
-
-import os
-from colorama import Fore
-from datetime import datetime
 
 
 class Interaction:

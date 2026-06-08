@@ -1,6 +1,9 @@
 {
     "watched_files": [
-        "log_files/generated.log"
+        "log_files/generated.log",
+        "log_files/auth.log",
+        "log_files/brute_force.log",
+        "log_files/combined_attack.log"
     ],
 
     "thresholds": {

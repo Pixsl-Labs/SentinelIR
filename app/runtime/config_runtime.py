@@ -321,21 +321,21 @@ class ConfigRuntime:
         print_stat_row(
             "Config file",
             self.config_path,
-            Fore.CYAN,
+            Fore.LIGHTCYAN_EX,
             28
         )
 
         print_stat_row(
             "Watched files",
             len(config.watched_files),
-            Fore.CYAN,
+            Fore.LIGHTCYAN_EX,
             28
         )
 
         print_stat_row(
             "First watched file",
             len(config.watched_files),
-            Fore.CYAN,
+            Fore.LIGHTCYAN_EX,
             28
         )
 
@@ -344,48 +344,48 @@ class ConfigRuntime:
             print_stat_row(
                 f"File {index}",
                 file_path,
-                Fore.CYAN,
+                Fore.LIGHTCYAN_EX,
                 28
             )
 
         print_stat_row(
             "Brute-force threshold",
             config.thresholds.brute_force_threshold,
-            Fore.YELLOW,
+            Fore.LIGHTYELLOW_EX,
             28
         )
 
         print_stat_row(
             "Brute-force time window",
             config.thresholds.brute_force_time_window,
-            Fore.YELLOW,
+            Fore.LIGHTYELLOW_EX,
             28
         )
 
         print_stat_row(
             "User-targeting threshold",
             config.thresholds.user_targeting_threshold,
-            Fore.YELLOW,
+            Fore.LIGHTYELLOW_EX,
             28
         )
 
         print_stat_row(
             "Poll interval",
             config.live_monitoring.poll_interval,
-            Fore.CYAN,
+            Fore.LIGHTYELLOW_EX,
             28
         )
 
         print_stat_row(
             "Status interval",
             config.live_monitoring.status_interval,
-            Fore.CYAN,
+            Fore.LIGHTYELLOW_EX,
             28
         )
 
         print_stat_row(
             "Show new logs",
             config.live_monitoring.show_new_logs,
-            Fore.CYAN,
+            Fore.LIGHTYELLOW_EX,
             28
         )

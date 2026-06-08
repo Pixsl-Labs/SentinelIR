@@ -25,7 +25,7 @@ class Interaction:
     """
     Provides the main command-line interaction layer for SentinelIR.
 
-    The interaction layer display menus, collects user choice, triggers
+    The interaction layer displays menus, collects user choice, triggers
     reporting and detection actions, applies filters, handles exports, and allows
     configuration changes during static analysis mode.
     """

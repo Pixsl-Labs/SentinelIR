@@ -84,7 +84,7 @@ class GeneratorRuntime:
 
         Returns:
             tuple[str, list[str]] | None: Selected scenario name and generated log
-                lines, or None if the user exist.
+                lines, or None if the user exits.
         """
 
         while True:

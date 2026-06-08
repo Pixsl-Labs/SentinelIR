@@ -16,7 +16,7 @@ def load_config(
     Loads the SentinelIR application configuration.
 
     Reads the JSON configuration file, converts it into an AppConfig
-    object, and applies default values for any missing optional sessions.
+    object, and applies default values for any missing optional sections.
 
     Args:
         config_path (str): Path to the JSON configuration file.

@@ -28,7 +28,7 @@ class LiveMonitoringConfig:
     Stores live monitoring configuration values.
 
     These settings control how often watched files are checked, how often
-    status output is printed, and whether new log lines displayed while
+    status output is printed, and whether new log lines are displayed while
     monitoring is running.
     """
 

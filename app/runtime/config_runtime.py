@@ -96,6 +96,8 @@ class ConfigRuntime:
             config
         )
 
+        self.apply_detection_thresholds(config)
+
         watched_file = config.watched_files[0]
 
         if not Path(watched_file).exists():
@@ -119,6 +121,29 @@ class ConfigRuntime:
         )
 
         runtime.start()
+
+    def apply_detection_thresholds(
+                self,
+                config
+        ) -> None:
+        """
+        Applies configured threshold values to the detection engine.
+
+        Updates the analyser detection engine so live monitoring uses threshold
+        values loaded from the JSON configuration file.
+
+        Args:
+            config: Application configuration object loaded from JSON.
+
+        Returns:
+            None
+        """
+
+        self.analyser.detection_engine.configure_threshold(
+            brute_force_threshold=config.thresholds.brute_force_threshold,
+            brute_force_time_window=config.thresholds.brute_force_time_window,
+            user_targeting_threshold=config.thresholds.user_targeting_threshold
+        )
 
     def print_config_summary(
                 self,
@@ -157,6 +182,27 @@ class ConfigRuntime:
             "First watched files",
             config.watched_files[0] if config.watched_files else None,
             Fore.CYAN,
+            28
+        )
+
+        print_stat_row(
+            "Brute-force threshold",
+            config.threshold.brute_force_threshold,
+            Fore.YELLOW,
+            28
+        )
+
+        print_stat_row(
+            "Brute-force time window",
+            config.threshold.brute_force_time_window,
+            Fore.YELLOW,
+            28
+        )
+
+        print_stat_row(
+            "User-targeting threshold",
+            config.threshold.user_targeting_threshold,
+            Fore.YELLOW,
             28
         )
 

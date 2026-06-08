@@ -2,6 +2,10 @@ from json import JSONDecodeError
 from pathlib import Path
 
 from app.config.config_loader import load_config
+from app.config.config_manager import (
+    list_available_log_files,
+    add_watched_files
+)
 from app.runtime.live_runtime import LiveRuntime
 
 from app.utils.display import (
@@ -142,10 +146,12 @@ class ConfigRuntime:
                 config
         ) -> None:
         """
-        Starts monitoring using configured watched files.
+        Starts configuration-driven monitoring actions.
 
-        Validates configured watched files, prompts the user to select one, and then
-        starts live monitoring for the selected file.
+        Allows the user to monitor an existing configured file, add a new watched
+        file from the log_files directory, or cancel config monitoring. If a new file
+        is added, the configuration is reloaded so the updated watched_files list is
+        used immediately.
 
         Args:
             config: Application configuration object loaded from JSON.
@@ -154,26 +160,66 @@ class ConfigRuntime:
             None
         """
 
-        if not self.validate_watched_files(config.watched_files):
+        while True:
 
-            return
-        
-        selected_file = self.select_watched_files(
-            config.watched_files
-        )
+            action = self.select_config_monitoring_action()
 
-        if selected_file is None:
+            if action == "monitor":                
 
-            print_empty_message(
-                "Config monitoring cancelled."
-            )
+                if not self.validate_watched_files(
+                    config.watched_files
+                ):
 
-            return
-        
-        self.start_monitoring_file(
-            selected_file,
-            config
-        )
+                    return
+                
+                selected_file = self.select_watched_files(
+                    config.watched_files
+                )
+
+                if selected_file == "BACK":
+
+                    continue
+
+                if selected_file is None:
+
+                    print_empty_message(
+                        "Config monitoring cancelled."
+                    )
+
+                    return
+                
+                self.start_monitoring_file(
+                    selected_file,
+                    config
+                )
+
+                return
+            
+            if action == "add":
+
+                added = self.add_watched_file_from_log_directory(
+                    config
+                )
+
+                if added:
+
+                    config = load_config(
+                        self.config_path
+                    )
+
+                    self.print_config_summary(
+                        config
+                    )
+
+                continue
+
+            if action == "cancel":
+
+                print_empty_message(
+                    "Config monitoring cancelled"
+                )
+
+                return
 
     def apply_detection_thresholds(
                 self,
@@ -258,45 +304,246 @@ class ConfigRuntime:
             str | None: Selected watched file path, or None if the user cancels.
         """
 
+        try:
+
+            while True:
+
+                print_section_header(
+                    "Configured Watched Files",
+                    Fore.GREEN
+                )
+
+                for index, file_path in enumerate(watched_files, start=1):
+
+                    print(f"{index}. {file_path}")
+
+                back_option = len(watched_files) + 1
+                
+                exit_option = len(watched_files) + 2
+
+                print(f"{back_option}. Back")
+
+                print(f"{exit_option}. Cancel\n")
+
+                choice = input(
+                    f"Select watched file: (1-{exit_option}) "
+                ).strip()
+
+                if not choice.isdigit():
+
+                    print_empty_message(
+                        "Invalid choice."
+                    )
+
+                    continue
+
+                choice_number = int(choice)
+
+                if choice_number == back_option:
+
+                    return "BACK"
+
+                if choice_number == exit_option:
+
+                    return None
+                
+                if 1 <= choice_number <= len(watched_files):
+
+                    return watched_files[choice_number - 1]
+                
+                print_empty_message(
+                    "Invalid watched file choice."
+                )
+
+        except KeyboardInterrupt:
+
+            print_empty_message(
+                "\nReturing to config monitoring menu."
+            )
+
+            return "BACK"
+
+    def select_available_log_file(
+                self,
+                available_files: list[str]
+        ) -> str | None:
+        """
+        Prompts the user to select an available log file.
+
+        Displays log files foudn in the log_files directory and returns the selected
+        file path. The user can cancel without selecting a file.
+
+        Args:
+            available_files (list[str]): Available .log files found in the log directory.
+
+        Returns:
+            str | None: Selected log file path, or None if the user cancels.
+        """
+
+        try:
+
+            while True:
+
+                print_section_header(
+                    "Available Log Files",
+                    Fore.GREEN
+                )
+
+                for index, file_path in enumerate(available_files, start=1):
+
+                    print(f"{index}. {file_path}")
+
+                cancel_option = len(available_files) + 1
+
+                print(f"{cancel_option}. Cancel\n")
+
+                choice = input(
+                    f"Select file to watch: (1-{cancel_option}) "
+                ).strip()
+
+                if not choice.isdigit():
+
+                    print_empty_message(
+                        "Invalid choice."
+                    )
+
+                    continue
+
+                choice_number = int(choice)
+
+                if choice_number == cancel_option:
+
+                    return None
+                
+                if 1 <= choice_number <= len(available_files):
+                    
+                    return available_files[choice_number - 1]
+                
+                print_empty_message(
+                    "Invalid file choice."
+                )
+
+        except KeyboardInterrupt:
+
+            return None
+
+    def add_watched_file_from_log_directory(
+                self,
+                config
+        ) -> bool:
+        """
+        Adds a watched file from the log_files directory.
+
+        Lists available .log files, removes any files that are already configured,
+        prompts the user to select one, and updates sentinel_config.json.
+
+        Args:
+            config: Application configuration object loaded from JSON.
+
+        Returns:
+            bool: True if a new watched file is added, otherwise False.
+        """
+
+        available_files = list_available_log_files()
+
+        if not available_files:
+
+            print_empty_message(
+                "No .log file foudn in log_files."
+            )
+
+            return False
+        
+        configured_file = set(
+            config.watched_files
+        )
+
+        unconfigured_files = [
+            file_path
+            for file_path in available_files
+            if file_path not in configured_file
+        ]
+
+        if not unconfigured_files:
+
+            print_empty_message(
+                "All available log files are already being watched."
+            )
+
+            return False
+        
+        selected_file = self.select_available_log_file(
+            unconfigured_files
+        )
+
+        if selected_file is None:
+
+            print_empty_message(
+                "Add watched file cancelled."
+            )
+
+            return False
+        
+        added = add_watched_files(
+            self.config_path,
+            selected_file
+        )
+
+        if added:
+
+            print_info(
+                f"\nAdded watched file: {selected_file}\n",
+                Fore.LIGHTGREEN_EX
+            )
+
+            return True
+        
+        print_empty_message(
+            f"{selected_file} is already being watched."
+        )
+
+        return False
+    
+    def select_config_monitoring_action(self) -> str:
+        """
+        Prompts the user to choose a config monitoring action.
+
+        Allows the user to monitor an existing watched file, add a new watched file,
+        or cancel config monitoring.
+
+        Returns:
+            str: Selected action, either "monitor", "add", or "cancel"
+        """
+
         while True:
 
             print_section_header(
-                "Configured Watched Files",
+                "Config Monitoring Actions",
                 Fore.GREEN
             )
 
-            for index, file_path in enumerate(watched_files, start=1):
-
-                print(f"{index}. {file_path}")
-            
-            exit_option = len(watched_files) + 1
-
-            print(f"{exit_option}. Cancel\n")
+            print("1. Monitor watched file")
+            print("2. Add a watched file")
+            print("3. Cancel")
 
             choice = input(
-                f"Select watched file: (1-{exit_option}) "
+                "\nSelect action: (1-3) "
             ).strip()
 
-            if not choice.isdigit():
+            if choice == "1":
 
-                print_empty_message(
-                    "Invalid choice."
-                )
-
-                continue
-
-            choice_number = int(choice)
-
-            if choice_number == exit_option:
-
-                return None
+                return "monitor"
             
-            if 1 <= choice_number <= len(watched_files):
+            if choice == "2":
 
-                return watched_files[choice_number - 1]
+                return "add"
+            
+            if choice == "3":
+
+                return "cancel"
             
             print_empty_message(
-                "Invalid watched file choice."
+                "Invalid config monitoring action."
             )
 
     def print_config_summary(

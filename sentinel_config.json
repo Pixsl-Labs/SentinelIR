@@ -3,21 +3,19 @@
         "log_files/generated.log",
         "log_files/auth.log",
         "log_files/brute_force.log",
-        "log_files/combined_attack.log"
+        "log_files/combined_attack.log",
+        "BACK"
     ],
-
     "thresholds": {
         "brute_force_threshold": 5,
         "brute_force_time_window": 10,
         "user_targeting_threshold": 5
     },
-
     "live_monitoring": {
         "poll_interval": 0.2,
         "status_interval": 10,
         "show_new_logs": true
     },
-
     "outputs": {
         "reports_dir": "reports",
         "logs_dir": "logs"

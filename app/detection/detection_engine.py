@@ -273,7 +273,7 @@ class DetectionEngine:
     @staticmethod
     def get_user_targeting(
         analyser,
-        threshold=BRUTE_FORCE_THRESHOLD
+        threshold=USER_TARGETING_THRESHOLD
     ) -> list[UserTargetingResult]:
         """
         Detects distributed user-targeting activity.

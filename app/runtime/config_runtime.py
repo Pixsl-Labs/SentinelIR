@@ -96,24 +96,39 @@ class ConfigRuntime:
             config
         )
 
-        self.apply_detection_thresholds(config)
+        self.apply_detection_thresholds(
+            config
+        )
 
-        watched_file = config.watched_files[0]
+        self.start_configured_monitoring(
+            config
+        )
 
-        if not Path(watched_file).exists():
+    def start_monitoring_file(
+                self,
+                file_path: str,
+                config
+        ) -> None:
+        """
+        Starts live monitoring for a selected configuration file.
 
-            print_empty_message(
-                f"Watched file does not exist: {watched_file}"
-            )
+        Resets the analyser state, creates a LiveRuntime using configuration values,
+        and starts monitoring the selected file.
 
-            return
-        
+        Args:
+            file_path (str): Selected watched file path.
+            config: Application configuration object loaded from JSON.
+
+        Returns:
+            None
+        """
+
         self.analyser.reset()
 
         runtime = LiveRuntime(
             analyser=self.analyser,
             reporter=self.reporter,
-            log_file=watched_file,
+            log_file=file_path,
             show_new_logs=config.live_monitoring.show_new_logs,
             status_interval=config.live_monitoring.status_interval,
             poll_interval=config.live_monitoring.poll_interval,
@@ -121,6 +136,44 @@ class ConfigRuntime:
         )
 
         runtime.start()
+
+    def start_configured_monitoring(
+                self,
+                config
+        ) -> None:
+        """
+        Starts monitoring using configured watched files.
+
+        Validates configured watched files, prompts the user to select one, and then
+        starts live monitoring for the selected file.
+
+        Args:
+            config: Application configuration object loaded from JSON.
+
+        Returns:
+            None
+        """
+
+        if not self.validate_watched_files(config.watched_files):
+
+            return
+        
+        selected_file = self.select_watched_files(
+            config.watched_files
+        )
+
+        if selected_file is None:
+
+            print_empty_message(
+                "Config monitoring cancelled."
+            )
+
+            return
+        
+        self.start_monitoring_file(
+            selected_file,
+            config
+        )
 
     def apply_detection_thresholds(
                 self,
@@ -144,6 +197,107 @@ class ConfigRuntime:
             brute_force_time_window=config.thresholds.brute_force_time_window,
             user_targeting_threshold=config.thresholds.user_targeting_threshold
         )
+
+    def validate_watched_files(
+                self,
+                watched_files: list[str]
+        ) -> bool:
+        """
+        Validates that all configured watched files exist.
+
+        Checks each file path listed in the configuration before monitoring starts.
+        If any configured file is missing, an error message is printed and monitoring
+        does not continue.
+
+        Args:
+            watched_files (list[str]): File paths loaded from the configuration.
+
+        Returns:
+            bool: True if all watched files exist, otherwise False.
+        """
+
+        missing_files = []
+
+        for file_path in watched_files:
+
+            if not Path(file_path).exists():
+
+                missing_files.append(file_path)
+
+        if missing_files:
+
+            print_empty_message(
+                "One or more configured watched files do not exist."
+            )
+
+            for file_path in missing_files:
+
+                print_empty_message(
+                    f"- {file_path}"
+                )
+
+            return False
+        
+        return True
+    
+    def select_watched_files(
+                self,
+                watched_files: list[str]
+        ) -> str | None:
+        """
+        Prompts the user to select a configured watched file.
+
+        Displays each configured watched file as a numbered option and returns the
+        selected file path. The user can also cancel and return without starting
+        monitoring.
+
+        Args:
+            watched_files (list[str]): File paths loaded from the configuration.
+
+        Returns:
+            str | None: Selected watched file path, or None if the user cancels.
+        """
+
+        while True:
+
+            print_section_header(
+                "Configured Watched Files",
+                Fore.GREEN
+            )
+
+            for index, file_path in enumerate(watched_files, start=1):
+
+                print(f"{index}. {file_path}")
+            
+            exit_option = len(watched_files) + 1
+
+            print(f"{exit_option}. Cancel\n")
+
+            choice = input(
+                f"Select watched file: (1-{exit_option}) "
+            ).strip()
+
+            if not choice.isdigit():
+
+                print_empty_message(
+                    "Invalid choice."
+                )
+
+                continue
+
+            choice_number = int(choice)
+
+            if choice_number == exit_option:
+
+                return None
+            
+            if 1 <= choice_number <= len(watched_files):
+
+                return watched_files[choice_number - 1]
+            
+            print_empty_message(
+                "Invalid watched file choice."
+            )
 
     def print_config_summary(
                 self,
@@ -180,10 +334,19 @@ class ConfigRuntime:
 
         print_stat_row(
             "First watched file",
-            config.watched_files[0] if config.watched_files else None,
+            len(config.watched_files),
             Fore.CYAN,
             28
         )
+
+        for index, file_path in enumerate(config.watched_files, start=1):
+
+            print_stat_row(
+                f"File {index}",
+                file_path,
+                Fore.CYAN,
+                28
+            )
 
         print_stat_row(
             "Brute-force threshold",
@@ -225,9 +388,4 @@ class ConfigRuntime:
             config.live_monitoring.show_new_logs,
             Fore.CYAN,
             28
-        )
-
-        print_info(
-            "\nStarting configured monitoring...\n",
-            Fore.GREEN
         )

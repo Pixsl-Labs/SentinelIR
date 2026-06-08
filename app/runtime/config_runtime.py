@@ -187,21 +187,21 @@ class ConfigRuntime:
 
         print_stat_row(
             "Brute-force threshold",
-            config.threshold.brute_force_threshold,
+            config.thresholds.brute_force_threshold,
             Fore.YELLOW,
             28
         )
 
         print_stat_row(
             "Brute-force time window",
-            config.threshold.brute_force_time_window,
+            config.thresholds.brute_force_time_window,
             Fore.YELLOW,
             28
         )
 
         print_stat_row(
             "User-targeting threshold",
-            config.threshold.user_targeting_threshold,
+            config.thresholds.user_targeting_threshold,
             Fore.YELLOW,
             28
         )

@@ -1,6 +1,7 @@
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
-    BRUTE_FORCE_TIME_WINDOW
+    BRUTE_FORCE_TIME_WINDOW,
+    USER_TARGETING_THRESHOLD
 )
 
 
@@ -222,7 +223,7 @@ class Detection:
 
     def print_user_targeting(
             self,
-            threshold=BRUTE_FORCE_THRESHOLD
+            threshold=USER_TARGETING_THRESHOLD
         ) -> None:
         """
         Prints distributed user-targeting detection results.
@@ -233,7 +234,7 @@ class Detection:
 
         Args:
             threshold (int): Number of unique IP addresses required to trigger
-                a user-targeting result. Defaults to BRUTE_FORCE_THRESHOLD.
+                a user-targeting result. Defaults to USER_TARGETING_THRESHOLD.
 
         Returns:
             None

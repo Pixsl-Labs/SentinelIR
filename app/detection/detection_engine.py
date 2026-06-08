@@ -33,19 +33,73 @@ class DetectionEngine:
     for the same entity can be suppressed during real-time monitoring.
     """
 
-    def __init__(self):
+    def __init__(
+            self,
+            brute_force_threshold: int = BRUTE_FORCE_THRESHOLD,
+            brute_force_time_window: int = BRUTE_FORCE_TIME_WINDOW,
+            user_targeting_threshold: int = USER_TARGETING_THRESHOLD
+        ) -> None:
         """
-        Initialises the detection engine alert state.
+        Initialises the detection engine alert state and threshold settings.
 
         The alert state stores which entities have already triggered each live alert
-        type. This prevents duplicate alerts from being raised repeatedly during
-        live monitoring.
+        type. Threshold values control when live detections should trigger alerts.
+
+        Args:
+            brute_force_threshold (int): Failed login threshold required to trigger
+                brute-force detection. Defaults to BRUTE_FORCE_THRESHOLD.
+            brute_force_time_window (int): Time window used for brute-force detection.
+                Defaults to BRUTE_FORCE_TIME_WINDOW.
+            user_targeting_threshold (int): Unique IP threshold required to trigger
+                user-targeting detection. Defaults to USER_TARGETING_THRESHOLD.
+
+        Returns:
+            None
         """
+
+        self.brute_force_threshold = brute_force_threshold
+        self.brute_force_time_window = brute_force_time_window
+        self.user_targeting_threshold = user_targeting_threshold
+
         self.alert_state = {
             BRUTE_FORCE_ALERT: set(),
             SUSPICIOUS_SUCCESS_ALERT: set(),
             USER_TARGETING_ALERT: set()
         }
+
+    def configure_threshold(
+            self,
+            brute_force_threshold: int | None = None,
+            brute_force_time_window: int | None = None,
+            user_targeting_threshold: int | None = None
+        ) -> None:
+        """
+        Updates detection threshold settings.
+
+        Any value left as None keeps the current settings. This allows runtime modes
+        such as config monitoring to update detection thresholds without recreating
+        the detection engine.
+
+        Args:
+            brute_force_threshold (int | None): New brute-force failed login threshold.
+                Defaults to None.
+            brute_force_time_window (int | None): New brute-force time window.
+                Defaults to None.
+            user_targeting_threshold (int | None): New user-targeting unique IP
+                threshold. Defaults to None.
+
+        Returns:
+            None
+        """
+
+        if brute_force_threshold is not None:
+            self.brute_force_threshold = brute_force_threshold
+
+        if brute_force_time_window is not None:
+            self.brute_force_time_window = brute_force_time_window
+
+        if user_targeting_threshold is not None:
+            self.user_targeting_threshold = user_targeting_threshold
 
     def has_alerted(
             self,
@@ -346,7 +400,7 @@ class DetectionEngine:
             None
         """
 
-        threshold = BRUTE_FORCE_THRESHOLD
+        threshold = self.brute_force_threshold
 
         for ip, attempts in analyser.failed_ip_counts.items():
 
@@ -444,7 +498,7 @@ class DetectionEngine:
             unique_ip_count = len(ips)
 
             if (
-                unique_ip_count >= USER_TARGETING_THRESHOLD
+                unique_ip_count >= self.user_targeting_threshold
                 and not self.has_alerted(USER_TARGETING_ALERT, user)
             ):
                 
@@ -454,7 +508,7 @@ class DetectionEngine:
                     message=(
                         f"User: {user} | "
                         f"Unique IPs: {unique_ip_count} | "
-                        f"Threshold: {USER_TARGETING_THRESHOLD}\n"
+                        f"Threshold: {self.user_targeting_threshold}\n"
                     )
                 )
 

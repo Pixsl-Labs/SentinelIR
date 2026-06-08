@@ -56,7 +56,7 @@ def list_available_log_files(
         if file_path.is_file()
     )
 
-def add_watched_files(
+def add_watched_file(
             config_path: str,
             file_path: str
     ) -> bool:
@@ -99,7 +99,7 @@ def add_watched_files(
 
     return True
 
-def remove_watched_files(
+def remove_watched_file(
             config_path: str,
             file_path: str
     ) -> bool:

@@ -379,7 +379,7 @@ class ConfigRuntime:
         except KeyboardInterrupt:
 
             print_empty_message(
-                "\nReturing to config monitoring menu."
+                "\nReturning to config monitoring menu."
             )
 
             return "BACK"
@@ -391,7 +391,7 @@ class ConfigRuntime:
         """
         Prompts the user to select an available log file.
 
-        Displays log files foudn in the log_files directory and returns the selected
+        Displays log files found in the log_files directory and returns the selected
         file path. The user can cancel without selecting a file.
 
         Args:
@@ -470,7 +470,7 @@ class ConfigRuntime:
         if not available_files:
 
             print_empty_message(
-                "No .log file foudn in log_files."
+                "No .log file found in log_files."
             )
 
             return False
@@ -537,7 +537,7 @@ class ConfigRuntime:
         Prompts the user to select a watched file to remove.
 
         Displays the currently configured watched files and returns the selected
-        file path. The selected fiel is removed from the configuration only, not
+        file path. The selected file is removed from the configuration only, not
         deleted from disk.
 
         Args:
@@ -601,8 +601,7 @@ class ConfigRuntime:
         except KeyboardInterrupt:
 
             print_empty_message(
-                "Returning to config monitoring menu.",
-                Fore.LIGHTRED_EX
+                "Returning to config monitoring menu."
             )
 
             return "BACK"

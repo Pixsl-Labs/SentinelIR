@@ -137,7 +137,8 @@ Current runtime modes:
 1. Static Analysis
 2. Live Monitoring
 3. Generate Scenario
-4. Exit
+4. Config Monitoring
+5. Exit
 ```
 
 Key files:

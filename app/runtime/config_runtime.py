@@ -179,7 +179,7 @@ class ConfigRuntime:
         )
 
         print_stat_row(
-            "First watched files",
+            "First watched file",
             config.watched_files[0] if config.watched_files else None,
             Fore.CYAN,
             28
@@ -221,7 +221,7 @@ class ConfigRuntime:
         )
 
         print_stat_row(
-            "Show new logs interval",
+            "Show new logs",
             config.live_monitoring.show_new_logs,
             Fore.CYAN,
             28

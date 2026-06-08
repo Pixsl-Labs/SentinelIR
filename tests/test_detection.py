@@ -91,3 +91,16 @@ def test_get_user_targeting_no_results(
     results = DetectionEngine.get_user_targeting(empty_reporter.analyser, 5)
 
     assert results == []
+
+def test_detection_engine_configure_threshold_updates_values():
+    detection_engine = DetectionEngine()
+
+    detection_engine.configure_threshold(
+        brute_force_threshold=3,
+        brute_force_time_window=20,
+        user_targeting_threshold=4
+    )
+
+    assert detection_engine.brute_force_threshold == 3
+    assert detection_engine.brute_force_time_window == 20
+    assert detection_engine.user_targeting_threshold == 4

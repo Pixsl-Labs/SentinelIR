@@ -56,37 +56,93 @@ class MainWindow(QMainWindow):
 
         # --- Open Log File ---
 
-        open_action = QAction(
-            QIcon(self.get_icon("file_icon.png")),
+        open_log_action = QAction(
+            QIcon(self.get_icon("log_file.png")),
             "Open Log File",
             self
         )
 
-        open_action.triggered.connect(
+        open_log_action.triggered.connect(
             self.menu_action_clicked
         )
 
         file_menu.addAction(
-            open_action
+            open_log_action
         )
 
         file_menu.addSeparator()
 
-        # --- Open Config File
+        # --- Open Config File ---
 
-        close_action = QAction(
-            QIcon(self.get_icon("close_icon.png")),
+        open_config_action = QAction(
+            QIcon(self.get_icon("config_file.png")),
             "Open Config File",
             self
         )
 
-        close_action.triggered.connect(
+        open_config_action.triggered.connect(
             self.menu_action_clicked
         )
 
         file_menu.addAction(
-            close_action
+            open_config_action
         )
+
+        file_menu.addSeparator()
+
+        # --- Save Config ---
+
+        save_config_action = QAction(
+            QIcon(self.get_icon("save_config.png")),
+            "Save Config",
+            self
+        )
+
+        save_config_action.triggered.connect(
+            self.menu_action_clicked
+        )
+
+        file_menu.addAction(
+            save_config_action
+        )
+
+        file_menu.addSeparator()
+
+        # --- Export Report ---
+
+        export_report_action = QAction(
+            QIcon(self.get_icon("export_report.png")),
+            "Export Report",
+            self
+        )
+
+        export_report_action.triggered.connect(
+            self.menu_action_clicked
+        )
+
+        file_menu.addAction(
+            export_report_action
+        )
+
+        file_menu.addSeparator()
+
+        # --- Exit ---
+
+        exit_action = QAction(
+            QIcon(self.get_icon("exit.png")),
+            "Exit",
+            self
+        )
+
+        exit_action.triggered.connect(
+            self.menu_action_clicked
+        )
+
+        file_menu.addAction(
+            exit_action
+        )
+
+        file_menu.addSeparator()
 
     def get_icon(
             self,

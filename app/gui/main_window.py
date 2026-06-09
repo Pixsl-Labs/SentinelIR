@@ -2,9 +2,9 @@
 Main GUI window for SentinelIR.
 """
 
+# source venv/bin/activate
 # python3 -m app.gui.gui_main
 
-import sys
 from pathlib import Path
 
 from PySide6.QtWidgets import (
@@ -22,6 +22,10 @@ from PySide6.QtGui import (
 )
 
 from app.gui.styles.light_theme import LIGHT_THEME
+from app.gui.utils.icons import (
+    get_icon
+)
+from app.gui.menus.menu_bar import build_menu_bar
 
 
 class MainWindow(QMainWindow):
@@ -43,7 +47,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(900, 600)
         self.setStyleSheet(LIGHT_THEME)
 
-        self.assets_path = Path(__file__).resolve().parent / "assets"
+        # self.assets_path = Path(__file__).resolve().parent / "assets"
 
         label = QLabel("Hello World - SentinelIR GUI")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -74,116 +78,8 @@ class MainWindow(QMainWindow):
         self.exit_shortcut = QShortcut(QKeySequence("Ctrl+Q"), self)
         self.exit_shortcut.activated.connect(lambda: self.exit_application())
 
-        # --- Menu Bar ---
-
-        menu = self.menuBar()
-
-        # --- File Menu ---
-
-        file_menu = menu.addMenu("&File")
-
-        # --- Open Log File ---
-
-        open_log_action = QAction(
-            QIcon(self.get_icon("log_file.png")),
-            "Open Log File",
+        build_menu_bar(
             self
-        )
-
-        open_log_action.triggered.connect(
-            self.menu_action_clicked
-        )
-
-        file_menu.addAction(
-            open_log_action
-        )
-
-        # --- Open Config File ---
-
-        open_config_action = QAction(
-            QIcon(self.get_icon("config_file.png")),
-            "Open Config File",
-            self
-        )
-
-        open_config_action.triggered.connect(
-            self.menu_action_clicked
-        )
-
-        file_menu.addAction(
-            open_config_action
-        )
-
-        file_menu.addSeparator()
-
-        # --- Save Config ---
-
-        save_config_action = QAction(
-            QIcon(self.get_icon("save_config.png")),
-            "Save Config",
-            self
-        )
-
-        save_config_action.triggered.connect(
-            self.menu_action_clicked
-        )
-
-        file_menu.addAction(
-            save_config_action
-        )
-
-        file_menu.addSeparator()
-
-        # --- Export Report ---
-
-        export_report_action = QAction(
-            QIcon(self.get_icon("export_report.png")),
-            "Export Report",
-            self
-        )
-
-        export_report_action.triggered.connect(
-            self.menu_action_clicked
-        )
-
-        file_menu.addAction(
-            export_report_action
-        )
-
-        file_menu.addSeparator()
-
-        # --- Exit ---
-
-        exit_action = QAction(
-            QIcon(self.get_icon("exit.png")),
-            "Exit",
-            self
-        )
-
-        exit_action.triggered.connect(
-            self.exit_application
-        )
-
-        file_menu.addAction(
-            exit_action
-        )
-
-    def get_icon(
-            self,
-            icon_name: str
-    ) -> QIcon:
-        """
-        Returns an icon from the GUI assets directory.
-
-        Args:
-            icon_name (str): Icon filename inside /app/gui/assets.
-
-        Returns:
-            QIcon: Loaded Qt icon.
-        """
-
-        return QIcon(
-            str(self.assets_path / icon_name)
         )
 
     def menu_action_clicked(
@@ -204,7 +100,7 @@ class MainWindow(QMainWindow):
                 f"Clicked: {action.text()}"
             )
 
-    def load_log_file(
+    def open_log_file(
             self,
             file_path:str
     ) -> None:
@@ -220,7 +116,21 @@ class MainWindow(QMainWindow):
 
         print(f"Loading: {file_path}")
 
-    def save(
+    def open_config_file(
+            self,
+            file_path: str
+    ) -> None:
+        """
+        _summary_
+
+        Args:
+            file_path (str): _description_
+
+        Returns:
+            None
+        """
+
+    def save_config(
                 self,
                 file_path: str
         ) -> None:

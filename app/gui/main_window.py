@@ -5,8 +5,6 @@ Main GUI window for SentinelIR.
 # source venv/bin/activate
 # python3 -m app.gui.gui_main
 
-from pathlib import Path
-
 from PySide6.QtWidgets import (
     QLabel,
     QMainWindow,
@@ -14,17 +12,8 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import (
-    QAction,
-    QIcon,
-    QKeySequence,
-    QShortcut
-)
 
 from app.gui.styles.light_theme import LIGHT_THEME
-from app.gui.utils.icons import (
-    get_icon
-)
 from app.gui.menus.menu_bar import build_menu_bar
 
 

@@ -94,8 +94,6 @@ class ConfigRuntime:
             print_empty_message(
                 "No watched file configured."
             )
-
-            return
         
         self.print_config_summary(
             config
@@ -165,7 +163,15 @@ class ConfigRuntime:
 
             action = self.select_config_monitoring_action()
 
-            if action == "monitor":                
+            if action == "monitor":
+
+                if not config.watched_files:
+
+                    print_empty_message(
+                        "No watched files configured. Add a watched file first."
+                    )
+
+                    continue
 
                 if not self.validate_watched_files(
                     config.watched_files
@@ -173,7 +179,7 @@ class ConfigRuntime:
 
                     return
                 
-                selected_file = self.select_watched_files(
+                selected_file = self.select_watched_file(
                     config.watched_files
                 )
 
@@ -215,6 +221,14 @@ class ConfigRuntime:
                 continue
 
             if action == "remove":
+
+                if not config.watched_files:
+
+                    print_empty_message(
+                        "No watched files configured to remove."
+                    )
+
+                    continue
 
                 removed = self.remove_watched_file_from_config(
                     config
@@ -292,22 +306,20 @@ class ConfigRuntime:
         if missing_files:
 
             print_empty_message(
-                "One or more configured watched files do not exist.",
-                Fore.LIGHTRED_EX
+                "One or more configured watched files do not exist."
             )
 
             for file_path in missing_files:
 
                 print_empty_message(
-                    f"- {file_path}",
-                    Fore.LIGHTRED_EX
+                    f"- {file_path}"
                 )
 
             return False
         
         return True
     
-    def select_watched_files(
+    def select_watched_file(
                 self,
                 watched_files: list[str]
         ) -> str | None:
@@ -529,7 +541,7 @@ class ConfigRuntime:
 
         return False
     
-    def selected_watched_file_to_remove(
+    def select_watched_file_to_remove(
                 self,
                 watched_files: list[str]
         ) -> str | None:
@@ -631,7 +643,7 @@ class ConfigRuntime:
 
             return False
         
-        selected_file = self.selected_watched_file_to_remove(
+        selected_file = self.select_watched_file_to_remove(
             config.watched_files
         )
 
@@ -742,13 +754,6 @@ class ConfigRuntime:
 
         print_stat_row(
             "Watched files",
-            len(config.watched_files),
-            Fore.LIGHTCYAN_EX,
-            28
-        )
-
-        print_stat_row(
-            "First watched file",
             len(config.watched_files),
             Fore.LIGHTCYAN_EX,
             28

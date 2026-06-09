@@ -51,9 +51,11 @@ class MainWindow(QMainWindow):
 
         file_menu = menu.addMenu("&File")
 
+        # --- Open Log File ---
+
         open_action = QAction(
             QIcon(self.get_icon("file_icon.png")),
-            "Open",
+            "Open Log File",
             self
         )
 
@@ -67,9 +69,11 @@ class MainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
+        # --- Open Config File
+
         close_action = QAction(
             QIcon(self.get_icon("close_icon.png")),
-            "Close",
+            "Open Config File",
             self
         )
 

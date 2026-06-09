@@ -617,3 +617,7 @@ Current limitations:
 Samuel Stacey
 
 Cyber Security student focused on detection engineering, incident response tooling, Linux, secure software development, and practical cyber security investigation workflows.
+
+# Credits
+
+Need to update once all icons added -> saved within icon_credits.md

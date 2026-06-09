@@ -4,8 +4,8 @@ from pathlib import Path
 from app.config.config_loader import load_config
 from app.config.config_manager import (
     list_available_log_files,
-    add_watched_files,
-    remove_watched_files
+    add_watched_file,
+    remove_watched_file
 )
 from app.runtime.live_runtime import LiveRuntime
 
@@ -509,7 +509,7 @@ class ConfigRuntime:
 
             return False
         
-        added = add_watched_files(
+        added = add_watched_file(
             self.config_path,
             selected_file
         )
@@ -647,7 +647,7 @@ class ConfigRuntime:
 
             return False
         
-        removed = remove_watched_files(
+        removed = remove_watched_file(
             self.config_path,
             selected_file
         )

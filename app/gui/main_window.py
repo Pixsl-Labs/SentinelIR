@@ -15,6 +15,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QIcon
 
+from app.gui.styles.light_theme import LIGHT_THEME
+
 
 class MainWindow(QMainWindow):
     """
@@ -33,6 +35,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("SentinelIR")
         self.setMinimumSize(900, 600)
+        self.setStyleSheet(LIGHT_THEME)
 
         self.assets_path = Path(__file__).resolve().parent / "assets"
 

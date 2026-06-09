@@ -90,20 +90,6 @@ def build_analysis_menu(window) -> None:
         view_activity_timeline_action
     )
 
-    analysis_menu.addSeparator()
-
-    clear_analysis_action = create_action(
-        window=window,
-        text="View Activity Timeline",
-        icon_name="log_file.png",
-        callback=clear_analysis
-        # shortcut="Ctrl+..."
-    )
-
-    analysis_menu.addAction(
-        clear_analysis_action
-    )
-
 def run_static_analysis(window) -> None:
     """
     Handles the Run Static Analysis menu action.

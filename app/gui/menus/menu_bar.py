@@ -6,6 +6,14 @@ from PySide6.QtGui import QAction
 
 from app.gui.utils.icons import get_icon
 
+from app.gui.actions.file_actions import (
+    open_log_file,
+    open_config_file,
+    save_config,
+    export_report,
+    exit_application
+)
+
 
 def build_menu_bar(window) -> None:
     """
@@ -72,7 +80,7 @@ def create_action(
         )
 
     action.triggered.connect(
-        callback
+        lambda checked=False: callback(window)
     )
 
     return action
@@ -100,7 +108,7 @@ def build_file_menu(window) -> None:
         window=window,
         text="Open Log File",
         icon_name="log_file.png",
-        callback=window.open_log_file,
+        callback=open_log_file,
         shortcut="Ctrl+O"
     )
 
@@ -112,7 +120,7 @@ def build_file_menu(window) -> None:
         window=window,
         text="Open Config File",
         icon_name="config_file.png",
-        callback=window.open_config_file
+        callback=open_config_file
     )
 
     file_menu.addAction(
@@ -125,7 +133,7 @@ def build_file_menu(window) -> None:
         window=window,
         text="Save Config",
         icon_name="save_config.png",
-        callback=window.save_config,
+        callback=save_config,
         shortcut="Ctrl+S"
     )
 
@@ -139,7 +147,7 @@ def build_file_menu(window) -> None:
         window=window,
         text="Export Report",
         icon_name="export_report.png",
-        callback=window.export_report,
+        callback=export_report,
         shortcut="Ctrl+E"
     )
 
@@ -153,7 +161,7 @@ def build_file_menu(window) -> None:
         window=window,
         text="Exit",
         icon_name="exit.png",
-        callback=window.exit_application,
+        callback=exit_application,
         shortcut="Ctrl+Q"
     )
 
@@ -176,6 +184,22 @@ def build_analysis_menu(window) -> None:
     Returns:
         None
     """
+
+    analysis_menu = window.menuBar().addMenu(
+        "&Analysis"
+    )
+
+    analysis_action = create_action(
+        window=window,
+        text="Open Log File",
+        icon_name="log_file.png",
+        callback=window.analysis_action,
+        shortcut="Ctrl+O"
+    )
+
+    analysis_menu.addAction(
+        analysis_action
+    )
 
 
 def build_detection_menu(window) -> None:

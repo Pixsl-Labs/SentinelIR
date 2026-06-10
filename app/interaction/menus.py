@@ -48,24 +48,25 @@ def display_log_analysis_menu() -> None:
     print("10. Show most targeted users")
     print("11. Show suspicious success")
     print("12. Show user-targeted attacks")
+    print("13. Show anonymous FTP logins")
 
     print_section_header(
         "General Information"
     )
 
-    print("13. Show successful logins")
-    print("14. Show total failed logins")
-    print("15. Show unique IP count")
+    print("14. Show successful logins")
+    print("15. Show total failed logins")
+    print("16. Show unique IP count")
 
     print_section_header(
         "Configuration"
     )
 
-    print("16. Export report to file")
-    print("17. Analyse new file")
-    print("18. Configure settings")
-    print("19. Show current configuration")
-    print("20. Exit")
+    print("17. Export report to file")
+    print("18. Analyse new file")
+    print("19. Configure settings")
+    print("20. Show current configuration")
+    print("21. Exit")
 
     print_section_header(
         "End of Menu",

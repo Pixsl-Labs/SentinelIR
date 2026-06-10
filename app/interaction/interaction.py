@@ -122,6 +122,8 @@ class Interaction:
 
                 self.reporter.print_user_targeting(self.threshold)
 
+                self.reporter.print_anonymous_ftp_logins()
+
                 print_section_header(
                     "Standard Logins"
                 )
@@ -222,9 +224,13 @@ class Interaction:
 
                 self.reporter.print_user_targeting(threshold)
 
+            elif choice == "13":
+
+                self.reporter.print_anonymous_ftp_logins()
+
             # === General Information ===
 
-            elif choice == "13":
+            elif choice == "14":
 
                 handle_filter_menu(
                     reporter=self.reporter,
@@ -233,7 +239,7 @@ class Interaction:
                     filters=["ip", "username", "severity", "status"]
                 )
 
-            elif choice == "14":
+            elif choice == "15":
 
                 total_failed_ = self.reporter.get_total_failed_login_attempts()
 
@@ -245,7 +251,7 @@ class Interaction:
                     total_colour_failed
                 )
 
-            elif choice == "15":
+            elif choice == "16":
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
 
@@ -259,7 +265,7 @@ class Interaction:
 
             # === Configuration ===
 
-            elif choice == "16":
+            elif choice == "17":
                 
                 print_section_header(
                     "Export Options",
@@ -347,7 +353,7 @@ class Interaction:
                         "Invalid file extension."
                     )
 
-            elif choice == "17":
+            elif choice == "18":
 
                 file_path = input("Enter log file path: ")
 
@@ -357,15 +363,15 @@ class Interaction:
 
                 self.analyser.analyse(file_path)
 
-            elif choice == "18":
+            elif choice == "19":
                 
                 configure(self)
 
-            elif choice == "19":
+            elif choice == "20":
 
                 current_config(self.threshold, self.window_seconds)
             
-            elif choice == "20":
+            elif choice == "21":
 
                 print(
                     Fore.LIGHTGREEN_EX

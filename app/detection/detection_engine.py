@@ -12,7 +12,8 @@ from app.detection.alert_types import (
 from app.models.detection_results import (
     BruteForceResult,
     UserTargetingResult,
-    SuspiciousSuccessResult
+    SuspiciousSuccessResult,
+    AnonymousFTPResult
 )
 
 from app.utils.severity import get_severity_level
@@ -359,10 +360,45 @@ class DetectionEngine:
 
         return results
     
+    @staticmethod
+    def get_anonymous_ftp_logins(
+            analyser
+        ) -> list[AnonymousFTPResult]:
+        """
+        Detects successful anonymous FTP logins.
+
+        Args:
+            analyser: Log analyser instance containing successful login entries.
+
+        Returns:
+            list[AnonymousFTPResult]: Anonymous FTP login detection results.
+        """
+
+        results = []
+
+        for entry in analyser.successful_logins:
+
+            if (
+                entry.service == "FTP"
+                and entry.user.lower() == "anonymous"
+                and entry.status == "SUCCESS"
+            ):
+                
+                results.append(
+                    AnonymousFTPResult(
+                        ip=entry.ip,
+                        username=entry.user,
+                        attempts=1,
+                        severity="MEDIUM"
+                    )
+                )
+        
+        return results
+    
     def process_live_detection(
-        self,
-        analyser
-    ) -> None:
+            self,
+            analyser
+        ) -> None:
         """
         Runs all live detection checks against the current analyser state.
 

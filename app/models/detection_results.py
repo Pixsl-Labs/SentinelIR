@@ -60,3 +60,14 @@ class SuspiciousSuccessResult(DetectionResult):
     that occurred after previous failed authentication activity from the same IP.
     """
     ip: str
+
+
+@dataclass
+class AnonymousFTPResult(DetectionResult):
+    """
+    Represents an anonymous FTP login detection result.
+
+    Stores the IP address and username linked to a successful anonymous FTP login.
+    """
+    ip: str
+    username: str

@@ -59,6 +59,20 @@ class LogAnalyser:
 
         self.detection_engine.reset_alert_state()
 
+    def has_ftp_events(self) -> bool:
+        """
+        Checks whether the current analysis contains FTP events.
+
+        Returns:
+            bool: True if any failed or successful login entry came from FTP,
+            otherwise False.
+        """
+
+        return any(
+            entry.service == "FTP"
+            for entry in self.failed_logins + self.successful_logins
+        )
+
     def group_attempts_by_ip(
         self
     ) -> dict[str, list]:
@@ -309,7 +323,7 @@ class LogAnalyser:
 
         ip = extract_ip(line)
 
-        user = extract_username(line)
+        user = extract_ftp_username(line)
 
         timestamp = extract_timestamp(line)
 

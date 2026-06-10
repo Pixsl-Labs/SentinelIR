@@ -57,3 +57,9 @@
 2026-06-08 10:25:27,370 - INFO - [33mMonitoring file: log_files/generated.log
 2026-06-10 20:27:36,452 - INFO - Analysing File: log_files/ftp_auth.log
 2026-06-10 20:27:36,456 - WARNING - Skipping FTP login line with missing IP: Apr 12 2026 12:00:30 server vsftpd[2108]: FTP LOGIN SUCCESS user=deploy
+2026-06-10 20:44:31,549 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-10 20:44:31,552 - WARNING - Skipping FTP login line with missing IP: Apr 12 2026 12:00:30 server vsftpd[2108]: FTP LOGIN SUCCESS user=deploy
+2026-06-10 20:47:44,793 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-10 20:47:44,796 - WARNING - Skipping FTP login line with missing IP: Apr 12 2026 12:00:30 server vsftpd[2108]: FTP LOGIN SUCCESS user=deploy
+2026-06-10 20:48:12,745 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-10 20:48:12,749 - WARNING - Skipping FTP login line with missing IP: Apr 12 2026 12:00:30 server vsftpd[2108]: FTP LOGIN SUCCESS user=deploy

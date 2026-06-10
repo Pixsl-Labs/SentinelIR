@@ -432,3 +432,56 @@ class Detection:
                 + severity_colour
                 + format_column(result.severity, 15)
             )
+
+    def print_anonymous_ftp_logins(self) -> None:
+        """
+        Prints detected anonymous FTP logins.
+
+        Returns:
+            None
+        """
+
+        results = DetectionEngine.get_anonymous_ftp_logins(
+            self.analyser
+        )
+
+        if not results:
+
+            print_empty_message(
+                "No anonymous FTP logins detected."
+            )
+
+            return
+        
+        print_section_header(
+            "Anonymous FTP Logins Detected",
+            Fore.YELLOW
+        )
+
+        print_total_count(
+            "Anonymous FTP Logins",
+            len(results),
+            Fore.LIGHTYELLOW_EX
+        )
+
+        columns = [
+            ("IP Address", 16),
+            ("Username", 14),
+            ("Severity", 12)
+        ]
+
+        print_table_header(columns)
+
+        for result in results:
+
+            severity_colour = get_severity_colour(
+                result.severity
+            )
+
+            print(
+                "   "
+                + severity_colour
+                + format_column(result.ip, 16)
+                + format_column(result.username, 14)
+                + format_column(result.severity,12)
+            )

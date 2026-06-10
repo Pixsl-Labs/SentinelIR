@@ -1,0 +1,10 @@
+Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN SUCCESS user=sam ip=192.168.1.25
+Apr 12 2026 12:00:04 server vsftpd[2102]: FTP LOGIN FAILED user=admin ip=192.168.1.30
+Apr 12 2026 12:00:08 server vsftpd[2103]: FTP LOGIN SUCCESS user=anonymous ip=203.0.113.50
+Apr 12 2026 12:00:12 server vsftpd[2104]: FTP LOGIN SUCCESS user=backup ip=192.168.1.40
+Apr 12 2026 12:00:16 server vsftpd[2105]: FTP LOGIN FAILED user=root ip=192.168.1.30
+Apr 12 2026 12:00:20 server vsftpd[2106]: FTP LOGIN FAILED user=root ip=192.168.1.30
+Apr 12 2026 12:00:24 server vsftpd[2107]: FTP LOGIN SUCCESS user=anonymous ip=198.51.100.77
+BROKEN FTP LINE missing timestamp user anonymous ip unknown
+Apr 12 2026 12:00:30 server vsftpd[2108]: FTP LOGIN SUCCESS user=deploy
+Apr 12 2026 12:00:35 server vsftpd[2109]: FTP LOGIN FAILED ip=192.168.1.60

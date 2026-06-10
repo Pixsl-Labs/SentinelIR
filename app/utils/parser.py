@@ -113,3 +113,69 @@ def extract_timestamp(
         )
 
         return None
+    
+def is_ftp_line(
+            line: str
+    ) -> bool:
+    """
+    Checks whether a log line appears to be an FTP authentication line.
+
+    Args:
+        line (str): Raw log line to check.
+
+    Returns:
+        bool: True if the line appears to be FTP authentication line,
+            otherwise False.
+    """
+
+    return "ftp login" in line.lower()
+
+def extract_ftp_username(
+            line: str
+    ) -> str:
+    """
+    Extracts an FTP username from a defined FTP log line.
+
+    Args:
+        line (str): Raw FTP log line.
+
+    Returns:
+        str: Extracted FTP username, or "unknown" if no username is found.
+    """
+
+    match = re.search(
+        r"user=([A-Za-z0-9_\-.]+)",
+        line,
+        re.IGNORECASE
+    )
+
+    return (
+        match.group(1)
+        if match
+        else "unknown"
+    )
+
+def extract_ftp_status(
+            line: str
+    ) -> str | None:
+    """
+    Extracts FTP authentication status from a defined FTP log line.
+
+    Args:
+        line (str): Raw FTP log line.
+
+    Returns:
+        str | None: SUCCESS, FAILED, or None if no status is found.
+    """
+
+    lower_line = line.lower()
+
+    if "ftp login success" in lower_line:
+
+        return "SUCCESS"
+    
+    if "ftp login failed" in lower_line:
+
+        return "FAILED"
+    
+    return None

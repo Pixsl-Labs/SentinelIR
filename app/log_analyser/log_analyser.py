@@ -7,7 +7,10 @@ from app.utils.display import print_empty_message
 from app.utils.parser import (
     extract_ip,
     extract_username,
-    extract_timestamp
+    extract_timestamp,
+    is_ftp_line,
+    extract_ftp_username,
+    extract_ftp_status
 )
 
 
@@ -108,7 +111,22 @@ class LogAnalyser:
             with open(file_path, 'r') as file:
                 for line in file:
 
-                    if "failed password" in line.lower():
+                    if is_ftp_line(line):
+
+                        ftp_status = extract_ftp_status(line)
+
+                        if ftp_status == "FAILED":
+
+                            found_failed = True
+                            self.extract_ftp_login(line)
+
+                        elif ftp_status == "SUCCESS":
+
+                            found_success = True
+                            self.extract_ftp_login(line)
+
+                    elif "failed password" in line.lower():
+
                         found_failed = True
                         self.extract_failed_ip(line)
                         
@@ -268,5 +286,96 @@ class LogAnalyser:
                 user=user, 
                 timestamp=timestamp, 
                 status="SUCCESS"
+            )
+        )
+
+    def extract_ftp_login(
+                self,
+                line: str
+        ) -> None:
+        """
+        Extracts and stores an FTP authentication event from a log line.
+
+        Parses the IP address, username, timestamp, and status from a defined
+        FTP authentication log format. Invalid FTP lines with missing IP,
+        timestamp, or status are skipped safely.
+
+        Args:
+            line (str): Raw FTP authentication log line to parse.
+
+        Returns:
+            None
+        """
+
+        ip = extract_ip(line)
+
+        user = extract_username(line)
+
+        timestamp = extract_timestamp(line)
+
+        status = extract_ftp_status(line)
+
+        if not ip:
+
+            logging.warning(
+                f"Skipping FTP login line with missing IP: {line.strip()}"
+            )
+
+            return
+        
+        if not user:
+
+            logging.warning(
+                f"Skipping FTP login line with missing username: {line.strip()}"
+            )
+
+            return
+        
+        if not timestamp:
+
+            logging.warning(
+                f"Skipping FTP login line with missing username: {line.strip()}"
+            )
+
+            return
+        
+        if status is None:
+
+            logging.warning(
+                f"Skipping FTP login line with missing username: {line.strip()}"
+            )
+
+            return
+        
+        if status == "FAILED":
+
+            self.failed_ip_counts[ip] = (
+                self.failed_ip_counts.get(ip, 0) + 1
+            )
+
+            attempts = self.failed_ip_counts[ip]
+
+            severity = get_severity_level(attempts)
+
+            self.failed_logins.append(
+                LogEntry(
+                    ip=ip,
+                    user=user,
+                    timestamp=timestamp,
+                    status="FAILED",
+                    severity=severity,
+                    service="FTP"
+                )
+            )
+
+            return
+        
+        self.successful_logins.append(
+            LogEntry(
+                ip=ip,
+                user=user, 
+                timestamp=timestamp, 
+                status="SUCCESS",
+                service="FTP"
             )
         )

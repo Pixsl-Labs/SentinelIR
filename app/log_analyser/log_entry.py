@@ -16,3 +16,4 @@ class LogEntry:
     timestamp: datetime
     status: str
     severity: str = "LOW"
+    service: str = "SSH"

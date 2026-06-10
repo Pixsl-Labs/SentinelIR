@@ -22,7 +22,7 @@ SentinelIR focuses on helping a security analyst investigate authentication-base
 - Live log changes during monitoring
 - Generated attack scenarios for testing detections
 
-The long-term direction is to expand SentinelIR into a broader investigation platform that can support log analysis, file triage, hash/signature scanning, IOC enrichment, and a future GUI.
+The long-term direction is to expand SentinelIR into a broader investigation platform that can support log analysis, file triage, hash/signature scanning, IOC enrichment, and a future web UI / SOC-style dashboard.
 
 ---
 

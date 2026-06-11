@@ -7,7 +7,6 @@ from app.utils.display import (
 
 
 import time
-import logging
 from colorama import Fore
 
 
@@ -62,7 +61,7 @@ class FileMonitor:
             )
 
             print_info(
-                "\nMonitoring started...",
+                "\nMonitoring started...\n",
                 Fore.GREEN
             )
 

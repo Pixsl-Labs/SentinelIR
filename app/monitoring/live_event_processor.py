@@ -3,7 +3,9 @@ from app.utils.display import (
     print_status_line
 )
 from app.utils.colours import get_live_status_colour
-
+from app.utils.parser import (
+    is_ftp_line
+)
 
 from colorama import Fore
 
@@ -88,7 +90,19 @@ class LiveEventProcessor:
 
         lower_line = line.lower()
 
-        if "failed password" in lower_line:
+        if is_ftp_line(line):
+
+            self.analyser.extract_ftp_login(
+                line
+            )
+
+            self.analyser.detection_engine.process_live_detection(
+                self.analyser
+            )
+
+            self.track_processed_event()
+
+        elif "failed password" in lower_line:
 
             self.analyser.extract_failed_ip(
                 line

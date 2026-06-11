@@ -171,6 +171,7 @@ def test_live_event_counter_increments():
     assert processor.events_processed == 2
 
 def test_live_total_alerts_count_all_alert_types():
+
     analyser = LogAnalyser()
 
     processor = LiveEventProcessor(
@@ -216,3 +217,119 @@ def test_live_total_alerts_count_all_alert_types():
         processor.process_line(line)
 
     assert analyser.detection_engine.get_total_alerts() == 3
+
+def test_live_processor_adds_failed_ftp_login() -> None:
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    failed_line = (
+        "Apr 12 2026 12:00:04 server vsftpd[2102]: "
+        "FTP LOGIN FAILED user=admin ip=192.168.1.30"
+    )
+
+    processor.process_line(failed_line)
+
+    assert len(analyser.failed_logins) == 1
+    assert analyser.failed_ip_counts["192.168.1.30"] == 1
+    assert analyser.failed_logins[0].user == "admin"
+    assert analyser.failed_logins[0].status == "FAILED"
+    assert analyser.failed_logins[0].service == "FTP"
+
+def test_live_processor_adds_successful_ftp_login():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    line = (
+        "Apr 12 2026 12:00:12 server vsftpd[2104]: "
+        "FTP LOGIN SUCCESS user=backup ip=192.168.1.40"
+    )
+
+    processor.process_line(line)
+
+    assert len(analyser.successful_logins) == 1
+    assert analyser.successful_logins[0].ip == "192.168.1.40"
+    assert analyser.successful_logins[0].user == "backup"
+    assert analyser.successful_logins[0].status == "SUCCESS"
+    assert analyser.successful_logins[0].service == "FTP"
+    assert processor.events_processed == 1
+
+def test_live_processor_processes_anonymous_ftp_login():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    line = (
+        "Apr 12 2026 12:00:08 server vsftpd[2103]: "
+        "FTP LOGIN SUCCESS user=anonymous ip=203.0.113.50"
+    )
+
+    processor.process_line(line)
+
+    assert len(analyser.successful_logins) == 1
+    assert analyser.successful_logins[0].ip == "203.0.113.50"
+    assert analyser.successful_logins[0].user == "anonymous"
+    assert analyser.successful_logins[0].status == "SUCCESS"
+    assert analyser.successful_logins[0].service == "FTP"
+    assert processor.events_processed == 1
+
+def test_live_ftp_event_counter_increments():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    first_line = (
+        "Apr 12 2026 12:00:08 server vsftpd[2103]: "
+        "FTP LOGIN SUCCESS user=anonymous ip=203.0.113.50"
+    )
+    
+    second_line = (
+        "Apr 12 2026 12:00:24 server vsftpd[2107]: "
+        "FTP LOGIN SUCCESS user=anonymous ip=198.51.100.77"
+    )
+
+    processor.process_line(first_line)
+
+    assert len(analyser.successful_logins) == 1
+    assert processor.events_processed == 1
+
+    processor.process_line(second_line)
+
+    assert len(analyser.successful_logins) == 2
+    assert processor.events_processed == 2
+
+def test_live_processor_ignores_malformed_ftp_line():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    line = (
+        "BROKEN FTP LINE missing timestamp user anonymous ip unknown"
+    )
+
+    processor.process_line(line)
+
+    assert len(analyser.successful_logins) == 0
+    assert len(analyser.failed_logins) == 0
+    assert processor.events_processed == 0

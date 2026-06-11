@@ -58,3 +58,7 @@ Apr 16 2026 12:03:04 server sshd[123]: Failed password for admin from 10.20.0.5 
 Apr 16 2026 12:04:00 server sshd[123]: Accepted password for guest from 192.168.1.5 port 22 ssh2
 Apr 16 2026 12:04:01 server sshd[123]: Accepted password for admin from 192.168.1.6 port 22 ssh2
 Apr 16 2026 12:04:02 server sshd[123]: Accepted password for deploy from 192.168.1.7 port 22 ssh2
+Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
+Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
+Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
+Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30

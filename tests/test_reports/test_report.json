@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-06-09 10:45:23",
+    "generated_at": "2026-06-11 14:32:40",
     "title": "Failed Logins",
     "results": [
         {
@@ -7,35 +7,40 @@
             "user": "root",
             "timestamp": "2024-06-10 12:00:01",
             "status": "FAILED",
-            "severity": "LOW"
+            "severity": "LOW",
+            "service": "SSH"
         },
         {
             "ip": "192.168.1.10",
             "user": "root",
             "timestamp": "2024-06-10 12:00:02",
             "status": "FAILED",
-            "severity": "LOW"
+            "severity": "LOW",
+            "service": "SSH"
         },
         {
             "ip": "192.168.1.10",
             "user": "root",
             "timestamp": "2024-06-10 12:00:03",
             "status": "FAILED",
-            "severity": "LOW"
+            "severity": "LOW",
+            "service": "SSH"
         },
         {
             "ip": "192.168.1.10",
             "user": "root",
             "timestamp": "2024-06-10 12:00:04",
             "status": "FAILED",
-            "severity": "LOW"
+            "severity": "LOW",
+            "service": "SSH"
         },
         {
             "ip": "192.168.1.10",
             "user": "root",
             "timestamp": "2024-06-10 12:00:05",
             "status": "FAILED",
-            "severity": "LOW"
+            "severity": "LOW",
+            "service": "SSH"
         }
     ]
 }

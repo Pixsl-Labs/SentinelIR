@@ -1,6 +1,36 @@
 from app.detection.detection_engine import DetectionEngine
 from app.log_analyser.log_analyser import LogAnalyser
 
+from app.parsers.parser_router import parse_log_line
+
+
+def store_parsed_line(
+        analyser: LogAnalyser,
+        line: str
+    ) -> None:
+    """
+    Parses a log line and stores it in the analyser if valid.
+
+    Args:
+        analyser (LogAnalyser): Log analyser instance to update.
+        line (str): Raw log line to parse.
+
+    Returns:
+        None
+    """
+
+    entry = parse_log_line(
+        line
+    )
+
+    if entry is None:
+
+        return
+
+    analyser.store_entry(
+        entry
+    )
+
 
 def test_anonymous_ftp_success_triggers_detection() -> None:
     
@@ -11,7 +41,8 @@ def test_anonymous_ftp_success_triggers_detection() -> None:
         "FTP LOGIN SUCCESS user=anonymous ip=203.0.113.50"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 
@@ -24,6 +55,7 @@ def test_anonymous_ftp_success_triggers_detection() -> None:
     assert results[0].username == "anonymous"
     assert results[0].severity == "MEDIUM"
 
+
 def test_normal_ftp_user_does_not_trigger_anonymous_detection() -> None:
 
     analyser = LogAnalyser()
@@ -33,7 +65,8 @@ def test_normal_ftp_user_does_not_trigger_anonymous_detection() -> None:
         "FTP LOGIN FAILED user=admin ip=192.168.1.30"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 
@@ -42,6 +75,7 @@ def test_normal_ftp_user_does_not_trigger_anonymous_detection() -> None:
     )
 
     assert len(results) == 0
+
 
 def test_anonymous_ftp_failed_login_does_not_trigger_detection() -> None:
 
@@ -52,7 +86,8 @@ def test_anonymous_ftp_failed_login_does_not_trigger_detection() -> None:
         "FTP LOGIN FAILED user=root ip=192.168.1.30"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 
@@ -61,6 +96,7 @@ def test_anonymous_ftp_failed_login_does_not_trigger_detection() -> None:
     )
 
     assert len(results) == 0
+
 
 def test_ftp_successful_login_is_parsed() -> None:
 
@@ -71,7 +107,8 @@ def test_ftp_successful_login_is_parsed() -> None:
         "FTP LOGIN SUCCESS user=backup ip=192.168.1.40"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 
@@ -84,6 +121,7 @@ def test_ftp_successful_login_is_parsed() -> None:
     assert entry.status == "SUCCESS"
     assert entry.service == "FTP"
 
+
 def test_ftp_failed_login_is_parsed() -> None:
 
     analyser = LogAnalyser()
@@ -93,7 +131,8 @@ def test_ftp_failed_login_is_parsed() -> None:
         "FTP LOGIN FAILED user=root ip=192.168.1.30"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 
@@ -106,6 +145,7 @@ def test_ftp_failed_login_is_parsed() -> None:
     assert entry.status == "FAILED"
     assert entry.service == "FTP"
 
+
 def test_malformed_ftp_line_does_not_crash() -> None:
 
     analyser = LogAnalyser()
@@ -114,7 +154,8 @@ def test_malformed_ftp_line_does_not_crash() -> None:
         "BROKEN FTP LINE missing timestamp user anonymous ip unknown"
     )
 
-    analyser.extract_ftp_login(
+    store_parsed_line(
+        analyser,
         line
     )
 

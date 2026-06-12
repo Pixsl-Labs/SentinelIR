@@ -590,7 +590,7 @@ Planned or possible future work includes:
 
 Current limitations:
 
-- Primarily supports Linux-style SSH authentication logs
+- Primarily supports Linux-style SSH + FTP + HTTP event logs
 - Detection rules are heuristic-based
 - No database or persistent case storage yet
 - No GUI yet

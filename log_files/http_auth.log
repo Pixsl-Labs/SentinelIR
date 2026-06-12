@@ -1,20 +1,20 @@
-Apr 17 2026 12:00:08 server nginx[3103]: HTTP LOGIN SUCCESS user=guest ip=192.168.1.7 method=POST path=/login status=200
-Apr 17 2026 12:01:00 server nginx[3110]: HTTP LOGIN FAILED user=admin ip=203.0.113.10 method=POST path=/login status=401
-Apr 17 2026 12:01:01 server nginx[3111]: HTTP LOGIN FAILED user=admin ip=203.0.113.10 method=POST path=/login status=401
-Apr 17 2026 12:01:02 server nginx[3112]: HTTP LOGIN FAILED user=admin ip=203.0.113.10 method=POST path=/login status=401
-Apr 17 2026 12:01:03 server nginx[3113]: HTTP LOGIN FAILED user=admin ip=203.0.113.10 method=POST path=/login status=401
-Apr 17 2026 12:01:04 server nginx[3114]: HTTP LOGIN FAILED user=admin ip=203.0.113.10 method=POST path=/login status=401
-Apr 17 2026 12:02:00 server nginx[3120]: HTTP LOGIN FAILED user=deploy ip=198.51.100.20 method=POST path=/login status=401
-Apr 17 2026 12:02:01 server nginx[3121]: HTTP LOGIN FAILED user=deploy ip=198.51.100.20 method=POST path=/login status=401
-Apr 17 2026 12:02:02 server nginx[3122]: HTTP LOGIN FAILED user=deploy ip=198.51.100.20 method=POST path=/login status=401
-Apr 17 2026 12:02:05 server nginx[3123]: HTTP LOGIN SUCCESS user=deploy ip=198.51.100.20 method=POST path=/login status=200
-Apr 17 2026 12:03:00 server nginx[3130]: HTTP LOGIN FAILED user=root ip=10.20.0.1 method=POST path=/login status=401
-Apr 17 2026 12:03:01 server nginx[3131]: HTTP LOGIN FAILED user=root ip=10.20.0.2 method=POST path=/login status=401
-Apr 17 2026 12:03:02 server nginx[3132]: HTTP LOGIN FAILED user=root ip=10.20.0.3 method=POST path=/login status=401
-Apr 17 2026 12:03:03 server nginx[3133]: HTTP LOGIN FAILED user=root ip=10.20.0.4 method=POST path=/login status=401
-Apr 17 2026 12:03:04 server nginx[3134]: HTTP LOGIN FAILED user=root ip=10.20.0.5 method=POST path=/login status=401
-Apr 17 2026 12:04:00 server nginx[3140]: HTTP ACCESS FAILED user=unknown ip=45.33.32.156 method=GET path=/admin status=403
-Apr 17 2026 12:04:02 server nginx[3141]: HTTP ACCESS FAILED user=unknown ip=45.33.32.156 method=GET path=/wp-login.php status=404
-Apr 17 2026 12:04:04 server nginx[3142]: HTTP ACCESS FAILED user=unknown ip=45.33.32.156 method=GET path=/.env status=404
-Apr 17 2026 12:04:06 server nginx[3143]: HTTP ACCESS FAILED user=unknown ip=45.33.32.156 method=GET path=/phpmyadmin status=404
-Apr 17 2026 12:05:00 server nginx[3150]: HTTP LOGIN SUCCESS user=analyst ip=192.168.1.8 method=POST path=/login status=200
+203.0.113.10 - - [17/Apr/2026:12:00:08 +0000] "POST /login?user=guest HTTP/1.1" 200 532
+203.0.113.11 - - [17/Apr/2026:12:01:00 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+203.0.113.11 - - [17/Apr/2026:12:01:01 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+203.0.113.11 - - [17/Apr/2026:12:01:02 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+203.0.113.11 - - [17/Apr/2026:12:01:03 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+203.0.113.11 - - [17/Apr/2026:12:01:04 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+203.0.113.11 - - [17/Apr/2026:12:01:10 +0000] "POST /login?user=admin HTTP/1.1" 200 532
+198.51.100.20 - - [17/Apr/2026:12:02:00 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+198.51.100.21 - - [17/Apr/2026:12:02:01 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+198.51.100.22 - - [17/Apr/2026:12:02:02 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+198.51.100.23 - - [17/Apr/2026:12:02:03 +0000] "POST /login?user=admin HTTP/1.1" 401 532
+45.33.32.156 - - [17/Apr/2026:12:04:00 +0000] "GET /admin HTTP/1.1" 403 721
+45.33.32.159 - - [17/Apr/2026:12:04:20 +0000] "GET /admin?user=root HTTP/1.1" 403 721
+192.0.2.44 - - [17/Apr/2026:12:05:00 +0000] "POST /login?user=deploy HTTP/1.1" 302 400
+192.0.2.45 - - [17/Apr/2026:12:05:15 +0000] "POST /login?user=backup HTTP/1.1" 201 410
+192.0.2.46 - - [17/Apr/2026:12:05:30 +0000] "POST /login?user=api HTTP/1.1" 204 0
+198.51.100.30 - - [17/Apr/2026:12:06:00 +0000] "POST /wp-login.php?user=wordpress HTTP/1.1" 401 612
+45.33.32.157 - - [17/Apr/2026:12:07:00 +0000] "GET /products HTTP/1.1" 200 900
+45.33.32.158 - - [17/Apr/2026:12:08:00 +0000] "GET /.env HTTP/1.1" 404 300
+203.0.113.99 - - [17/Apr/2026:12:09:00 +0000] "POST /login?user=test HTTP/1.1" 500 1000

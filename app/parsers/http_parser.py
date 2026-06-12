@@ -26,22 +26,13 @@ def is_http_line(line: str) -> bool:
             otherwise False.
     """
 
-    standard_access_log = re.search(
+    match = re.search(
         r'"(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+\S+\s+HTTP/\d(?:\.\d)?"\s+\d{3}',
         line,
         re.IGNORECASE
     )
 
-    sentinelir_http_log = re.search(
-        r"\bHTTP\b.*\bmethod=(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b.*\bpath=\S+.*\bstatus=\d{3}",
-        line,
-        re.IGNORECASE
-    )
-
-    return (
-        standard_access_log is not None
-        or sentinelir_http_log is not None
-    )
+    return match is not None
 
 def is_http_login(line: str) -> bool:
     """
@@ -103,27 +94,15 @@ def extract_http_timestamp(line: str) -> datetime | None:
         datetime | None: Parsed timestamp if available, otherwise None.
     """
 
-    sentinelir_match = re.search(
-        r"^([A-Z][a-z]{2}\s+\d{1,2}\s+\d{4}\s+\d{2}:\d{2}:\d{2})",
-        line
-    )
-
-    if sentinelir_match:
-
-        return datetime.strptime(
-            sentinelir_match.group(1),
-            "%b %d %Y %H:%M:%S"
-        )
-
-    access_log_match = re.search(
+    match = re.search(
         r"\[(\d{2}/[A-Za-z]{3}/\d{4}:\d{2}:\d{2}:\d{2})\s+[+-]\d{4}\]",
         line
     )
 
-    if access_log_match:
+    if match:
 
         return datetime.strptime(
-            access_log_match.group(1),
+            match.group(1),
             "%d/%b/%Y:%H:%M:%S"
         )
 
@@ -140,25 +119,15 @@ def extract_http_method(line: str) -> str | None:
         str | None: HTTP method such as GET or POST, otherwise None.
     """
 
-    custom_match = re.search(
-        r"\bmethod=(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b",
-        line,
-        re.IGNORECASE
-    )
-
-    if custom_match:
-
-        return custom_match.group(1).upper()
-
-    access_log_match = re.search(
+    match = re.search(
         r'"(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+',
         line,
         re.IGNORECASE
     )
 
-    if access_log_match:
+    if match:
 
-        return access_log_match.group(1).upper()
+        return match.group(1).upper()
 
     return None
 
@@ -173,25 +142,15 @@ def extract_http_path(line: str) -> str | None:
         str | None: Requested path such as /login or /admin, otherwise None.
     """
 
-    custom_match = re.search(
-        r"\bpath=(\S+)",
-        line,
-        re.IGNORECASE
-    )
-
-    if custom_match:
-
-        return custom_match.group(1)
-
-    access_log_match = re.search(
+    match = re.search(
         r'"(?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+(\S+)\s+HTTP/\d(?:\.\d)?"',
         line,
         re.IGNORECASE
     )
 
-    if access_log_match:
+    if match:
 
-        return access_log_match.group(1)
+        return match.group(1)
 
     return None
 
@@ -233,24 +192,14 @@ def extract_http_status_code(line: str) -> int | None:
             otherwise None.
     """
 
-    custom_match = re.search(
-        r"\bstatus=(\d{3})\b",
-        line,
-        re.IGNORECASE
-    )
-
-    if custom_match:
-
-        return int(custom_match.group(1))
-
-    access_log_match = re.search(
+    match = re.search(
         r'"\s+(\d{3})\b',
         line
     )
 
-    if access_log_match:
+    if match:
 
-        return int(access_log_match.group(1))
+        return int(match.group(1))
 
     return None
 

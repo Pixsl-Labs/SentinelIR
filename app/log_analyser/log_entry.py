@@ -17,3 +17,6 @@ class LogEntry:
     status: str
     severity: str = "LOW"
     service: str = "SSH"
+    method: str | None = None
+    path: str | None = None
+    status_code: str | None = None

@@ -616,7 +616,7 @@ class Statistics:
         )
 
         columns = [
-            ("User", 5),
+            ("User", 7),
             ("Attempts", 15, "^"),
             ("Severity", 12)
         ]
@@ -636,8 +636,8 @@ class Statistics:
             print(
                 "   "
                 + attempt_colour
-                + format_column(result.username, 5)
-                + format_column(result.attempts, 15, "^")
+                + format_column(result.username, 11)
+                + format_column(result.attempts, 12)
                 + severity_colour
                 + format_column(result.severity, 12)
             )

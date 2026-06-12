@@ -86,7 +86,7 @@ def extract_ssh_username(line: str) -> str:
         return match.group(1)
     
     session_match = re.search(
-        r"session opened for user (\W+)",
+        r"session opened for user (\w+)",
         line,
         re.IGNORECASE
     )

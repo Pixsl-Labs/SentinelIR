@@ -58,11 +58,11 @@ def extract_ftp_status(line: str) -> str | None:
         str | None: SUCCESS, FAILED, or None if no status is found.
     """
 
-    if is_ftp_successful_login:
+    if is_ftp_successful_login(line):
 
         return "SUCCESS"
     
-    if is_ftp_failed_login:
+    if is_ftp_failed_login(line):
 
         return "FAILED"
     

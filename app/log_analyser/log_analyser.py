@@ -1,22 +1,13 @@
+import logging
+from collections import defaultdict
+
 from app.log_analyser.log_entry import LogEntry
 from app.detection.detection_engine import DetectionEngine
 
-
 from app.utils.severity import get_severity_level
 from app.utils.display import print_empty_message
-from app.utils.parser import (
-    extract_ip,
-    extract_username,
-    extract_timestamp,
-    is_ftp_line,
-    extract_ftp_username,
-    extract_ftp_status
-)
 
-
-import logging
-from collections import defaultdict
-from colorama import Fore
+from app.parsers.parser_router import parse_log_line
 
 
 class LogAnalyser:
@@ -93,6 +84,45 @@ class LogAnalyser:
             grouped_attempts[entry.ip].append(entry.timestamp)
 
         return grouped_attempts
+    
+    def store_entry(self, entry: LogEntry) -> None:
+        """
+        Stores a parsed log entry in the correct analyser collection.
+
+        Failed entries update failed IP count, receive a calculated severity, and
+        are stored in failed_logins. Successful entries are stored in
+        successful_logins.
+
+        Args:
+            entry (LogEntry): Parsed log entry returned by the parser router.
+
+        Returns:
+            None
+        """
+
+        if entry.status == "FAILED":
+
+            self.failed_ip_counts[entry.ip] = (
+                self.failed_ip_counts.get(entry.ip, 0) + 1
+            )
+
+            attempts = self.failed_ip_counts[entry.ip]
+
+            entry.severity = get_severity_level(attempts)
+
+            self.failed_logins.append(entry)
+
+            return
+        
+        if entry.status == "SUCCESS":
+
+            self.successful_logins.append(entry)
+
+            return
+        
+        logging.warning(
+            f"Skipping parsed entry with unsupported status: {entry.status}"
+        )
 
     def analyse(
             self,
@@ -101,9 +131,9 @@ class LogAnalyser:
         """
         Reads and processes an authentication log file.
 
-        Scans the selected file line by line, extracts failed login events, extracts
-        successful login events, and stores valid parsed entries. Missing files are
-        handled safely and reported through logging.
+        Each line is passed to the parser router. Supported SSH, FTP, and future
+        HTTP lines are converted into LogEntry objects and stored by status.
+        Unsupported or malformed lines are ignored safely.
 
         Args:
             file_path (str): Path to the log file being analysed.
@@ -125,39 +155,34 @@ class LogAnalyser:
             with open(file_path, 'r') as file:
                 for line in file:
 
-                    if is_ftp_line(line):
+                    entry = parse_log_line(
+                        line.strip()
+                    )
 
-                        ftp_status = extract_ftp_status(line)
+                    if entry is None:
 
-                        if ftp_status == "FAILED":
+                        continue
 
-                            found_failed = True
-                            self.extract_ftp_login(line)
+                    self.store_entry(
+                        entry
+                    )
 
-                        elif ftp_status == "SUCCESS":
-
-                            found_success = True
-                            self.extract_ftp_login(line)
-
-                    elif "failed password" in line.lower():
+                    if entry.status == "FAILED":
 
                         found_failed = True
-                        self.extract_failed_ip(line)
-                        
-                    elif (
-                        "accepted password" in line.lower() 
-                        or "session opened" in line.lower()
-                        ):
+
+                    elif entry.status == "SUCCESS":
 
                         found_success = True
-                        self.extract_successful_login(line)            
 
             if not found_failed:
+
                 print_empty_message(
                     "No failed login attempts found."
                 )
 
             if not found_success:
+
                 print_empty_message(
                     "No successful logins found."
                 )
@@ -201,11 +226,10 @@ class LogAnalyser:
             line: str
         ) -> None:
         """
-        Extracts and stores a failed login event from a log line.
+        Backwards-compatible wrapper for storing failed login events.
 
-        Parses the IP address, username, and timestamp from a failed authentication
-        line. Invalid lines with missing IP addresses or timestamps are skipped. Valid
-        entries update the failed IP count and are stored with a calculated severity.
+        This method is kept temporarily so existing live monitoring code and tests
+        continue working while the project transitions to parser_router.py.
 
         Args:
             line (str): Raw failed login log line to parse.
@@ -214,56 +238,27 @@ class LogAnalyser:
             None
         """
 
-        ip = extract_ip(line)
-        
-        user = extract_username(line)
-        
-        timestamp = extract_timestamp(line)
+        entry = parse_log_line(
+            line
+        )
 
-        if not ip:
-
-            logging.warning(
-                f"Skipping failed login line with missing IP: {line.strip()}"
-            )
-
-            return        
-
-        if not timestamp:
-
-            logging.warning(
-                f"Skipping failed login line with missing timestamp: {line.strip()}"
-            )
+        if entry is None or entry.status != "FAILED":
 
             return
-
-        self.failed_ip_counts[ip] = (
-            self.failed_ip_counts.get(ip, 0) + 1
+        
+        self.store_entry(
+            entry
         )
-
-        attempts = self.failed_ip_counts[ip]
-
-        severity = get_severity_level(attempts)
-
-        self.failed_logins.append(
-            LogEntry(
-                ip=ip,
-                user=user,
-                timestamp=timestamp,
-                status="FAILED",
-                severity=severity
-            )
-        )
-
+    
     def extract_successful_login(
             self,
             line: str
         ) -> None:
         """
-        Extracts and stores a successful login event from a log line.
+        Backwards-compatible wrapper for storing successful login events.
 
-        Parses the IP address, username, and timestamp from a successful authentication
-        line. Invalid lines with missing IP addresses or timestamp are skipped. Valid
-        entries are stored as successful login events. 
+        This method is kept temporarily so existing live monitoring code and tests
+        continue working while the project transitions to parser_router.py.
 
         Args:
             line (str): Raw successful login log line to parse.
@@ -272,35 +267,16 @@ class LogAnalyser:
             None
         """
 
-        ip = extract_ip(line)
+        entry = parse_log_line(
+            line
+        )
 
-        user = extract_username(line)
-
-        timestamp = extract_timestamp(line)
-
-        if not ip:
-
-            logging.warning(
-                f"Skipping successful login line with missing IP: {line.strip()}"
-            )
+        if entry is None or entry.status != "SUCCESS":
 
             return
         
-        if not timestamp:
-
-            logging.warning(
-                f"Skipping successful login line with missing timestamp: {line.strip()}"
-            )
-
-            return
-
-        self.successful_logins.append(
-            LogEntry(
-                ip=ip,
-                user=user, 
-                timestamp=timestamp, 
-                status="SUCCESS"
-            )
+        self.store_entry(
+            entry
         )
 
     def extract_ftp_login(
@@ -308,11 +284,10 @@ class LogAnalyser:
                 line: str
         ) -> None:
         """
-        Extracts and stores an FTP authentication event from a log line.
+        Backwards-compatible wrapper for storing FTP authentication events.
 
-        Parses the IP address, username, timestamp, and status from a defined
-        FTP authentication log format. Invalid FTP lines with missing IP,
-        timestamp, or status are skipped safely.
+        This method is kept temporarily so existing FTP tests and live monitoring
+        code continue working while the project transitions to parser_router.py.
 
         Args:
             line (str): Raw FTP authentication log line to parse.
@@ -321,75 +296,14 @@ class LogAnalyser:
             None
         """
 
-        ip = extract_ip(line)
+        entry = parse_log_line(
+            line
+        )
 
-        user = extract_ftp_username(line)
-
-        timestamp = extract_timestamp(line)
-
-        status = extract_ftp_status(line)
-
-        if not ip:
-
-            logging.warning(
-                f"Skipping FTP login line with missing IP: {line.strip()}"
-            )
+        if entry is None or entry.service != "FTP":
 
             return
         
-        if not user:
-
-            logging.warning(
-                f"Skipping FTP login line with missing username: {line.strip()}"
-            )
-
-            return
-        
-        if not timestamp:
-
-            logging.warning(
-                f"Skipping FTP login line with missing username: {line.strip()}"
-            )
-
-            return
-        
-        if status is None:
-
-            logging.warning(
-                f"Skipping FTP login line with missing username: {line.strip()}"
-            )
-
-            return
-        
-        if status == "FAILED":
-
-            self.failed_ip_counts[ip] = (
-                self.failed_ip_counts.get(ip, 0) + 1
-            )
-
-            attempts = self.failed_ip_counts[ip]
-
-            severity = get_severity_level(attempts)
-
-            self.failed_logins.append(
-                LogEntry(
-                    ip=ip,
-                    user=user,
-                    timestamp=timestamp,
-                    status="FAILED",
-                    severity=severity,
-                    service="FTP"
-                )
-            )
-
-            return
-        
-        self.successful_logins.append(
-            LogEntry(
-                ip=ip,
-                user=user, 
-                timestamp=timestamp, 
-                status="SUCCESS",
-                service="FTP"
-            )
+        self.store_entry(
+            entry
         )

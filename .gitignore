@@ -1,19 +1,24 @@
 # Python
-.pytest_cache/
 __pycache__/
-*.pyc
-logs/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Virtual environment
+# Virtual environments and secrets
 venv/
-.env/
+.venv/
+.env
+.env.*
 
-# VS Code
+# Runtime output
+logs/
+reports/*.txt
+reports/*.json
+
+# IDE
 .vscode/
 *.code-workspace
 
 # OS
 .DS_Store
-
-# Personal Files
-pytest.ini

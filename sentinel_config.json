@@ -3,7 +3,9 @@
         "log_files/generated.log",
         "log_files/auth.log",
         "log_files/brute_force.log",
-        "log_files/malformed_logs.log"
+        "log_files/malformed_logs.log",
+        "log_files/ftp_auth.log",
+        "log_files/http_auth.log"
     ],
 
     "thresholds": {

@@ -4,35 +4,7 @@ from app.log_analyser.log_analyser import LogAnalyser
 from app.parsers.parser_router import parse_log_line
 
 
-def store_parsed_line(
-        analyser: LogAnalyser,
-        line: str
-    ) -> None:
-    """
-    Parses a log line and stores it in the analyser if valid.
-
-    Args:
-        analyser (LogAnalyser): Log analyser instance to update.
-        line (str): Raw log line to parse.
-
-    Returns:
-        None
-    """
-
-    entry = parse_log_line(
-        line
-    )
-
-    if entry is None:
-
-        return
-
-    analyser.store_entry(
-        entry
-    )
-
-
-def test_anonymous_ftp_success_triggers_detection() -> None:
+def test_anonymous_ftp_success_triggers_detection(store_parsed_line) -> None:
     
     analyser = LogAnalyser()
 
@@ -56,7 +28,7 @@ def test_anonymous_ftp_success_triggers_detection() -> None:
     assert results[0].severity == "MEDIUM"
 
 
-def test_normal_ftp_user_does_not_trigger_anonymous_detection() -> None:
+def test_normal_ftp_user_does_not_trigger_anonymous_detection(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -77,7 +49,7 @@ def test_normal_ftp_user_does_not_trigger_anonymous_detection() -> None:
     assert len(results) == 0
 
 
-def test_anonymous_ftp_failed_login_does_not_trigger_detection() -> None:
+def test_anonymous_ftp_failed_login_does_not_trigger_detection(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -98,7 +70,7 @@ def test_anonymous_ftp_failed_login_does_not_trigger_detection() -> None:
     assert len(results) == 0
 
 
-def test_ftp_successful_login_is_parsed() -> None:
+def test_ftp_successful_login_is_parsed(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -122,7 +94,7 @@ def test_ftp_successful_login_is_parsed() -> None:
     assert entry.service == "FTP"
 
 
-def test_ftp_failed_login_is_parsed() -> None:
+def test_ftp_failed_login_is_parsed(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -146,7 +118,7 @@ def test_ftp_failed_login_is_parsed() -> None:
     assert entry.service == "FTP"
 
 
-def test_malformed_ftp_line_does_not_crash() -> None:
+def test_malformed_ftp_line_does_not_crash(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 

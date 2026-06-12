@@ -5,35 +5,7 @@ from app.log_analyser.log_analyser import LogAnalyser
 from app.parsers.parser_router import parse_log_line
 
 
-def store_parsed_line(
-        analyser: LogAnalyser,
-        line: str
-    ) -> None:
-    """
-    Parses a log line and stores it in the analyser if valid.
-
-    Args:
-        analyser (LogAnalyser): Log analyser instance to update.
-        line (str): Raw log line to parse.
-
-    Returns:
-        None
-    """
-
-    entry = parse_log_line(
-        line
-    )
-
-    if entry is None:
-
-        return
-
-    analyser.store_entry(
-        entry
-    )
-
-
-def test_parse_http_line_returns_log_entry_for_failed_login() -> None:
+def test_parse_http_line_returns_log_entry_for_failed_login(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -60,7 +32,7 @@ def test_parse_http_line_returns_log_entry_for_failed_login() -> None:
     assert entry.path == "/login?user=admin"
     assert entry.status_code == 401
 
-def test_parse_http_line_returns_log_entry_for_successful_login() -> None:
+def test_parse_http_line_returns_log_entry_for_successful_login(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
 
@@ -80,10 +52,49 @@ def test_parse_http_line_returns_log_entry_for_successful_login() -> None:
 
     assert entry.ip == "203.0.113.10"
     assert entry.user == "guest"
-    assert entry.timestamp == datetime(2026, 4, 17, 12, 0, 8) #"%d/%b/%Y:%H:%M:%S"
+    assert entry.timestamp == datetime(2026, 4, 17, 12, 0, 8)
     assert entry.status == "SUCCESS"
     assert entry.service == "HTTP"
     assert entry.method == "POST"
     assert entry.path == "/login?user=guest"
     assert entry.status_code == 200
 
+def test_parse_http_line_returns_none_for_non_login_path() -> None:
+
+    line = (
+        '45.33.32.157 - - [17/Apr/2026:12:07:00 +0000] '
+        '"GET /products HTTP/1.1" 200 900'
+    )
+
+    entry = parse_log_line(line)
+
+    assert entry is None
+
+def test_extract_http_status_ignores_404_for_now() -> None:
+
+    line = (
+        '45.33.32.158 - - [17/Apr/2026:12:08:00 +0000] '
+        '"POST /login?user=admin HTTP/1.1" 404 300'
+    )
+
+    entry = parse_log_line(line)
+
+    assert entry is None
+
+def test_parser_router_parses_http_log_line() -> None:
+
+    line = (
+        '192.0.2.44 - - [17/Apr/2026:12:05:00 +0000] '
+        '"POST /login?user=deploy HTTP/1.1" 302 400'
+    )
+
+    entry = parse_log_line(line)
+
+    assert entry is not None
+    assert entry.service == "HTTP"
+    assert entry.status == "SUCCESS"
+    assert entry.ip == "192.0.2.44"
+    assert entry.user == "deploy"
+    assert entry.method == "POST"
+    assert entry.path == "/login?user=deploy"
+    assert entry.status_code == 302

@@ -69,7 +69,7 @@ class Interaction:
             display_log_analysis_menu()
 
             choice = input(
-                "\nSelect an option (1-20): "
+                "\nSelect an option (1-21): "
             ).strip()
 
             if choice == "1":

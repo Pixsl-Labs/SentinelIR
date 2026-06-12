@@ -62,3 +62,23 @@ Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168
 Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
 Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
 Apr 12 2026 12:00:01 server vsftpd[2101]: FTP LOGIN FAILED user=admin ip=192.168.1.30
+Apr 16 2026 12:00:00 server sshd[123]: Accepted password for guest from 192.168.1.5 port 22 ssh2
+Apr 16 2026 12:00:01 server sshd[123]: Accepted password for admin from 192.168.1.6 port 22 ssh2
+Apr 16 2026 12:00:02 server sshd[123]: Accepted password for deploy from 192.168.1.7 port 22 ssh2
+Apr 16 2026 12:01:00 server sshd[123]: Failed password for root from 192.168.1.50 port 22 ssh2
+Apr 16 2026 12:01:01 server sshd[123]: Failed password for root from 192.168.1.50 port 22 ssh2
+Apr 16 2026 12:01:02 server sshd[123]: Failed password for root from 192.168.1.50 port 22 ssh2
+Apr 16 2026 12:01:03 server sshd[123]: Failed password for root from 192.168.1.50 port 22 ssh2
+Apr 16 2026 12:01:04 server sshd[123]: Failed password for root from 192.168.1.50 port 22 ssh2
+Apr 16 2026 12:02:00 server sshd[124]: Failed password for deploy from 192.168.1.60 port 22 ssh2
+Apr 16 2026 12:02:01 server sshd[124]: Failed password for deploy from 192.168.1.60 port 22 ssh2
+Apr 16 2026 12:02:02 server sshd[124]: Failed password for deploy from 192.168.1.60 port 22 ssh2
+Apr 16 2026 12:02:03 server sshd[124]: Accepted password for deploy from 192.168.1.60 port 22 ssh2
+Apr 16 2026 12:03:00 server sshd[123]: Failed password for admin from 10.20.0.1 port 22 ssh2
+Apr 16 2026 12:03:01 server sshd[123]: Failed password for admin from 10.20.0.2 port 22 ssh2
+Apr 16 2026 12:03:02 server sshd[123]: Failed password for admin from 10.20.0.3 port 22 ssh2
+Apr 16 2026 12:03:03 server sshd[123]: Failed password for admin from 10.20.0.4 port 22 ssh2
+Apr 16 2026 12:03:04 server sshd[123]: Failed password for admin from 10.20.0.5 port 22 ssh2
+Apr 16 2026 12:04:00 server sshd[123]: Accepted password for guest from 192.168.1.5 port 22 ssh2
+Apr 16 2026 12:04:01 server sshd[123]: Accepted password for admin from 192.168.1.6 port 22 ssh2
+Apr 16 2026 12:04:02 server sshd[123]: Accepted password for deploy from 192.168.1.7 port 22 ssh2

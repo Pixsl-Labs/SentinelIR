@@ -110,11 +110,11 @@ def extract_ssh_status(line: str) -> str | None:
             the line is not supported SSH authentication event.
     """
 
-    if is_ssh_failed_login:
+    if is_ssh_failed_login(line):
 
         return "FAILED"
     
-    if is_ssh_successful_login:
+    if is_ssh_successful_login(line):
 
         return "SUCCESS"
     

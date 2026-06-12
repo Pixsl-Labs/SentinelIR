@@ -3,8 +3,8 @@ from app.utils.display import (
     print_status_line
 )
 from app.utils.colours import get_live_status_colour
-from app.utils.parser import (
-    is_ftp_line
+from app.parsers.parser_router import (
+    parse_log_line
 )
 
 from colorama import Fore
@@ -84,50 +84,25 @@ class LiveEventProcessor:
 
             return
         
+        entry = parse_log_line(line)
+
+        if entry is None:
+
+            return
+                
         if self.show_new_logs:
 
             print(f"[NEW LOG] {line}")
 
-        lower_line = line.lower()
+        self.analyser.store_entry(
+            entry
+        )
 
-        if is_ftp_line(line):
+        self.analyser.detection_engine.process_live_detection(
+            self.analyser
+        )
 
-            self.analyser.extract_ftp_login(
-                line
-            )
-
-            self.analyser.detection_engine.process_live_detection(
-                self.analyser
-            )
-
-            self.track_processed_event()
-
-        elif "failed password" in lower_line:
-
-            self.analyser.extract_failed_ip(
-                line
-            )
-
-            self.analyser.detection_engine.process_live_detection(
-                self.analyser
-            )
-
-            self.track_processed_event()
-
-        elif (
-            "accepted password" in lower_line
-            or "session opened" in lower_line
-        ):
-
-            self.analyser.extract_successful_login(
-                line
-            )
-
-            self.analyser.detection_engine.process_live_detection(
-                self.analyser
-            )
-
-            self.track_processed_event()
+        self.track_processed_event()
 
     def print_live_stats(self) -> None:
         """

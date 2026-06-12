@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.log_analyser.log_analyser import LogAnalyser
 from app.monitoring.live_event_processor import LiveEventProcessor
 
@@ -23,8 +25,13 @@ def test_live_processor_adds_failed_login():
 
     processor.process_line(line)
 
+    entry = analyser.failed_logins[0]
+
     assert len(analyser.failed_logins) == 1
     assert analyser.failed_ip_counts["192.168.1.50"] == 1
+    assert entry.user == "root"
+    assert entry.status == "FAILED"
+    assert entry.service == "SSH"
 
 
 def test_live_processor_adds_successful_login():
@@ -234,11 +241,13 @@ def test_live_processor_adds_failed_ftp_login() -> None:
 
     processor.process_line(failed_line)
 
+    entry = analyser.failed_logins[0]
+
     assert len(analyser.failed_logins) == 1
     assert analyser.failed_ip_counts["192.168.1.30"] == 1
-    assert analyser.failed_logins[0].user == "admin"
-    assert analyser.failed_logins[0].status == "FAILED"
-    assert analyser.failed_logins[0].service == "FTP"
+    assert entry.user == "admin"
+    assert entry.status == "FAILED"
+    assert entry.service == "FTP"
 
 def test_live_processor_adds_successful_ftp_login():
 
@@ -256,12 +265,13 @@ def test_live_processor_adds_successful_ftp_login():
 
     processor.process_line(line)
 
+    entry = analyser.successful_logins[0]
+
     assert len(analyser.successful_logins) == 1
-    assert analyser.successful_logins[0].ip == "192.168.1.40"
-    assert analyser.successful_logins[0].user == "backup"
-    assert analyser.successful_logins[0].status == "SUCCESS"
-    assert analyser.successful_logins[0].service == "FTP"
-    assert processor.events_processed == 1
+    assert entry.ip == "192.168.1.40"
+    assert entry.user == "backup"
+    assert entry.status == "SUCCESS"
+    assert entry.service == "FTP"
 
 def test_live_processor_processes_anonymous_ftp_login():
 
@@ -279,11 +289,13 @@ def test_live_processor_processes_anonymous_ftp_login():
 
     processor.process_line(line)
 
+    entry = analyser.successful_logins[0]
+
     assert len(analyser.successful_logins) == 1
-    assert analyser.successful_logins[0].ip == "203.0.113.50"
-    assert analyser.successful_logins[0].user == "anonymous"
-    assert analyser.successful_logins[0].status == "SUCCESS"
-    assert analyser.successful_logins[0].service == "FTP"
+    assert entry.ip == "203.0.113.50"
+    assert entry.user == "anonymous"
+    assert entry.status == "SUCCESS"
+    assert entry.service == "FTP"
     assert processor.events_processed == 1
 
 def test_live_ftp_event_counter_increments():
@@ -326,6 +338,110 @@ def test_live_processor_ignores_malformed_ftp_line():
 
     line = (
         "BROKEN FTP LINE missing timestamp user anonymous ip unknown"
+    )
+
+    processor.process_line(line)
+
+    assert len(analyser.successful_logins) == 0
+    assert len(analyser.failed_logins) == 0
+    assert processor.events_processed == 0
+
+def test_live_processor_adds_failed_http_login() -> None:
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    failed_line = (
+        '203.0.113.11 - - [17/Apr/2026:12:01:01 +0000] '
+        '"POST /login?user=admin HTTP/1.1" 401 532'
+    )
+
+    processor.process_line(failed_line)
+
+    entry = analyser.failed_logins[0]
+
+    assert len(analyser.failed_logins) == 1
+    assert analyser.failed_ip_counts["203.0.113.11"] == 1
+    assert entry.user == "admin"
+    assert entry.status == "FAILED"
+    assert entry.service == "HTTP"
+    assert entry.method == "POST"
+    assert entry.path == "/login?user=admin"
+    assert entry.status_code == 401
+
+def test_live_processor_adds_successful_http_login():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    line = (
+        '203.0.113.10 - - [17/Apr/2026:12:00:08 +0000] '
+        '"POST /login?user=guest HTTP/1.1" 200 532'
+    )
+
+    processor.process_line(line)
+
+    assert len(analyser.successful_logins) == 1
+
+    entry = analyser.successful_logins[0]
+
+    assert entry.ip == "203.0.113.10"
+    assert entry.user == "guest"
+    assert entry.timestamp == datetime(2026, 4, 17, 12, 0, 8) #"%d/%b/%Y:%H:%M:%S"
+    assert entry.status == "SUCCESS"
+    assert entry.service == "HTTP"
+    assert entry.method == "POST"
+    assert entry.path == "/login?user=guest"
+    assert entry.status_code == 200
+
+def test_live_http_event_counter_increments():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    first_line = (
+        '203.0.113.10 - - [17/Apr/2026:12:00:08 +0000] '
+        '"POST /login?user=guest HTTP/1.1" 200 532'
+    )
+    
+    second_line = (
+        '203.0.113.11 - - [17/Apr/2026:12:01:10 +0000] '
+        '"POST /login?user=admin HTTP/1.1" 200 532'
+    )
+
+    processor.process_line(first_line)
+
+    assert len(analyser.successful_logins) == 1
+    assert processor.events_processed == 1
+
+    processor.process_line(second_line)
+
+    assert len(analyser.successful_logins) == 2
+    assert processor.events_processed == 2
+
+def test_live_processor_ignores_malformed_http_line():
+
+    analyser = LogAnalyser()
+
+    processor = LiveEventProcessor(
+        analyser=analyser,
+        show_new_logs=False
+    )
+
+    line = (
+        "BROKEN HTTP LINE missing timestamp user guest ip unknown"
     )
 
     processor.process_line(line)

@@ -8,11 +8,15 @@ from app.parsers.ssh_parser import (
     is_ssh_line,
     parse_ssh_line
 )
-
 from app.parsers.ftp_parser import (
     is_ftp_line,
     parse_ftp_line
 )
+from app.parsers.http_parser import (
+    is_http_line,
+    parse_http_line
+)
+
 
 def identify_log_line(line: str) -> bool | None:
     """
@@ -38,6 +42,10 @@ def identify_log_line(line: str) -> bool | None:
     if is_ftp_line(line):
 
         return "FTP"
+    
+    if is_http_line(line):
+
+        return "HTTP"
     
     if is_ssh_line(line):
 
@@ -65,6 +73,10 @@ def parse_log_line(line: str) -> LogEntry | None:
     if log_type == "FTP":
 
         return parse_ftp_line(line)
+    
+    if log_type == "HTTP":
+
+        return parse_http_line(line)
     
     if log_type == "SSH":
 

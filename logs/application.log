@@ -90,3 +90,6 @@
 2026-06-12 11:44:57,156 - INFO - [33mMonitoring file: log_files/generated.log
 2026-06-12 11:50:48,489 - INFO - Analysing File: log_files/generated.log
 2026-06-12 11:51:52,426 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-12 13:41:29,133 - INFO - Analysing File: log_files/http_auth.log
+2026-06-12 13:47:26,034 - INFO - Analysing File: log_files/http_auth.log
+2026-06-12 13:54:57,401 - INFO - Analysing File: log_files/http_auth.log

@@ -16,19 +16,32 @@ def is_http_line(line: str) -> bool:
     """
     Checks whether a log line appears to be an HTTP access log line.
 
+    Supports both standard HTTP access logs and SentinelIR generated HTTP logs.
+
     Args:
         line (str): Raw HTTP access log line to check.
 
     Returns:
-        bool: True if the line appears to be HTTP request pattern and status code,
+        bool: True if the line appears to contain HTTP request data,
             otherwise False.
     """
 
-    return re.search(
+    standard_access_log = re.search(
         r'"(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+\S+\s+HTTP/\d(?:\.\d)?"\s+\d{3}',
         line,
         re.IGNORECASE
-    ) is not None
+    )
+
+    sentinelir_http_log = re.search(
+        r"\bHTTP\b.*\bmethod=(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b.*\bpath=\S+.*\bstatus=\d{3}",
+        line,
+        re.IGNORECASE
+    )
+
+    return (
+        standard_access_log is not None
+        or sentinelir_http_log is not None
+    )
 
 def is_http_login(line: str) -> bool:
     """
@@ -77,7 +90,10 @@ def extract_http_timestamp(line: str) -> datetime | None:
     """
     Extracts the timestamp from an HTTP access log line.
 
-    Supports common access log timestamp formats such as:
+    Supports SentinelIR-style timestamps:
+    Apr 17 2026 12:00:08
+
+    Also supports access-log timestamps:
     [12/Apr/2026:12:04:10 +0000]
 
     Args:
@@ -87,19 +103,31 @@ def extract_http_timestamp(line: str) -> datetime | None:
         datetime | None: Parsed timestamp if available, otherwise None.
     """
 
-    match = re.search(
+    sentinelir_match = re.search(
+        r"^([A-Z][a-z]{2}\s+\d{1,2}\s+\d{4}\s+\d{2}:\d{2}:\d{2})",
+        line
+    )
+
+    if sentinelir_match:
+
+        return datetime.strptime(
+            sentinelir_match.group(1),
+            "%b %d %Y %H:%M:%S"
+        )
+
+    access_log_match = re.search(
         r"\[(\d{2}/[A-Za-z]{3}/\d{4}:\d{2}:\d{2}:\d{2})\s+[+-]\d{4}\]",
         line
     )
 
-    if not match:
+    if access_log_match:
 
-        return None
+        return datetime.strptime(
+            access_log_match.group(1),
+            "%d/%b/%Y:%H:%M:%S"
+        )
 
-    return datetime.strptime(
-        match.group(1),
-        "%d/%b/%Y:%H:%M:%S"
-    )
+    return None
 
 def extract_http_method(line: str) -> str | None:
     """
@@ -109,20 +137,30 @@ def extract_http_method(line: str) -> str | None:
         line (str): Raw HTTP access log line.
 
     Returns:
-        str | None: HTTP method such as GET or POST, otherwise False.
+        str | None: HTTP method such as GET or POST, otherwise None.
     """
-    
-    match = re.search(
+
+    custom_match = re.search(
+        r"\bmethod=(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\b",
+        line,
+        re.IGNORECASE
+    )
+
+    if custom_match:
+
+        return custom_match.group(1).upper()
+
+    access_log_match = re.search(
         r'"(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+',
         line,
         re.IGNORECASE
     )
 
-    if not match:
+    if access_log_match:
 
-        return None
-    
-    return match.group(1).upper()
+        return access_log_match.group(1).upper()
+
+    return None
 
 def extract_http_path(line: str) -> str | None:
     """
@@ -135,17 +173,27 @@ def extract_http_path(line: str) -> str | None:
         str | None: Requested path such as /login or /admin, otherwise None.
     """
 
-    match = re.search(
+    custom_match = re.search(
+        r"\bpath=(\S+)",
+        line,
+        re.IGNORECASE
+    )
+
+    if custom_match:
+
+        return custom_match.group(1)
+
+    access_log_match = re.search(
         r'"(?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+(\S+)\s+HTTP/\d(?:\.\d)?"',
         line,
         re.IGNORECASE
     )
 
-    if not match:
+    if access_log_match:
 
-        return None
-    
-    return match.group(1)
+        return access_log_match.group(1)
+
+    return None
 
 def extract_http_username(line: str) -> str:
     """
@@ -185,18 +233,26 @@ def extract_http_status_code(line: str) -> int | None:
             otherwise None.
     """
 
-    match = re.search(
+    custom_match = re.search(
+        r"\bstatus=(\d{3})\b",
+        line,
+        re.IGNORECASE
+    )
+
+    if custom_match:
+
+        return int(custom_match.group(1))
+
+    access_log_match = re.search(
         r'"\s+(\d{3})\b',
         line
     )
 
-    if not match:
+    if access_log_match:
 
-        return None
+        return int(access_log_match.group(1))
 
-    return int(
-        match.group(1)
-    )
+    return None
 
 def extract_http_status(line: str) -> str | None:
     """

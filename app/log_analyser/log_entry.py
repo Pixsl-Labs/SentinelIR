@@ -19,4 +19,4 @@ class LogEntry:
     service: str = "SSH"
     method: str | None = None
     path: str | None = None
-    status_code: str | None = None
+    status_code: int | None = None

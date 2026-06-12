@@ -18,12 +18,12 @@ from app.parsers.http_parser import (
 )
 
 
-def identify_log_line(line: str) -> bool | None:
+def identify_log_line(line: str) -> str | None:
     """
     Identifies the supported log type for a raw log line.
 
     The router checks known parser modules in a controlled order. FTP is checked
-    before SHS because FTP log lines use a clear "FTP LOGIN" pattern, while SSH
+    before SSH because FTP log lines use a clear "FTP LOGIN" pattern, while SSH
     lines use authentication phrases such as "failed password" and 
     "accepted password".
 

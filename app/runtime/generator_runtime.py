@@ -4,12 +4,12 @@ from app.utils.display import (
 )
 
 
-from app.generator.scenarios import (
-    generate_brute_force_scenario,
-    generate_mixed_attack_scenario,
-    generate_normal_activity,
-    generate_suspicious_success_scenario,
-    generate_user_targeting_scenario
+from app.generator.ssh_scenarios import (
+    generate_ssh_brute_force_scenario,
+    generate_ssh_mixed_attack_scenario,
+    generate_ssh_normal_activity,
+    generate_ssh_suspicious_success_scenario,
+    generate_ssh_user_targeting_scenario
 )
 from app.generator.log_generator import (
     write_lines_to_file,
@@ -105,23 +105,23 @@ class GeneratorRuntime:
 
             if choice == "1":
 
-                return "Brute force", generate_brute_force_scenario()
+                return "Brute force", generate_ssh_brute_force_scenario()
             
             elif choice == "2":
 
-                return "Suspicious success", generate_suspicious_success_scenario()
+                return "Suspicious success", generate_ssh_suspicious_success_scenario()
             
             elif choice == "3":
 
-                return "User targeting", generate_user_targeting_scenario()
+                return "User targeting", generate_ssh_user_targeting_scenario()
             
             elif choice == "4":
 
-                return "Normal activity", generate_normal_activity()
+                return "Normal activity", generate_ssh_normal_activity()
             
             elif choice == "5":
 
-                return "Mixed attack", generate_mixed_attack_scenario()
+                return "Mixed attack", generate_ssh_mixed_attack_scenario()
             
             elif choice == "6":
 

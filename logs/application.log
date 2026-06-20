@@ -99,3 +99,5 @@
 2026-06-12 18:43:04,960 - INFO - Analysing File: log_files/http_auth.log
 2026-06-12 22:08:56,958 - INFO - Analysing File: log_files/ftp_auth.log
 2026-06-12 22:09:05,382 - INFO - Analysing File: log_files/http_auth.log
+2026-06-20 18:20:17,320 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-20 18:31:07,330 - INFO - Analysing File: log_files/ftp_auth.log

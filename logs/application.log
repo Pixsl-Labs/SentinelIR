@@ -106,3 +106,5 @@
 2026-06-20 19:36:27,598 - INFO - [33mMonitoring file: log_files/generated.py
 2026-06-20 19:36:27,598 - ERROR - [91mError: File 'log_files/generated.py' not found.
 2026-06-20 19:36:39,054 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-20 19:39:44,673 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-20 19:44:05,670 - INFO - [33mMonitoring file: log_files/generated.log

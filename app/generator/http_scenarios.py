@@ -1,6 +1,98 @@
 from datetime import datetime, timedelta
 
 
+def format_http_timestamp(timestamp: datetime) -> str:
+    """
+    Formats a datetime object using HTTP access-log timestamp format.
+
+    Example:
+        16/Apr/2026:12:01:00
+
+    Args:
+        timestamp (datetime): Timestamp to format.
+
+    Returns:
+        str: Formatted HTTP access-log timestamp.
+    """
+
+    return timestamp.strftime("%d/%b/%Y:%H:%M:%S")
+
+def generate_http_failed_scenario(
+        ip: str = "192.168.1.45",
+        user: str = "root",
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a single failed HTTP login scenario.
+
+    Creates one failed HTTP authentication event for the selected username and
+    source IP address. This can be used to test basic HTTP failed-login parsing,
+    failed login storage, suspicious IP tracking, and severity assignment.
+
+    Args:
+        ip (str): Source IP address used in the failed HTTP login event.
+            Defaults to "192.168.1.45".
+        user (str): Username used in the failed HTTP login event.
+            Defaults to "root".
+        start_time (datetime | None): Timestamp for the generated log line.
+            Defaults to None.
+
+    Returns:
+        list[str]: Generated HTTP access log line.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 13, 22, 5, 0)
+
+    formatted_time = format_http_timestamp(start_time)
+
+    line = (
+            f'{ip} - - '
+            f'[{formatted_time} +0000] '
+            f'"POST /login?user={user} HTTP/1.1" '
+            f'401 532'
+    )
+
+    return [line]
+
+def generate_http_success_scenario(
+        ip: str = "192.168.1.34",
+        user: str = "guest",
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a single successful HTTP login scenario.
+
+    Creates one successful HTTP authentication event for the selected username and
+    source IP address. This can be used to test HTTP success parsing, successful
+    login storage, and normal HTTP authentication activity.
+
+    Args:
+        ip (str): Source IP address used in the successful HTTP login event.
+            Defaults to "192.168.1.34".
+        user (str): Username used in the successful HTTP login event.
+            Defaults to "guest".
+        start_time (datetime | None): Timestamp for the generated log line.
+            Defaults to None.
+
+    Returns:
+        list[str]: Generated HTTP access log line.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 13, 19, 5, 0)
+
+    formatted_time = format_http_timestamp(start_time)
+
+    line = (
+            f'{ip} - - '
+            f'[{formatted_time} +0000] '
+            f'"POST /login?user={user} HTTP/1.1" '
+            f'200 532'
+    )
+
+    return [line]
+
 def generate_http_brute_force_scenario(
         ip: str = "203.0.113.11",
         user: str = "admin",
@@ -25,7 +117,7 @@ def generate_http_brute_force_scenario(
             log lines. Defaults to None.
 
     Returns:
-        list[str]: Generated HTTP authentication log lines.
+        list[str]: Generated HTTP access log lines.
     """
 
     if start_time is None:
@@ -74,7 +166,7 @@ def generate_http_suspicious_success_scenario(
             log line. Defaults to None.
 
     Returns:
-        list[str]: Generated HTTP authentication log lines.
+        list[str]: Generated HTTP access log lines.
     """
 
     if start_time is None:
@@ -86,7 +178,7 @@ def generate_http_suspicious_success_scenario(
 
         timestamp = start_time + timedelta(seconds=event_number)
 
-        formatted_time = timestamp.strftime("%b %d %Y %H:%M:%S")
+        formatted_time = format_http_timestamp(timestamp)
 
         failed_line = (
             f'{ip} - - '
@@ -98,7 +190,7 @@ def generate_http_suspicious_success_scenario(
         lines.append(failed_line)
 
     success_time = start_time + timedelta(seconds=failed_attempts)
-    formatted_time = success_time.strftime("%b %d %Y %H:%M:%S")
+    formatted_time = format_http_timestamp(success_time)
 
     successful_line = (
         f'{ip} - - '
@@ -135,7 +227,7 @@ def generate_http_user_targeting_scenario(
             log line. Defaults to None.
 
     Returns:
-        list[str]: Generated HTTP authentication log lines.
+        list[str]: Generated HTTP access log lines.
     """
 
     if start_time is None:
@@ -149,7 +241,7 @@ def generate_http_user_targeting_scenario(
 
         timestamp = start_time + timedelta(seconds=event_number)
 
-        formatted_time = timestamp.strftime("%b %d %Y %H:%M:%S")
+        formatted_time = format_http_timestamp(timestamp)
 
         line = (
             f'{base_ip}{initial_ip} - - '
@@ -188,7 +280,7 @@ def generate_http_normal_activity(
             log line. Defaults to None.
 
     Returns:
-        list[str]: Generated HTTP authentication log lines.
+        list[str]: Generated HTTP access log lines.
     """
 
     if users is None:
@@ -206,7 +298,7 @@ def generate_http_normal_activity(
 
         timestamp = start_time + timedelta(seconds=event_number)
 
-        formatted_time = timestamp.strftime("%b %d %Y %H:%M:%S")
+        formatted_time = format_http_timestamp(timestamp)
 
         user = users[event_number % len(users)]
 
@@ -238,7 +330,7 @@ def generate_http_mixed_attack_scenario(
             the generated scenario. Defaults to None.
 
     Returns:
-        list[str]: Generated HTTP authentication log lines.
+        list[str]: Generated HTTP access log lines.
     """
 
     if start_time is None:
@@ -252,6 +344,24 @@ def generate_http_mixed_attack_scenario(
         generate_http_normal_activity(
             events=3,
             start_time=start_time
+        )
+    )
+
+    # Failed login
+
+    lines.extend(
+        generate_http_failed_scenario(
+            ip="192.168.1.45",
+            user="root"
+        )
+    )
+
+    # Successful login
+
+    lines.extend(
+        generate_http_success_scenario(
+            ip="192.168.1.34",
+            user="guest"
         )
     )
 

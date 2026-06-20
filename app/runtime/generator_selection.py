@@ -1,11 +1,14 @@
 from colorama import Fore
+from datetime import datetime
 
 from app.generator.ssh_scenarios import (
     generate_ssh_brute_force_scenario,
     generate_ssh_mixed_attack_scenario,
     generate_ssh_normal_activity,
     generate_ssh_suspicious_success_scenario,
-    generate_ssh_user_targeting_scenario
+    generate_ssh_user_targeting_scenario,
+    generate_ssh_failed_scenario,
+    generate_ssh_success_scenario
 )
 from app.generator.ftp_scenarios import (
     generate_ftp_failed_scenario,
@@ -15,14 +18,16 @@ from app.generator.ftp_scenarios import (
     generate_ftp_mixed_attack_scenario,
     generate_ftp_normal_activity,
     generate_ftp_suspicious_success_scenario,
-    generate_ftp_user_targeting_scenario
+    generate_ftp_user_targeting_scenario,
 )
 from app.generator.http_scenarios import (
     generate_http_brute_force_scenario,
     generate_http_mixed_attack_scenario,
     generate_http_normal_activity,
     generate_http_suspicious_success_scenario,
-    generate_http_user_targeting_scenario
+    generate_http_user_targeting_scenario,
+    generate_http_failed_scenario,
+    generate_http_success_scenario
 )
 
 from app.utils.display import (
@@ -105,36 +110,46 @@ def select_ssh_scenario() -> tuple[str, list[str]] | None:
             Fore.GREEN
         )
 
-        print("1. Brute force")
-        print("2. Suspicious success")
-        print("3. User targeting")
-        print("4. Normal activity")
-        print("5. Mixed attack")
-        print("6. Exit")
+        print("1. Failed login")
+        print("2. Successful login")
+        print("3. Brute force")
+        print("4. Suspicious success")
+        print("5. User targeting")
+        print("6. Normal activity")
+        print("7. Mixed attack")
+        print("8. Exit")
 
-        choice = input("\nSelect scenario: (1-6) ").strip()
+        choice = input("\nSelect scenario: (1-8) ").strip()
 
         if choice == "1":
 
-            return "Brute force", generate_ssh_brute_force_scenario()
+            return "Failed login", generate_ssh_failed_scenario()
         
         elif choice == "2":
 
-            return "Suspicious success", generate_ssh_suspicious_success_scenario()
-        
+            return "Successful login", generate_ssh_success_scenario()
+
         elif choice == "3":
 
-            return "User targeting", generate_ssh_user_targeting_scenario()
+            return "Brute force", generate_ssh_brute_force_scenario()
         
         elif choice == "4":
 
-            return "Normal activity", generate_ssh_normal_activity()
+            return "Suspicious success", generate_ssh_suspicious_success_scenario()
         
         elif choice == "5":
 
-            return "Mixed attack", generate_ssh_mixed_attack_scenario()
+            return "User targeting", generate_ssh_user_targeting_scenario()
         
         elif choice == "6":
+
+            return "Normal activity", generate_ssh_normal_activity()
+        
+        elif choice == "7":
+
+            return "Mixed attack", generate_ssh_mixed_attack_scenario()
+        
+        elif choice == "8":
 
             return None
         
@@ -238,36 +253,46 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
             Fore.GREEN
         )
 
-        print("1. Brute force")
-        print("2. Suspicious success")
-        print("3. User targeting")
-        print("4. Normal activity")
-        print("5. Mixed attack")
-        print("6. Exit")
+        print("1. Failed login")
+        print("2. Sucessful login")
+        print("3. Brute force")
+        print("4. Suspicious success")
+        print("5. User targeting")
+        print("6. Normal activity")
+        print("7. Mixed attack")
+        print("8. Exit")
 
-        choice = input("\nSelect scenario: (1-6) ").strip()
+        choice = input("\nSelect scenario: (1-8) ").strip()
 
         if choice == "1":
 
-            return "Brute force", generate_http_brute_force_scenario()
+            return "Failed login", generate_http_failed_scenario()
         
         elif choice == "2":
 
-            return "Suspicious success", generate_http_suspicious_success_scenario()
-        
+            return "Successful login", generate_http_success_scenario()
+
         elif choice == "3":
 
-            return "User targeting", generate_http_user_targeting_scenario()
+            return "Brute force", generate_http_brute_force_scenario()
         
         elif choice == "4":
 
-            return "Normal activity", generate_http_normal_activity()
+            return "Suspicious success", generate_http_suspicious_success_scenario()
         
         elif choice == "5":
 
-            return "Mixed attack", generate_http_mixed_attack_scenario()
+            return "User targeting", generate_http_user_targeting_scenario()
         
         elif choice == "6":
+
+            return "Normal activity", generate_http_normal_activity()
+        
+        elif choice == "7":
+
+            return "Mixed attack", generate_http_mixed_attack_scenario()
+        
+        elif choice == "8":
 
             return None
         
@@ -276,3 +301,75 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
             print_empty_message(
                 "Invalid scenario choice."
             )
+
+# def select_mixed_services(self) -> tuple[str, list[str]] | None:
+#     """
+#     Prompts the user to select a mixed service attack scenario.
+
+#     Mixed service scenarios combine generated authentication activity from
+#     multiple supported services, such as SSH, FTP, and HTTP. This allows
+#     SentinelIR to test multi-service parsing, static analysis, live monitoring,
+#     and detection behaviour using one generated log file.
+
+#     Returns:
+#         tuple[str, list[str]] | None: Selected mixed scenario name and generated
+#             log lines, or None if the user exits the mixed service menu.
+#     """
+
+#     while True:
+
+#         print_section_header(
+#             "Select Mixed Service Scenario:",
+#             Fore.GREEN
+#         )
+
+#         print("1. SSH + FTP + HTTP")
+#         print("2. SSH + FTP")
+#         print("3. SSH + HTTP")
+#         print("4. FTP + HTTP")
+#         print("5. Exit")
+
+#         choice = input("\nSelect mixed service scenario: (1-5) ").strip()
+
+#         if choice == "1":
+
+#             return "Mixed service attack", generate_mixed_service_attack_scenario()
+
+#         if choice == "2":
+
+#             return "Mixed SSH + FTP attack", generate_ssh_ftp_mixed_attack_scenario()
+
+#         if choice == "3":
+
+#             return "Mixed SSH + HTTP attack", generate_ssh_http_mixed_attack_scenario()
+
+#         if choice == "4":
+
+#             return "Mixed FTP + HTTP attack", generate_ftp_http_mixed_attack_scenario()
+
+#         if choice == "5":
+
+#             return None
+
+#         print_empty_message(
+#             "Invalid mixed service scenario choice."
+#         )
+
+# def generate_mixed_service_attack_scenario(
+#         start_time: datetime | None = None
+#     ) -> list[str]:
+#     """
+#     Generates a mixed multi-service attack scenario.
+
+#     Combines SSH, FTP, and HTTP authentication activity into one generated
+#     scenario. This can be used to test whether SentinelIR can parse, analyse,
+#     live-monitor, and detect suspicious behaviour across multiple log formats
+#     within the same file.
+
+#     Args:
+#         start_time (datetime | None): Timestamp used as the base time for
+#             the generated scenario. Defaults to None.
+
+#     Returns:
+#         list[str]: Generated SSH, FTP, and HTTP authentication-related log lines.
+#     """

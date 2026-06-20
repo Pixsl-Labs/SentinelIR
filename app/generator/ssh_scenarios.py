@@ -1,6 +1,80 @@
 from datetime import datetime, timedelta
 
 
+def generate_ssh_failed_scenario(
+        ip: str = "192.168.1.10",
+        user: str = "root",
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a single failed SSH login scenario.
+
+    Creates one failed SSH authentication event for the selected username and
+    source IP address. This can be used to test basic SSH failed-login parsing,
+    failed login storage, suspicious IP tracking, and severity assignment.
+
+    Args:
+        ip (str): Source IP address used in the failed SSH login event.
+            Defaults to "192.168.1.10".
+        user (str): Username used in the failed SSH login event.
+            Defaults to "root".
+        start_time (datetime | None): Timestamp for the generated log line.
+            Defaults to None.
+
+    Returns:
+        list[str]: Generated SSH authentication log line.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 13, 22, 5, 0)
+
+    formatted_time = start_time.strftime("%b %d %Y %H:%M:%S")
+
+    line = (
+            f"{formatted_time} server sshd[124]: "
+            f"Failed password for {user} "
+            f"from {ip} port 22 ssh2"
+    )
+
+    return [line]
+
+def generate_ssh_success_scenario(
+        ip: str = "192.168.1.12",
+        user: str = "guest",
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a single successful SSH login scenario.
+
+    Creates one successful SSH authentication event for the selected username and
+    source IP address. This can be used to test SSH success parsing, successful
+    login storage, and normal SSH authentication activity.
+
+    Args:
+        ip (str): Source IP address used in the successful SSH login event.
+            Defaults to "192.168.1.12".
+        user (str): Username used in the successful SSH login event.
+            Defaults to "guest".
+        start_time (datetime | None): Timestamp for the generated log line.
+            Defaults to None.
+
+    Returns:
+        list[str]: Generated SSH authentication log line.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 13, 19, 5, 0)
+
+    formatted_time = start_time.strftime("%b %d %Y %H:%M:%S")
+
+    line = (
+            f"{formatted_time} server sshd[123]: "
+            f"Accepted password for {user} "
+            f"from {ip} port 22 ssh2"
+    )
+
+    return [line]
+
 def generate_ssh_brute_force_scenario(
         ip: str = "192.168.1.10",
         user: str = "root",
@@ -247,6 +321,24 @@ def generate_ssh_mixed_attack_scenario(
         generate_ssh_normal_activity(
             events=3,
             start_time=start_time
+        )
+    )
+
+    # Failed login
+
+    lines.extend(
+        generate_ssh_failed_scenario(
+            ip="192.168.1.10",
+            user="root"
+        )
+    )
+
+    # Successful login
+
+    lines.extend(
+        generate_ssh_success_scenario(
+            ip="192.168.1.12",
+            user="guest"
         )
     )
 

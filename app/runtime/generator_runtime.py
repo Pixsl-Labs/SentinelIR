@@ -10,7 +10,8 @@ from app.runtime.generator_selection import (
     select_scenario_type,
     select_ssh_scenario,
     select_ftp_scenario,
-    select_http_scenario
+    select_http_scenario,
+    select_mixed_services
 )
 
 from app.generator.log_generator import (
@@ -55,6 +56,10 @@ class GeneratorRuntime:
         elif scenario_type == "HTTP":
 
             selected_scenario = select_http_scenario()
+
+        elif scenario_type == "MIXED":
+
+            selected_scenario = select_mixed_services()
 
         else:
 
@@ -138,17 +143,30 @@ class GeneratorRuntime:
 
     def confirm_scenario(self) -> bool:
         """
-        Ask the user to confirm scenario generation.
+        Asks the user to confirm scenario generation.
+
+        Pressing Enter defaults to yes.
 
         Returns:
             bool: True if the user confirms, otherwise False.
         """
 
-        confirm = input(
-            "\nContinue with this scenario? (y/n): "
-        ).strip().lower()
+        while True:
+            confirm = input(
+                "\nContinue with this scenario? (Y/n): "
+            ).strip().lower()
 
-        return confirm == "y"
+            if confirm in ["", "y", "yes"]:
+
+                return True
+
+            if confirm in ["n", "no"]:
+
+                return False
+
+            print_empty_message(
+                "Invalid choice. Press Enter/y for yes or n for no."
+            )
     
     def prepare_output_file(
             self,

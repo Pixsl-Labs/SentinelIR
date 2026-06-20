@@ -221,7 +221,7 @@ def select_ftp_scenario() -> tuple[str, list[str]] | None:
         
         elif choice == "8":
 
-            return "Mixed attack", generate_ftp_normal_activity()
+            return "Mixed attack", generate_ftp_mixed_attack_scenario()
         
         elif choice == "9":
 
@@ -302,7 +302,7 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
                 "Invalid scenario choice."
             )
 
-def select_mixed_services(self) -> tuple[str, list[str]] | None:
+def select_mixed_services() -> tuple[str, list[str]] | None:
     """
     Prompts the user to select a mixed service attack scenario.
 

@@ -9,7 +9,8 @@ from app.utils.display import (
 from app.runtime.generator_selection import (
     select_scenario_type,
     select_ssh_scenario,
-    select_ftp_scenario
+    select_ftp_scenario,
+    select_http_scenario
 )
 
 from app.generator.log_generator import (
@@ -50,6 +51,10 @@ class GeneratorRuntime:
         elif scenario_type == "FTP":
 
             selected_scenario = select_ftp_scenario()
+
+        elif scenario_type == "HTTP":
+
+            selected_scenario = select_http_scenario()
 
         else:
 

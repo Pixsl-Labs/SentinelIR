@@ -17,6 +17,13 @@ from app.generator.ftp_scenarios import (
     generate_ftp_suspicious_success_scenario,
     generate_ftp_user_targeting_scenario
 )
+from app.generator.http_scenarios import (
+    generate_http_brute_force_scenario,
+    generate_http_mixed_attack_scenario,
+    generate_http_normal_activity,
+    generate_http_suspicious_success_scenario,
+    generate_http_user_targeting_scenario
+)
 
 from app.utils.display import (
     print_section_header,
@@ -202,6 +209,65 @@ def select_ftp_scenario() -> tuple[str, list[str]] | None:
             return "Mixed attack", generate_ftp_normal_activity()
         
         elif choice == "9":
+
+            return None
+        
+        else:
+
+            print_empty_message(
+                "Invalid scenario choice."
+            )
+
+def select_http_scenario() -> tuple[str, list[str]] | None:
+    """
+    Prompts the user to select an HTTP access log scenario.
+
+    Displays available HTTP scenario options and returns the selected scenario name
+    with its generated HTTP authentication log lines. The user can also exit
+    without selecting an HTTP scenario.
+
+    Returns:
+        tuple[str, list[str]] | None: Selected HTTP scenario name and generated
+            log lines, or None if the user exits.
+    """
+
+    while True:
+
+        print_section_header(
+            "Select Scenario:",
+            Fore.GREEN
+        )
+
+        print("1. Brute force")
+        print("2. Suspicious success")
+        print("3. User targeting")
+        print("4. Normal activity")
+        print("5. Mixed attack")
+        print("6. Exit")
+
+        choice = input("\nSelect scenario: (1-6) ").strip()
+
+        if choice == "1":
+
+            return "Brute force", generate_http_brute_force_scenario()
+        
+        elif choice == "2":
+
+            return "Suspicious success", generate_http_suspicious_success_scenario()
+        
+        elif choice == "3":
+
+            return "User targeting", generate_http_user_targeting_scenario()
+        
+        elif choice == "4":
+
+            return "Normal activity", generate_http_normal_activity()
+        
+        elif choice == "5":
+
+            return "Mixed attack", generate_http_mixed_attack_scenario()
+        
+        elif choice == "6":
 
             return None
         

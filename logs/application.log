@@ -101,3 +101,8 @@
 2026-06-12 22:09:05,382 - INFO - Analysing File: log_files/http_auth.log
 2026-06-20 18:20:17,320 - INFO - Analysing File: log_files/ftp_auth.log
 2026-06-20 18:31:07,330 - INFO - Analysing File: log_files/ftp_auth.log
+2026-06-20 19:36:15,277 - INFO - [33mMonitoring file: log_files/generated_log.py
+2026-06-20 19:36:15,277 - ERROR - [91mError: File 'log_files/generated_log.py' not found.
+2026-06-20 19:36:27,598 - INFO - [33mMonitoring file: log_files/generated.py
+2026-06-20 19:36:27,598 - ERROR - [91mError: File 'log_files/generated.py' not found.
+2026-06-20 19:36:39,054 - INFO - [33mMonitoring file: log_files/generated.log

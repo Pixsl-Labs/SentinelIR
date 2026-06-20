@@ -1,24 +1,21 @@
+from colorama import Fore
+import os
+
 from app.utils.display import (
     print_section_header,
     print_empty_message
 )
 
-
-from app.generator.ssh_scenarios import (
-    generate_ssh_brute_force_scenario,
-    generate_ssh_mixed_attack_scenario,
-    generate_ssh_normal_activity,
-    generate_ssh_suspicious_success_scenario,
-    generate_ssh_user_targeting_scenario
+from app.runtime.generator_selection import (
+    select_scenario_type,
+    select_ssh_scenario,
+    select_ftp_scenario
 )
+
 from app.generator.log_generator import (
     write_lines_to_file,
     stream_lines_to_file
 )
-
-
-from colorama import Fore
-import os
 
 
 class GeneratorRuntime:
@@ -41,7 +38,26 @@ class GeneratorRuntime:
             None
         """
 
-        selected_scenario = self.select_scenario()
+        scenario_type = select_scenario_type()
+
+        if scenario_type is None:
+            return
+
+        if scenario_type == "SSH":
+
+            selected_scenario = select_ssh_scenario()
+
+        elif scenario_type == "FTP":
+
+            selected_scenario = select_ftp_scenario()
+
+        else:
+
+            print_empty_message(
+                "Invalid scenario type choice."
+            )
+
+            return
 
         if selected_scenario is None:
             return
@@ -64,7 +80,7 @@ class GeneratorRuntime:
 
         if output_file is None:
             return
-        
+
         append = self.select_append_mode()
 
         self.select_stream_or_write(
@@ -72,66 +88,6 @@ class GeneratorRuntime:
             lines,
             append
         )
-
-    def select_scenario(
-            self
-        ) -> tuple[str, list[str]] | None:
-        """
-        Prompts the user to select a log generation scenario.
-
-        Displays available scenario options and returns the selected scenario name with
-        its generated log lines. The user can also exit without selecting a scenario.
-
-        Returns:
-            tuple[str, list[str]] | None: Selected scenario name and generated log
-                lines, or None if the user exits.
-        """
-
-        while True:
-
-            print_section_header(
-                "Select Scenario:",
-                Fore.GREEN
-            )
-
-            print("1. Brute force")
-            print("2. Suspicious success")
-            print("3. User targeting")
-            print("4. Normal activity")
-            print("5. Mixed attack")
-            print("6. Exit")
-
-            choice = input("\nSelect scenario: (1-6) ").strip()
-
-            if choice == "1":
-
-                return "Brute force", generate_ssh_brute_force_scenario()
-            
-            elif choice == "2":
-
-                return "Suspicious success", generate_ssh_suspicious_success_scenario()
-            
-            elif choice == "3":
-
-                return "User targeting", generate_ssh_user_targeting_scenario()
-            
-            elif choice == "4":
-
-                return "Normal activity", generate_ssh_normal_activity()
-            
-            elif choice == "5":
-
-                return "Mixed attack", generate_ssh_mixed_attack_scenario()
-            
-            elif choice == "6":
-
-                return None
-            
-            else:
-
-                print_empty_message(
-                    "Invalid scenario choice."
-                )
 
     def preview_scenario(
                 self,

@@ -80,14 +80,15 @@ def select_scenario_type() -> str | None:
 
 def select_ssh_scenario() -> tuple[str, list[str]] | None:
     """
-    Prompts the user to select a log generation scenario.
+    Prompts the user to select an SSH log generation scenario.
 
-    Displays available scenario options and returns the selected scenario name with
-    its generated log lines. The user can also exit without selecting a scenario.
+    Displays available SSH scenario options and returns the selected scenario name
+    with its generated SSH authentication log lines. The user can also exit
+    without selecting an SSH scenario.
 
     Returns:
-        tuple[str, list[str]] | None: Selected scenario name and generated log
-            lines, or None if the user exits.
+        tuple[str, list[str]] | None: Selected SSH scenario name and generated
+            log lines, or None if the user exits.
     """
 
     while True:
@@ -138,14 +139,15 @@ def select_ssh_scenario() -> tuple[str, list[str]] | None:
 
 def select_ftp_scenario() -> tuple[str, list[str]] | None:
     """
-    Prompts the user to select a log generation scenario.
+    Prompts the user to select an FTP log generation scenario.
 
-    Displays available scenario options and returns the selected scenario name with
-    its generated log lines. The user can also exit without selecting a scenario.
+    Displays available FTP scenario options and returns the selected scenario name
+    with its generated FTP authentication log lines. The user can also exit
+    without selecting an FTP scenario.
 
     Returns:
-        tuple[str, list[str]] | None: Selected scenario name and generated log
-            lines, or None if the user exits.
+        tuple[str, list[str]] | None: Selected FTP scenario name and generated
+            log lines, or None if the user exits.
     """
 
     while True:

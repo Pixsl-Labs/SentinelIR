@@ -1,5 +1,5 @@
 from colorama import Fore
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from app.generator.ssh_scenarios import (
     generate_ssh_brute_force_scenario,
@@ -302,74 +302,210 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
                 "Invalid scenario choice."
             )
 
-# def select_mixed_services(self) -> tuple[str, list[str]] | None:
-#     """
-#     Prompts the user to select a mixed service attack scenario.
+def select_mixed_services(self) -> tuple[str, list[str]] | None:
+    """
+    Prompts the user to select a mixed service attack scenario.
 
-#     Mixed service scenarios combine generated authentication activity from
-#     multiple supported services, such as SSH, FTP, and HTTP. This allows
-#     SentinelIR to test multi-service parsing, static analysis, live monitoring,
-#     and detection behaviour using one generated log file.
+    Mixed service scenarios combine generated authentication activity from
+    multiple supported services, such as SSH, FTP, and HTTP. This allows
+    SentinelIR to test multi-service parsing, static analysis, live monitoring,
+    and detection behaviour using one generated log file.
 
-#     Returns:
-#         tuple[str, list[str]] | None: Selected mixed scenario name and generated
-#             log lines, or None if the user exits the mixed service menu.
-#     """
+    Returns:
+        tuple[str, list[str]] | None: Selected mixed scenario name and generated
+            log lines, or None if the user exits the mixed service menu.
+    """
 
-#     while True:
+    while True:
 
-#         print_section_header(
-#             "Select Mixed Service Scenario:",
-#             Fore.GREEN
-#         )
+        print_section_header(
+            "Select Mixed Service Scenario:",
+            Fore.GREEN
+        )
 
-#         print("1. SSH + FTP + HTTP")
-#         print("2. SSH + FTP")
-#         print("3. SSH + HTTP")
-#         print("4. FTP + HTTP")
-#         print("5. Exit")
+        print("1. SSH + FTP + HTTP")
+        print("2. SSH + FTP")
+        print("3. SSH + HTTP")
+        print("4. FTP + HTTP")
+        print("5. Exit")
 
-#         choice = input("\nSelect mixed service scenario: (1-5) ").strip()
+        choice = input("\nSelect mixed service scenario: (1-5) ").strip()
 
-#         if choice == "1":
+        if choice == "1":
 
-#             return "Mixed service attack", generate_mixed_service_attack_scenario()
+            return "Mixed service attack", generate_mixed_service_attack_scenario()
 
-#         if choice == "2":
+        if choice == "2":
 
-#             return "Mixed SSH + FTP attack", generate_ssh_ftp_mixed_attack_scenario()
+            return "Mixed SSH + FTP attack", generate_ssh_ftp_mixed_attack_scenario()
 
-#         if choice == "3":
+        if choice == "3":
 
-#             return "Mixed SSH + HTTP attack", generate_ssh_http_mixed_attack_scenario()
+            return "Mixed SSH + HTTP attack", generate_ssh_http_mixed_attack_scenario()
 
-#         if choice == "4":
+        if choice == "4":
 
-#             return "Mixed FTP + HTTP attack", generate_ftp_http_mixed_attack_scenario()
+            return "Mixed FTP + HTTP attack", generate_ftp_http_mixed_attack_scenario()
 
-#         if choice == "5":
+        if choice == "5":
 
-#             return None
+            return None
 
-#         print_empty_message(
-#             "Invalid mixed service scenario choice."
-#         )
+        print_empty_message(
+            "Invalid mixed service scenario choice."
+        )
 
-# def generate_mixed_service_attack_scenario(
-#         start_time: datetime | None = None
-#     ) -> list[str]:
-#     """
-#     Generates a mixed multi-service attack scenario.
+def generate_mixed_service_attack_scenario(
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a mixed multi-service attack scenario.
 
-#     Combines SSH, FTP, and HTTP authentication activity into one generated
-#     scenario. This can be used to test whether SentinelIR can parse, analyse,
-#     live-monitor, and detect suspicious behaviour across multiple log formats
-#     within the same file.
+    Combines SSH, FTP, and HTTP authentication activity into one generated
+    scenario. This can be used to test whether SentinelIR can parse, analyse,
+    live-monitor, and detect suspicious behaviour across multiple log formats
+    within the same file.
 
-#     Args:
-#         start_time (datetime | None): Timestamp used as the base time for
-#             the generated scenario. Defaults to None.
+    Args:
+        start_time (datetime | None): Timestamp used as the base time for
+            the generated scenario. Defaults to None.
 
-#     Returns:
-#         list[str]: Generated SSH, FTP, and HTTP authentication-related log lines.
-#     """
+    Returns:
+        list[str]: Generated SSH, FTP, and HTTP authentication-related log lines.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 17, 12, 0, 0)
+
+    lines = []
+
+    lines.extend(
+        generate_ssh_mixed_attack_scenario(
+            start_time=start_time
+        )
+    )
+
+    lines.extend(
+        generate_ftp_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=10)
+        )
+    )
+
+    lines.extend(
+        generate_http_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=20)
+        )
+    )
+
+    return lines
+
+def generate_ssh_ftp_mixed_attack_scenario(
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a mixed SSH and FTP attack scenario.
+
+    Combines SSH and FTP authentication activity into one generated scenario.
+    This can be used to test multi-parser routing, shared detection logic, and
+    service-aware analysis across SSH and FTP log formats.
+
+    Args:
+        start_time (datetime | None): Timestamp used as the base time for
+            the generated scenario. Defaults to None.
+
+    Returns:
+        list[str]: Generated SSH and FTP authentication log lines.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 17, 12, 0, 0)
+
+    lines = []
+
+    lines.extend(
+        generate_ssh_mixed_attack_scenario(
+            start_time=start_time
+        )
+    )
+
+    lines.extend(
+        generate_ftp_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=10)
+        )
+    )
+
+    return lines
+
+def generate_ssh_http_mixed_attack_scenario(
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a mixed SSH and HTTP attack scenario.
+
+    Combines SSH authentication logs and HTTP authentication-related access logs
+    into one generated scenario. This can be used to test cross-service brute-force,
+    suspicious-success, and user-targeting behaviour.
+
+    Args:
+        start_time (datetime | None): Timestamp used as the base time for
+            the generated scenario. Defaults to None.
+
+    Returns:
+        list[str]: Generated SSH and HTTP authentication-related log lines.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 17, 12, 0, 0)
+
+    lines = []
+
+    lines.extend(
+        generate_ssh_mixed_attack_scenario(
+            start_time=start_time
+        )
+    )
+
+    lines.extend(
+        generate_http_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=20)
+        )
+    )
+
+    return lines
+
+def generate_ftp_http_mixed_attack_scenario(
+        start_time: datetime | None = None
+    ) -> list[str]:
+    """
+    Generates a mixed FTP and HTTP attack scenario.
+
+    Combines FTP authentication logs and HTTP authentication-related access logs
+    into one generated scenario. This can be used to test whether SentinelIR can
+    process different service formats through the same detection pipeline.
+
+    Args:
+        start_time (datetime | None): Timestamp used as the base time for
+            the generated scenario. Defaults to None.
+
+    Returns:
+        list[str]: Generated FTP and HTTP authentication-related log lines.
+    """
+
+    if start_time is None:
+        start_time = datetime(2026, 4, 17, 12, 0, 0)
+
+    lines = []
+
+    lines.extend(
+        generate_ftp_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=10)
+        )
+    )
+
+    lines.extend(
+        generate_http_mixed_attack_scenario(
+            start_time=start_time + timedelta(minutes=20)
+        )
+    )
+
+    return lines

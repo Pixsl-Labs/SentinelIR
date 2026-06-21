@@ -96,6 +96,7 @@ class Detection:
         )
 
         columns = [
+            ("Service", 10),
             ("IP Address", 15),
             ("Attempts", 10, "^"),
             ("Time Window", 14, "^"),
@@ -111,6 +112,7 @@ class Detection:
             print(
                 "   "
                 + severity_colour
+                + format_column(result.service, 10)
                 + format_column(result.ip, 15)
                 + format_column(result.attempts, 10, "^")
                 + format_column(result.time_window, 14, "^")
@@ -151,6 +153,7 @@ class Detection:
         for result in results:
 
             print(
+                f"Service: {result.service}"
                 f"IP: {result.ip}"
                 f"Attempts: {result.attempts}"
                 f"Window: {result.time_window}"
@@ -266,6 +269,7 @@ class Detection:
         )
 
         columns = [
+            ("Service", 10),
             ("User", 8),
             ("Unique IPs", 15, "^"),
             ("Attempts", 12, "^"),
@@ -288,6 +292,7 @@ class Detection:
 
             print(
                 "   "
+                + format_column(result.service, 10)
                 + format_column(result.username, 8)
                 + ip_colour
                 + format_column(result.unique_ips, 15, "^")
@@ -299,17 +304,20 @@ class Detection:
 
     def get_suspicious_ips(
             self,
-            ip: str | None=None,
-            severity: str | None=None,
+            service: str | None = None,
+            ip: str | None = None,
+            severity: str | None = None,
         ) -> list[SuspiciousIPResult]:
         """
         Returns suspicious IP results with optional filtering.
 
-        Builds suspicious IP results from failed login counts, calculates severity and
-        risk status for each IP address, and optionally filters by IP address or
-        severity level.
+        Builds suspicious IP results from failed login entries, grouped by service and
+        IP address. This keeps SSH, FTP, and HTTP activity separate in mixed-service
+        reports.
 
         Args:
+            service (str | None): Service to match, such as SSH, FTP, or HTTP.
+                Defaults to None.
             ip (str | None): IP address to match.
                 Defaults to None.
             severity (str | None): Severity level to match.
@@ -317,31 +325,59 @@ class Detection:
 
         Returns:
             list[SuspiciousIPResult]: Suspicious IP results matching the selected
-            filters.
+                filters.
         """
+
+        grouped_results = {}
+
+        for entry in self.analyser.failed_logins:
+
+            key = (
+                entry.service,
+                entry.ip
+            )
+
+            grouped_results[key] = grouped_results.get(
+                key,
+                0
+            ) + 1
 
         results = []
 
-        sorted_ips = sorted(
-            self.analyser.failed_ip_counts.items(),
-            key=lambda x: x[1],
+        sorted_results = sorted(
+            grouped_results.items(),
+            key=lambda item: item[1],
             reverse=True
         )
 
-        for current_ip, count in sorted_ips:
+        for (
+            current_service,
+            current_ip
+        ), count in sorted_results:
 
-            current_severity = get_severity_level(count)
+            current_severity = get_severity_level(
+                count
+            )
 
-            risk_status = get_risk_level(count)
+            risk_status = get_risk_level(
+                count
+            )
 
-            if ip and current_ip != ip:
+            if service and current_service != service.upper():
+
                 continue
 
-            if severity and current_severity != severity:
+            if ip and current_ip != ip:
+
+                continue
+
+            if severity and current_severity != severity.upper():
+
                 continue
 
             results.append(
                 SuspiciousIPResult(
+                    service=current_service,
                     ip=current_ip,
                     attempts=count,
                     severity=current_severity,
@@ -353,19 +389,22 @@ class Detection:
     
     def print_suspicious_ips(
             self,
-            ip: str | None=None,
-            severity: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None
+            service: str | None = None,
+            ip: str | None = None,
+            severity: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None
         ) -> None:
         """
         Prints suspicious IP results.
 
-        Displays suspicious IP addresses based on failed login counts, including
+        Displays suspicious IP addresses grouped by service and IP address, including
         attempt count, risk status, and severity. Time arguments are accepted for menu
         compatibility but are not currently applied by this method.
 
         Args:
+            service (str | None): Service to match, such as SSH, FTP, or HTTP.
+                Defaults to None.
             ip (str | None): IP address to match.
                 Defaults to None.
             severity (str | None): Severity level to match.
@@ -380,6 +419,7 @@ class Detection:
         """
 
         results = self.get_suspicious_ips(
+            service=service,
             ip=ip,
             severity=severity
         )
@@ -396,7 +436,9 @@ class Detection:
             Fore.YELLOW
         )
 
-        attempt_colour = get_count_colour(len(results))
+        attempt_colour = get_count_colour(
+            len(results)
+        )
 
         print_total_count(
             "Suspicious IPs Detected",
@@ -405,32 +447,36 @@ class Detection:
         )
 
         columns = [
+            ("Service", 10),
             ("IP Address", 15),
             ("Attempts", 12, "^"),
             ("Status", 20, "^"),
-            ("Severity", 15)
+            ("Severity", 12, "^")
         ]
 
-        print_table_header(columns)
+        print_table_header(
+            columns
+        )
 
         for result in results:
 
-            severity_colour = (
-                get_severity_colour(
-                    result.severity
-                )
+            severity_colour = get_severity_colour(
+                result.severity
             )
 
-            attempt_colour = get_attempt_colour(result.attempts)
+            attempt_colour = get_attempt_colour(
+                result.attempts
+            )
 
             print(
                 "   "
                 + attempt_colour
+                + format_column(result.service, 10)
                 + format_column(result.ip, 15)
                 + format_column(result.attempts, 12, "^")
                 + format_column(result.risk_status, 20, "^")
                 + severity_colour
-                + format_column(result.severity, 15)
+                + format_column(result.severity, 12, "^")
             )
 
     def print_anonymous_ftp_logins(self) -> None:

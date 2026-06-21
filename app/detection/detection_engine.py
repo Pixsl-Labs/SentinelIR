@@ -223,34 +223,45 @@ class DetectionEngine:
         """
         Detects brute-force activity from failed login timestamps.
 
-        Groups failed login attempts by IP address and checks whether an IP reaches
-        the configured threshold within the configured time window.
+        Groups failed login attempts by service and IP address, then checks whether
+        each service/IP pair reaches the configured threshold within the configured
+        time window.
 
         Args:
-            analyser: Log analyser instance containing failed login data and
-            grouped timestamp access.
+            analyser: Log analyser instance containing failed login entries.
             threshold (int): Number of failed attempts required to trigger a
-            brute-force result.
+                brute-force result.
             window_seconds (int): Maximum time window, in seconds, allowed between
-            the first and final failed attempt.
+                the first and final failed attempt.
 
         Returns:
             list[BruteForceResult]: Brute-force detection results containing the
-            attacking IP address, attempt count, time window, and severity.
+                service, attacking IP address, attempt count, time window, and severity.
         """
 
-        ip_attempts = analyser.group_attempts_by_ip()
+        grouped_attempts = defaultdict(list)
+
+        for entry in analyser.failed_logins:
+
+            key = (
+                entry.service,
+                entry.ip
+            )
+
+            grouped_attempts[key].append(
+                entry.timestamp
+            )
 
         results = []
 
-        for ip, time_stamps in ip_attempts.items():
+        for (service, ip), timestamp in grouped_attempts.items():
 
-            time_stamps.sort()
+            timestamp.sort()
 
-            for i in range(len(time_stamps) - threshold + 1):
+            for index in range(len(timestamp) - threshold + 1):
 
-                start = time_stamps[i]
-                end = time_stamps[i + threshold - 1]
+                start = timestamp[index]
+                end = timestamp[index + threshold - 1]
 
                 diff = (end - start).total_seconds()
 
@@ -260,6 +271,7 @@ class DetectionEngine:
 
                     results.append(
                         BruteForceResult(
+                            service=service,
                             ip=ip,
                             attempts=threshold,
                             time_window=diff,
@@ -272,6 +284,60 @@ class DetectionEngine:
         return results
 
     @staticmethod
+    def get_suspicious_success(
+        analyser
+    ) -> list[SuspiciousSuccessResult]:
+        """
+        Detects successful logins from service/IP pairs that previously failed
+        authentication.
+
+        Args:
+            analyser: Log analyser instance containing failed and successful login
+            entries.
+
+        Returns:
+            list[SuspiciousSuccessResult]: Suspicious success results containing
+            the service, IP address, failed attempt count, and severity.
+        """
+
+        failed_attempts = defaultdict(int)
+
+        for entry in analyser.failed_logins:
+
+            key = (
+                entry.service,
+                entry.ip
+            )
+
+            failed_attempts[key] += 1
+
+        results = []
+
+        for entry in analyser.successful_logins:
+
+            key = (
+                entry.service,
+                entry.ip
+            )
+
+            if key in failed_attempts:
+
+                severity = get_severity_level(
+                    failed_attempts[key]
+                )
+
+                results.append(
+                    SuspiciousSuccessResult(
+                        service=entry.service,
+                        ip=entry.ip,
+                        attempts=failed_attempts[key],
+                        severity=severity
+                    )
+                )
+
+        return results
+    
+    @staticmethod
     def get_user_targeting(
         analyser,
         threshold=USER_TARGETING_THRESHOLD
@@ -279,30 +345,42 @@ class DetectionEngine:
         """
         Detects distributed user-targeting activity.
 
-        Groups failed login attempts by username and checks whether a user has been
-        targeted by enough unique IP addresses to meet the configured threshold.
-        This can indicate password spraying or coordinated account targeting.
+        Groups failed login attempts by service and username, then checks whether a
+        user has been targeted by enough unique IP addresses within that service.
 
         Args:
             analyser: Log analyser instance containing failed login entries.
             threshold (int): Number of unique IP addresses required to trigger a
-            user-targeting result.
+                user-targeting result.
 
         Returns:
-            list[UserTargetingResult]: User-targeting results containing the
-            username, total attempts, unique IP count, and severity.
+            list[UserTargetingResult]: User-targeting results containing the service,
+                username, total attempts, unique IP count, and severity.
         """
 
         user_attempts = defaultdict(list)
 
         for entry in analyser.failed_logins:
-            user_attempts[entry.user].append(entry.ip)
+
+            key = (
+                entry.service,
+                entry.user
+            )
+
+            user_attempts[key].append(
+                entry.ip
+            )
 
         results = []
 
-        for user, ips in user_attempts.items():
+        for (
+            service,
+            user
+        ), ips in user_attempts.items():
 
-            unique_ips = set(ips)
+            unique_ips = set(
+                ips
+            )
 
             if len(unique_ips) >= threshold:
 
@@ -312,48 +390,10 @@ class DetectionEngine:
 
                 results.append(
                     UserTargetingResult(
+                        service=service,
                         username=user,
                         attempts=len(ips),
                         unique_ips=len(unique_ips),
-                        severity=severity
-                    )
-                )
-
-        return results
-
-    @staticmethod
-    def get_suspicious_success(
-        analyser
-    ) -> list[SuspiciousSuccessResult]:
-        """
-        Detects successful logins from IP addresses that previously failed authentication.
-
-        Args:
-            analyser: Log analyser instance containing failed and successful login
-            entries.
-
-        Returns:
-            list[SuspiciousSuccessResult]: Suspicious success results containing
-            the IP address, attempt count, and severity.
-        """
-
-        failed_ips = set(
-            entry.ip
-            for entry in analyser.failed_logins
-        )
-
-        results = []
-
-        for entry in analyser.successful_logins:
-
-            if entry.ip in failed_ips:
-
-                severity = get_severity_level(5)
-
-                results.append(
-                    SuspiciousSuccessResult(
-                        ip=entry.ip,
-                        attempts=1,
                         severity=severity
                     )
                 )

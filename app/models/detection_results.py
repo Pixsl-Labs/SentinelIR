@@ -19,9 +19,10 @@ class SuspiciousIPResult(DetectionResult):
     """
     Represents a suspicious IP detection result.
 
-    Stores the IP address, failed attempt count, severity level, and risk status
-    for an IP address that appears suspicious during authentication analysis.
+    Stores the source service, IP address, failed attempt count, severity level,
+    and risk status for an IP address that appears suspicious during authentication analysis.
     """
+    service: str
     ip: str
     risk_status: str
 
@@ -31,11 +32,12 @@ class BruteForceResult(DetectionResult):
     """
     Represents a brute-force detection result.
 
-    Stores the attacking IP address, failed attempt count, detection time window,
-    and severity level for repeated login failures within a configured period.
+    Stores the source service attacking IP address, failed attempt count, 
+    detection time window, and severity level for repeated login failures within a configured period.
     """
     ip: str
     time_window: float
+    service: str = "UNKNOWN"
 
 
 @dataclass
@@ -43,12 +45,13 @@ class UserTargetingResult(DetectionResult):
     """
     Represents a distributed user-targeting detection result.
 
-    Stores the targeted username, total failed attempts, number of unique attacking
-    IP addresses, and severity level for password spraying or coordinated account
+    Stores the source service, targeted username, total failed attempts, 
+    number of unique attacking IP addresses, and severity level for password spraying or coordinated account
     targeting behaviour.
     """
     username: str
     unique_ips: int
+    service: str = "UNKNOWN"
 
 
 @dataclass
@@ -56,10 +59,11 @@ class SuspiciousSuccessResult(DetectionResult):
     """
     Represents a suspicious-success detection result.
 
-    Stores the IP address, attempt count, and severity level for a successful login
-    that occurred after previous failed authentication activity from the same IP.
+    Stores the source service, IP address, attempt count, and severity level for
+    a successful login that occurred after previous failed authentication activity from the same IP.
     """
     ip: str
+    service: str = "UNKNOWN"
 
 
 @dataclass

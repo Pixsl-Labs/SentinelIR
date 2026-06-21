@@ -19,6 +19,7 @@ class LogFilter:
         ip: str | None=None,
         username: str | None=None,
         severity: str | None=None,
+        service: str | None=None,
         status: str | None=None,
         start_time: time | None=None,
         end_time: time | None=None
@@ -60,6 +61,9 @@ class LogFilter:
                 continue
 
             if severity and entry.severity != severity:
+                continue
+
+            if service and entry.service != service.upper():
                 continue
 
             if status and entry.status != status:

@@ -42,7 +42,7 @@ def print_table_header(
         None
     """
 
-    header_row = "   "
+    header_row = "    "
 
     separator_length = 3
 
@@ -71,7 +71,7 @@ def print_table_header(
     )
 
     print(
-        "   "
+        "    "
         + Fore.LIGHTBLACK_EX
         + "-" * separator_length
     )

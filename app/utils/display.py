@@ -108,7 +108,7 @@ def print_total_count(
 
     print(
         colour
-        + f"   {label}: {count}\n"
+        + f"    {label}: {count}\n"
     )
 
 def print_separator(

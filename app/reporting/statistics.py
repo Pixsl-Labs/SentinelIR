@@ -92,8 +92,8 @@ class Statistics:
         Returns failed login results grouped by username and IP address.
 
         Groups failed login entries by username and source IP address, counts attempts
-        for each pair, calculates severity, and returns the results sorted by attempt
-        count.
+        for each pair, calculates severity, source service, and returns the results 
+        sorted by attempt count.
 
         Returns:
             list[FailedLoginSummaryResult]: Grouped failed login summary results.
@@ -104,6 +104,7 @@ class Statistics:
         for entry in self.analyser.failed_logins:
 
             key = (
+                entry.service,
                 entry.user,
                 entry.ip
             )
@@ -115,6 +116,7 @@ class Statistics:
         results = []
 
         for (
+            service,
             username,
             ip
         ), attempts in grouped_results.items():
@@ -123,6 +125,7 @@ class Statistics:
 
             results.append(
                 FailedLoginSummaryResult(
+                    service=service,
                     username=username,
                     ip=ip,
                     attempts=attempts,
@@ -215,7 +218,7 @@ class Statistics:
             )
 
             print(
-                "   "
+                "    "
                 + severity_colour
                 + format_column(entry.severity, 12)
                 + format_column(entry.user, 10)
@@ -259,10 +262,11 @@ class Statistics:
         )
 
         columns = [
-            ("User", 10),
-            ("IP Address", 12),
+            ("Service", 11),
+            ("User", 12),
+            ("IP Address", 14),
             ("Attempts", 14, "^"),
-            ("Severity", 10)
+            ("Severity", 12, "^"),
         ]
 
         print_table_header(columns)
@@ -273,13 +277,14 @@ class Statistics:
             severity_colour = get_severity_colour(result.severity)            
 
             print(
-                "   "
-                + attempt_colour
-                + format_column(result.username, 10)
-                + format_column(result.ip, 12)
+                "    "
+                + format_column(result.service, 11)
+                + attempt_colour                
+                + format_column(result.username, 12)
+                + format_column(result.ip, 14)
                 + format_column(result.attempts, 14, "^")
                 + severity_colour
-                + format_column(result.severity, 10)
+                + format_column(result.severity, 12, "^")
             )
 
     def get_successful_logins(
@@ -287,6 +292,7 @@ class Statistics:
             ip: str | None=None,
             username: str | None=None,
             severity: str | None=None,
+            service: str | None=None,
             status: str | None=None,
             start_time: time | None=None,
             end_time: time | None=None
@@ -320,6 +326,7 @@ class Statistics:
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
             start_time=start_time,
             end_time=end_time
@@ -335,6 +342,7 @@ class Statistics:
             ip: str | None=None,
             username: str | None=None,
             severity: str | None=None,
+            service: str | None=None,
             status: str | None=None,
             start_time: time | None=None,
             end_time: time | None=None
@@ -367,6 +375,7 @@ class Statistics:
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
             start_time=start_time,
             end_time=end_time
@@ -391,10 +400,11 @@ class Statistics:
         )
 
         columns = [
-            ("Status", 12),
-            ("Timestamp", 21),
-            ("User", 10),
-            ("IP Address", 15)
+            ("Service", 12),
+            ("Status", 16),
+            ("Timestamp", 26),
+            ("User", 16),
+            ("IP Address", 9)
         ]
 
         print_table_header(columns)
@@ -408,13 +418,13 @@ class Statistics:
             )
 
             print(
-                Fore.GREEN
-                +
-                "   "
-                + format_column(f"[{entry.status}]", 12)
-                + format_column(time_str, 21)
-                + format_column(entry.user, 10)
-                + format_column(entry.ip, 15)
+                "    "
+                + format_column(entry.service, 12)
+                + Fore.GREEN
+                + format_column(f"[{entry.status}]", 16)
+                + format_column(time_str, 26)
+                + format_column(entry.user, 16)
+                + format_column(entry.ip, 9)
             )
 
     def get_total_failed_login_attempts(self) -> int:
@@ -476,15 +486,13 @@ class Statistics:
         """
         Returns high-level attack statistics.
 
-        Builds a summary of analysed authentication activity, including failed
-        attempts, successful logins, suspicious IPs, brute-force alerts, targeted
-        users, highest severity, top attacker, and most targeted user.
+        Builds a service-aware summary of analysed authentication activity, including
+        failed attempts, successful logins, suspicious IPs, brute-force alerts,
+        targeted users, highest severity, top attacker, and most targeted user.
 
         Returns:
             dict[str, int | str | None]: Summary statistics for analysed log data.
         """
-
-        failed_ip_counts = self.analyser.failed_ip_counts
 
         targeted_users = self.get_most_targeted_users()
 
@@ -492,46 +500,71 @@ class Statistics:
 
         total_successful = self.get_total_successful_logins()
 
-        total_suspicious_ips = self.get_total_suspicious_ips()
-
-        total_brute_force = len(
-            DetectionEngine.get_brute_force(
-                self.analyser
-            )
+        total_suspicious_ips = len(
+            self.get_suspicious_ips()
         )
 
+        brute_force_results = DetectionEngine.get_brute_force(
+            self.analyser
+        )
+
+        total_brute_force = len(
+            brute_force_results
+        )
+
+        failed_service_ip_counts = {}
+
+        for entry in self.analyser.failed_logins:
+
+            key = (
+                entry.service,
+                entry.ip
+            )
+
+            failed_service_ip_counts[key] = (
+                failed_service_ip_counts.get(key, 0) + 1
+            )
+
         top_attacker_entry = max(
-            failed_ip_counts.items(),
+            failed_service_ip_counts.items(),
             key=lambda item: item[1],
             default=None
         )
 
         if top_attacker_entry:
-            top_ip, highest_attempts = top_attacker_entry
+
+            (
+                top_service,
+                top_ip
+            ), highest_attempts = top_attacker_entry
 
             highest_severity = get_severity_level(
                 highest_attempts
             )
 
             top_attacker = (
-                f"{top_ip} "
+                f"{top_service} {top_ip} "
                 f"({highest_attempts} attempts)"
             )
 
         else:
+
             highest_severity = "NONE"
 
             top_attacker = None
 
         if targeted_users:
+
             top_targeted_user = targeted_users[0]
 
             most_targeted_user = (
+                f"{top_targeted_user.service} "
                 f"{top_targeted_user.username} "
                 f"({top_targeted_user.attempts} attempts)"
             )
 
         else:
+
             most_targeted_user = None
 
         return {
@@ -559,18 +592,25 @@ class Statistics:
         user_counts = {}
 
         for entry in self.analyser.failed_logins:
-            user_counts[entry.user] = (
-                user_counts.get(entry.user, 0) + 1
+
+            key = (
+                entry.service,
+                entry.user
+            )
+
+            user_counts[key] = (
+                user_counts.get(key, 0) + 1
             )
 
         results = []
 
-        for username, attempts in user_counts.items():
+        for (service, username), attempts in user_counts.items():
 
             severity = get_severity_level(attempts)
 
             results.append(
                 TargetedUserResult(
+                    service=service,
                     username=username,
                     attempts=attempts,
                     severity=severity
@@ -616,9 +656,10 @@ class Statistics:
         )
 
         columns = [
-            ("User", 7),
-            ("Attempts", 15, "^"),
-            ("Severity", 12)
+            ("Service", 11),
+            ("User", 10),
+            ("Attempts", 8, "^"),
+            ("Severity", 16, "^")
         ]
 
         print_table_header(columns)
@@ -634,12 +675,13 @@ class Statistics:
             )
 
             print(
-                "   "
-                + attempt_colour
-                + format_column(result.username, 11)
-                + format_column(result.attempts, 12)
+                "    "
+                + format_column(result.service, 11)
+                + attempt_colour                
+                + format_column(result.username, 10)
+                + format_column(result.attempts, 8, "^")
                 + severity_colour
-                + format_column(result.severity, 12)
+                + format_column(result.severity, 16, "^")
             )
 
     def print_attack_statistics(self) -> None:

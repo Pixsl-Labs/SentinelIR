@@ -5,7 +5,12 @@ from app.config.security_config import (
 )
 
 
-from app.utils.formatting import format_column, print_table_header
+from app.utils.formatting import (
+    format_column, 
+    print_table_header,
+    format_service_column,
+    format_user_column
+)
 from app.utils.severity import get_severity_level
 from app.utils.risk import get_risk_level
 from app.utils.display import (
@@ -107,14 +112,22 @@ class Detection:
 
         for result in results:
 
-            severity_colour = get_severity_colour(result.severity)
+            severity_colour = get_severity_colour(
+                result.severity
+            )
+
+            attempt_colour = get_attempt_colour(
+                result.attempts
+            )
 
             print(
                 "    "
-                + format_column(result.service, 12)
+                + format_service_column(result.service, 12)
                 + severity_colour                
                 + format_column(result.ip, 14)
+                + attempt_colour
                 + format_column(result.attempts, 12, "^")
+                + severity_colour
                 + format_column(result.time_window, 16, "^")
                 + format_column(result.severity, 10, "^")
             )
@@ -199,9 +212,9 @@ class Detection:
 
         columns = [
             ("Service", 12),
-            ("IP Address", 16),
+            ("IP Address", 14),
             ("Failed Attempts", 16, "^"),
-            ("Severity", 16, "^")
+            ("Severity", 14, "^")
         ]
 
         print_table_header(columns)
@@ -218,12 +231,12 @@ class Detection:
 
             print(
                 "    "
-                + format_column(result.service, 12)
+                + format_service_column(result.service, 12)
                 + attempt_colour                
-                + format_column(result.ip, 16)
+                + format_column(result.ip, 14)
                 + format_column(result.attempts, 16, "^")
                 + severity_colour
-                + format_column(result.severity, 16, "^")
+                + format_column(result.severity, 14, "^")
             )
 
     def print_user_targeting(
@@ -273,16 +286,18 @@ class Detection:
         columns = [
             ("Service", 12),
             ("User", 8),
-            ("Unique IPs", 15, "^"),
+            ("Unique IPs", 12, "^"),
             ("Attempts", 12, "^"),
-            ("Severity", 7, "^")
+            ("Severity", 10, "^")
         ]
 
         print_table_header(columns)
 
         for result in results:
 
-            severity_colour = get_severity_colour(result.severity)
+            severity_colour = get_severity_colour(
+                result.severity
+            )
 
             ip_colour = get_attempt_colour(
                 result.unique_ips
@@ -294,14 +309,14 @@ class Detection:
 
             print(
                 "    "
-                + format_column(result.service, 12)
-                + format_column(result.username, 8)
+                + format_service_column(result.service, 12)
+                + format_user_column(result.username, 8)
                 + ip_colour
-                + format_column(result.unique_ips, 15, "^")
+                + format_column(result.unique_ips, 12, "^")
                 + attempt_colour
                 + format_column(result.attempts, 12, "^")
                 + severity_colour
-                + format_column(result.severity, 7, "^")
+                + format_column(result.severity, 10, "^")
             )
 
     def get_suspicious_ips(
@@ -472,7 +487,7 @@ class Detection:
 
             print(
                 "    "
-                + format_column(result.service, 12)
+                + format_service_column(result.service, 12)
                 + attempt_colour                
                 + format_column(result.ip, 15)
                 + format_column(result.attempts, 12, "^")
@@ -514,8 +529,8 @@ class Detection:
 
         columns = [
             ("IP Address", 16),
-            ("Username", 12),
-            ("Severity", 12, "^")
+            ("Username", 14),
+            ("Severity", 10)
         ]
 
         print_table_header(columns)
@@ -530,6 +545,6 @@ class Detection:
                 "    "
                 + severity_colour
                 + format_column(result.ip, 16)
-                + format_column(result.username, 12)
-                + format_column(result.severity, 12, "^")
+                + format_column(result.username, 14)
+                + format_column(result.severity, 10)
             )

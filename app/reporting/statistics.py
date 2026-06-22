@@ -2,7 +2,12 @@ from app.log_analyser.log_entry import LogEntry
 from app.log_analyser.filtering import LogFilter
 
 
-from app.utils.formatting import print_table_header, format_column
+from app.utils.formatting import (
+    print_table_header,
+    format_column, 
+    format_service_column,
+    format_user_column
+)
 from app.utils.severity import get_severity_level
 from app.utils.display import (
     print_section_header,
@@ -278,9 +283,10 @@ class Statistics:
 
             print(
                 "    "
-                + format_column(result.service, 11)
+                + format_service_column(result.service, 11)
                 + attempt_colour                
-                + format_column(result.username, 12)
+                + format_user_column(result.username, 12)
+                + attempt_colour
                 + format_column(result.ip, 14)
                 + format_column(result.attempts, 14, "^")
                 + severity_colour
@@ -403,8 +409,8 @@ class Statistics:
             ("Service", 12),
             ("Status", 16),
             ("Timestamp", 26),
-            ("User", 16),
-            ("IP Address", 9)
+            ("User", 14),
+            ("IP Address", 13)
         ]
 
         print_table_header(columns)
@@ -419,12 +425,13 @@ class Statistics:
 
             print(
                 "    "
-                + format_column(entry.service, 12)
+                + format_service_column(entry.service, 12)
                 + Fore.GREEN
                 + format_column(f"[{entry.status}]", 16)
                 + format_column(time_str, 26)
-                + format_column(entry.user, 16)
-                + format_column(entry.ip, 9)
+                + format_user_column(entry.user, 14)
+                + Fore.GREEN
+                + format_column(entry.ip, 13)
             )
 
     def get_total_failed_login_attempts(self) -> int:
@@ -676,9 +683,9 @@ class Statistics:
 
             print(
                 "    "
-                + format_column(result.service, 11)
-                + attempt_colour                
-                + format_column(result.username, 10)
+                + format_service_column(result.service, 11)
+                + format_user_column(result.username, 10)
+                + attempt_colour
                 + format_column(result.attempts, 8, "^")
                 + severity_colour
                 + format_column(result.severity, 16, "^")

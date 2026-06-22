@@ -152,3 +152,73 @@ def get_live_status_colour(
         return get_count_colour(value)
     
     return Fore.WHITE
+
+def get_service_colour(service: str | None) -> str:
+    """
+    Returns a colour for a log service.
+
+    Args:
+        service (str | None): Service name such as SSH, FTP, or HTTP.
+
+    Returns:
+        str: Colorama foreground colour.
+    """
+
+    service = (
+        service or "UNKNOWN"
+    ).upper()
+
+    if service == "SSH":
+
+        return Fore.LIGHTCYAN_EX
+    
+    if service == "FTP":
+
+        return Fore.LIGHTMAGENTA_EX
+    
+    if service == "HTTP":
+
+        return Fore.LIGHTBLUE_EX
+    
+    return Fore.WHITE
+
+def get_user_colour(user: str | None) -> str:
+    """
+    Returns a colour for a user.
+
+    Args:
+        user (str | None): Username such as root, admin, and others.
+
+    Returns:
+        str: Colorama foreground colour.
+    """
+
+    user = (
+        user or "unknown"
+    ).lower()
+
+    if user == "root":
+
+        return Fore.RED
+    
+    if user == "admin":
+
+        return Fore.LIGHTRED_EX
+    
+    if user == "deploy":
+
+        return Fore.LIGHTYELLOW_EX
+    
+    if user == "anonymous":
+
+        return Fore.LIGHTMAGENTA_EX
+    
+    if user == "guest":
+
+        return Fore.LIGHTGREEN_EX
+    
+    if user == "unknown":
+
+        return Fore.LIGHTBLACK_EX
+    
+    return Fore.WHITE

@@ -406,10 +406,10 @@ class Statistics:
         )
 
         columns = [
-            ("Service", 12),
-            ("Status", 16),
-            ("Timestamp", 26),
-            ("User", 14),
+            ("Service", 10),
+            ("Status", 11 ,"^"),
+            ("Timestamp", 26 ,"^"),
+            ("User", 12),
             ("IP Address", 13)
         ]
 
@@ -425,11 +425,11 @@ class Statistics:
 
             print(
                 "    "
-                + format_service_column(entry.service, 12)
+                + format_service_column(entry.service, 10)
                 + Fore.GREEN
-                + format_column(f"[{entry.status}]", 16)
-                + format_column(time_str, 26)
-                + format_user_column(entry.user, 14)
+                + format_column(f"[{entry.status}]", 11, "^")
+                + format_column(time_str, 26, "^")
+                + format_user_column(entry.user, 12)
                 + Fore.GREEN
                 + format_column(entry.ip, 13)
             )

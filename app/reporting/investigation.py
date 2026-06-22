@@ -1,17 +1,26 @@
+from datetime import time, datetime
+from colorama import Fore
+
 from app.log_analyser.log_entry import LogEntry
 from app.log_analyser.filtering import LogFilter
 
 
-from app.utils.colours import get_status_colour, get_severity_colour
+from app.utils.colours import (
+    get_status_colour,
+    get_severity_colour
+)
 from app.utils.display import (
     print_section_header,
     print_empty_message,
-    print_total_count
+    print_total_count,
 )
-
-
-from datetime import time, datetime
-from colorama import Fore
+from app.utils.formatting import (
+    format_column,
+    format_service_column,
+    format_servity_column,
+    format_user_column,
+    print_table_header
+)
 
 
 class Investigation:    
@@ -127,7 +136,19 @@ class Investigation:
             Fore.CYAN
         )
 
+        columns = [
+            ("Service", 10),
+            ("Status", 11 ,"^"),
+            ("Timestamp", 26 ,"^"),
+            ("User", 12),
+            ("IP Address", 16), 
+            ("Status", 8)
+        ]
+
+        print_table_header(columns)
+
         for entry in results:
+
             time_str = (
                 entry.timestamp.strftime("%Y-%m-%d %H:%M:%S")
                 if entry.timestamp
@@ -143,15 +164,16 @@ class Investigation:
             )
 
             print(
-                f"   "
-                f"{status_colour}"
-                f"[{entry.status:^9}] "
-                f"{time_str:<20} "
-                f"{entry.user:<7} "
-                f"{entry.ip:<13} "
-                f"{Fore.RESET}"
-                f"{severity_colour}"
-                f"[{entry.severity:^8}]"
+                "    "
+                + format_service_column(entry.service, 10)
+                + status_colour
+                + format_column(f"[{entry.status}]", 11, "^")
+                + format_column(time_str, 26, "^")
+                + format_user_column(entry.user, 12)
+                + status_colour
+                + format_column(entry.ip, 16)
+                + severity_colour
+                + format_column(f"[{entry.severity}]", 8)
             )
 
     def get_activity_timeline(
@@ -268,7 +290,18 @@ class Investigation:
             Fore.CYAN
         )
 
+        columns = [
+            ("Service", 10),
+            ("Status", 11 ,"^"),
+            ("Timestamp", 26 ,"^"),
+            ("User", 12),
+            ("IP Address", 13)
+        ]
+
+        print_table_header(columns)
+
         for entry in results:
+
             time_str = (
                 entry.timestamp.strftime("%Y-%m-%d %H:%M:%S")
                 if entry.timestamp
@@ -280,12 +313,14 @@ class Investigation:
             )
 
             print(
-                f"   "
-                f"{status_colour}"
-                f"[{entry.status:^9}] "
-                f"{time_str:<20} "
-                f"{entry.user:<7} "
-                f"{entry.ip}"
+                "    "
+                + format_service_column(entry.service, 10)
+                + status_colour
+                + format_column(f"[{entry.status}]", 11, "^")
+                + format_column(time_str, 26, "^")
+                + format_user_column(entry.user, 12)
+                + status_colour
+                + format_column(entry.ip, 13)
             )
 
         print_section_header(

@@ -2,7 +2,8 @@ from colorama import Fore
 
 from app.utils.colours import (
     get_service_colour,
-    get_user_colour
+    get_user_colour,
+    get_severity_colour
 )
 
 
@@ -61,6 +62,35 @@ def format_user_column(
     return (
         get_user_colour(user_text)
         + format_column(user_text, width, align)
+        + Fore.RESET
+    )
+
+def format_servity_column(
+            servity: str | None,
+            width: int | str,
+            align: str = "<"
+    ) -> str:
+    """
+    Formats the servity column with user-specific colour.
+
+    Args:
+        servity (str | None): Servity name such as "HIGH", "MEDIUM", "LOW"
+            or "NONE".
+        width (int | str): Column width
+        align (str): Alignment direction.
+            Defaults to "<".
+
+    Returns:
+        str: Colour-formatted servity column.
+    """
+
+    severity_text = (
+        servity or "UNKNOWN"
+    ).upper()
+
+    return (
+        get_severity_colour(severity_text)
+        + format_column(severity_text, width, align)
         + Fore.RESET
     )
 

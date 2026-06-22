@@ -245,10 +245,20 @@ class Interaction:
 
                 total_colour_failed = get_attempt_colour(total_failed_)
 
+                print_section_header(
+                    "Total Failed Login Attempts",
+                    Fore.LIGHTGREEN_EX
+                )
+
                 print_total_count(
                     "Total failed logins",
                     total_failed_,
                     total_colour_failed
+                )
+
+                print(
+                    Fore.MAGENTA
+                    + "=== End of Report ==="
                 )
 
             elif choice == "16":
@@ -257,10 +267,20 @@ class Interaction:
 
                 total_colour_ips = get_attempt_colour(total_ips)
 
+                print_section_header(
+                    "Unique IP Count",
+                    Fore.LIGHTGREEN_EX
+                )
+
                 print_total_count(
                     "Unique IP count",
                     total_ips,
                     total_colour_ips
+                )
+
+                print(
+                    Fore.MAGENTA
+                    + "=== End of Report ==="
                 )
 
             # === Configuration ===

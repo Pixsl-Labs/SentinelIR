@@ -207,27 +207,28 @@ class Statistics:
         )
 
         columns = [
-            ("Severity", 12),
+            ("Service", 12),
             ("User", 10),
-            ("IP Address", 15)
+            ("IP Address", 16),
+            ("Severity", 12, "^")
         ]
-        
+
         print_table_header(columns)
 
         for entry in results:
 
-            severity_colour = (
-                get_severity_colour(
-                    entry.severity
-                )
+            severity_colour = get_severity_colour(
+                entry.severity
             )
 
             print(
                 "    "
+                + format_service_column(entry.service, 12)
+                + format_user_column(entry.user, 10)
+                + Fore.YELLOW
+                + format_column(entry.ip, 16)
                 + severity_colour
-                + format_column(entry.severity, 12)
-                + format_column(entry.user, 10)
-                + format_column(entry.ip, 15)
+                + format_column(entry.severity, 12, "^")
             )
 
     def print_failed_logins_summary(

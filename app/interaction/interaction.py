@@ -151,7 +151,16 @@ class Interaction:
                     reporter=self.reporter,
                     title="Timeline",
                     show_function=self.reporter.print_activity_timeline,
-                    filters=["ip", "username"]
+                    filters=[
+                        "service",
+                        "username",
+                        "ip",
+                        "severity",
+                        "status",
+                        "method",
+                        "path",
+                        "status_code"
+                    ]
                 )
 
             elif choice == "5":
@@ -160,7 +169,15 @@ class Interaction:
                     reporter=self.reporter,
                     title="Suspicious Activity",
                     show_function=self.reporter.print_suspicious_activity,
-                    filters=["ip", "username", "severity"]
+                    filters=[
+                        "service",
+                        "ip",
+                        "username",
+                        "severity",
+                        "method",
+                        "path",
+                        "status_code"
+                    ]
                 )
 
             elif choice == "6":
@@ -169,7 +186,15 @@ class Interaction:
                     reporter=self.reporter,
                     title="Failed Logins",
                     show_function=self.reporter.print_failed_logins,
-                    filters=["ip", "username", "severity", "status"]
+                    filters=[
+                        "service",
+                        "ip",
+                        "username",
+                        "severity",
+                        "method",
+                        "path",
+                        "status_code"
+                    ]
                 )
 
             elif choice == "7":
@@ -236,7 +261,16 @@ class Interaction:
                     reporter=self.reporter,
                     title="Successful Logins",
                     show_function=self.reporter.print_successful_logins,
-                    filters=["ip", "username", "severity", "status"]
+                    filters=[
+                        "service",
+                        "ip",
+                        "username",
+                        "severity",
+                        "status",
+                        "method",
+                        "path",
+                        "status_code"
+                    ]
                 )
 
             elif choice == "15":

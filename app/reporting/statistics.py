@@ -48,8 +48,12 @@ class Statistics:
             username: str | None=None,
             severity: str | None=None,
             status: str | None=None,
+            service: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> list[LogEntry]:
         """
         Returns filtered failed login attempts.
@@ -77,10 +81,15 @@ class Statistics:
 
         results = LogFilter.apply_filters(
             self.analyser.failed_logins,
+            results,
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -150,8 +159,12 @@ class Statistics:
             username: str | None=None,
             severity: str | None=None,
             status: str | None=None,
+            service: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> None:
         """
         Prints filtered failed login attempts.
@@ -178,10 +191,15 @@ class Statistics:
         """
 
         results = self.get_failed_logins(
+            results,
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -224,11 +242,11 @@ class Statistics:
                 entry.severity
             )
 
-            method = entry.method or "-"
+            display_method = entry.method or "-"
 
-            path = entry.path or "-"
+            display_path = entry.path or "-"
 
-            status_code = (
+            display_status_code = (
                 entry.status_code
                 if entry.status_code is not None
                 else "-"
@@ -244,9 +262,9 @@ class Statistics:
                 + format_user_column(entry.user, 12)
                 + Fore.YELLOW
                 + format_column(entry.ip, 16)
-                + format_column(method, 8, "^")
-                + format_column(path, 24, "^")
-                + format_column(status_code, 8, "^")
+                + format_column(display_method, 8, "^")
+                + format_column(display_path, 24, "^")
+                + format_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )
@@ -322,7 +340,10 @@ class Statistics:
             service: str | None=None,
             status: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> list[LogEntry]:
         """
         Returns filtered successful login entries.
@@ -355,6 +376,9 @@ class Statistics:
             severity=severity,
             service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -372,7 +396,10 @@ class Statistics:
             service: str | None=None,
             status: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> None:
         """
         Prints filtered successful login entries.
@@ -404,6 +431,9 @@ class Statistics:
             severity=severity,
             service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -447,11 +477,11 @@ class Statistics:
                 else "Unknown"
             )
 
-            method = entry.method or "-"
+            display_method = entry.method or "-"
 
-            path = entry.path or "-"
+            display_path = entry.path or "-"
 
-            status_code = (
+            display_status_code = (
                 entry.status_code
                 if entry.status_code is not None
                 else "-"
@@ -466,9 +496,9 @@ class Statistics:
                 + format_user_column(entry.user, 12)
                 + Fore.GREEN
                 + format_column(entry.ip, 16)
-                + format_column(method, 8, "^")
-                + format_column(path, 24, "^")
-                + format_column(status_code, 8, "^")
+                + format_column(display_method, 8, "^")
+                + format_column(display_path, 24, "^")
+                + format_column(display_status_code, 8, "^")
             )
 
     def get_total_failed_login_attempts(self) -> int:

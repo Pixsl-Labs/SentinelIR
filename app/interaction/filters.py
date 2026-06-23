@@ -105,6 +105,103 @@ def get_time_range() -> tuple[time | None, time | None]:
 
         return None, None
     
+def format_filter_display_name(
+        filter_name: str
+    ) -> str:
+    """
+    Converts an internal filter key into a readable menu label.
+
+    This keeps filter display text consistent across the CLI filter menu. Internal
+    keys such as status_code and ip are converted into user-friendly labels such as
+    Status Code and IP.
+
+    Args:
+        filter_name (str): Internal filter key, such as ip, username, service,
+            method, path, or status_code.
+
+    Returns:
+        str: Human-readable filter label for display in the terminal menu.
+    """
+
+    display_names = {
+        "ip": "IP",
+        "username": "Username",
+        "service": "Service",
+        "severity": "Severity",
+        "status": "Status",
+        "method": "Method",
+        "path": "Path",
+        "status_code": "Status Code"
+    }
+
+    return display_names.get(
+        filter_name,
+        filter_name.title()
+    )
+
+
+def parse_filter_selection(
+        choice: str,
+        options: dict[str, str]
+    ) -> list[str]:
+    """
+    Parses one or more selected filter options from user input.
+
+    Supports numeric menu choices and written filter names. Multiple filters can be
+    selected using + or commas, allowing inputs such as "2 + 4", "service + username",
+    or "service, ip". Duplicate filters are removed while preserving the order chosen
+    by the user.
+
+    Args:
+        choice (str): Raw user input containing one or more selected filters.
+        options (dict[str, str]): Mapping of menu option numbers to internal filter
+            keys.
+
+    Returns:
+        list[str]: Selected internal filter keys. Returns ["none"] or ["back"] for
+        those menu actions, an empty list if the selection is invalid, or multiple
+        filter keys for combined filtering.
+    """
+
+    selected_filters = []
+
+    parts = [
+        part.strip()
+        for part in choice.replace(",", "+").split("+")
+        if part.strip()
+    ]
+
+    for part in parts:
+
+        if part in options:
+
+            selected_filter = options[part]
+
+        else:
+
+            selected_filter = part.lower().replace(" ", "_")
+
+        if selected_filter in ["none", "back"]:
+
+            return [selected_filter]
+
+        if selected_filter not in options.values():
+
+            print_empty_message(
+                f"'{part}' is not a valid filter."
+            )
+
+            return []
+
+        if selected_filter not in selected_filters:
+
+            selected_filters.append(
+                selected_filter
+            )
+
+    return selected_filters
+
+
 def handle_filter_menu(
         reporter,
         title,
@@ -112,23 +209,30 @@ def handle_filter_menu(
         filters
     ) -> None:
     """
-    Handles a reusable filtering menu for report and investigation views.
+    Handles a reusable multi-filter menu for report and investigation views.
 
-    Builds a dynamic filter menu from the supplied filter names, collects the
-    required filter value from the user, optionally applies a time range, and then
-    calls the selected display function with the matching keyword arguments.
+    Builds a filter menu from the supplied filter names, allows the user to select
+    one or more filters, collects values for each selected filter, optionally applies
+    a time range, and calls the provided report display function with the selected
+    keyword arguments.
+
+    Supported filters include service, IP address, username, severity, status,
+    HTTP method, HTTP path, and HTTP status code. Multiple filters can be selected
+    using + or commas, for example "service + username" or "2 + 4".
 
     Args:
-        reporter: Log reporter instance used to display available IP addresses
-            and usernames.
-        title: Title of the filter menu being displayed.
-        show_function: Function called after a filter option is selected.
-        filters: List of available filter names, such as ip, username, severity,
-            or status.
+        reporter: Log reporter instance used to display available filter values,
+            such as known IP addresses and usernames.
+        title (str): Name of the report being filtered, displayed in the menu title.
+        show_function: Report printing function called after filters are collected.
+            The function must accept the selected filter names as keyword arguments.
+        filters (list[str]): Available filter keys for this report, such as service,
+            ip, username, severity, status, method, path, or status_code.
 
     Returns:
         None
     """
+
     while True:
 
         print(f"\nFilter {title} by:\n")
@@ -137,16 +241,17 @@ def handle_filter_menu(
 
         option_number = 1
 
-        # Show all
         print(f"{option_number}. None")
 
         options[str(option_number)] = "none"
-        
+
         option_number += 1
 
-        # Dynamic filters
         for filter_name in filters:
-            display_name = filter_name.upper() if filter_name == "ip" else filter_name.title()
+
+            display_name = format_filter_display_name(
+                filter_name
+            )
 
             print(f"{option_number}. {display_name}")
 
@@ -154,16 +259,25 @@ def handle_filter_menu(
 
             option_number += 1
 
-        # Back
         print(f"{option_number}. Back")
 
         options[str(option_number)] = "back"
 
-        choice = input("\nSelect option: ").strip()
+        choice = input(
+            "\nSelect option(s), e.g. service + username or 2 + 4: "
+        ).strip()
 
-        selected_filter = options.get(choice)
+        selected_filters = parse_filter_selection(
+            choice,
+            options
+        )
 
-        if selected_filter == "none":
+        if not selected_filters:
+
+            continue
+
+        if selected_filters == ["none"]:
+
             start_time, end_time = get_time_range()
 
             show_function(
@@ -173,111 +287,176 @@ def handle_filter_menu(
 
             break
 
-        elif selected_filter == "ip":
-
-            reporter.print_all_ips()
-
-            ip = input("\nEnter IP address: ").strip()
-
-            if not ip:
-                print_empty_message(
-                    "No IP entered."
-                )
-
-                continue
-
-            start_time, end_time = get_time_range()
-
-            show_function(
-                ip=ip,
-                start_time=start_time,
-                end_time=end_time
-            )
+        if selected_filters == ["back"]:
 
             break
 
-        elif selected_filter == "username":
+        filter_values = {}
 
-            reporter.print_all_usernames()
+        for selected_filter in selected_filters:
 
-            username = input("\nEnter username: ").strip()
+            if selected_filter == "ip":
 
-            if not username:
-                print_empty_message(
-                    "No username entered."
-                )
+                reporter.print_all_ips()
 
-                continue
+                value = input(
+                    "\nEnter IP address: "
+                ).strip()
 
-            start_time, end_time = get_time_range()
+                if not value:
+                    print_empty_message(
+                        "No IP entered."
+                    )
 
-            show_function(
-                username=username,
-                start_time=start_time,
-                end_time=end_time
-            )
+                    continue
 
-            break
+                filter_values["ip"] = value
 
-        elif selected_filter == "severity":
+            elif selected_filter == "username":
 
-            severity = input(
-                f"\nEnter severity "
-                f"({Fore.GREEN}LOW/"
-                f"{Fore.YELLOW}MEDIUM/"
-                f"{Fore.LIGHTRED_EX}HIGH"
-                f"{Fore.RESET}): "
-            ).strip().upper()
+                reporter.print_all_usernames()
 
-            if not severity:
-                print_empty_message(
-                    "No severity entered."
-                )
+                value = input(
+                    "\nEnter username: "
+                ).strip()
 
-                continue
+                if not value:
+                    print_empty_message(
+                        "No username entered."
+                    )
 
-            start_time, end_time = get_time_range()
+                    continue
 
-            show_function(
-                severity=severity,
-                start_time=start_time,
-                end_time=end_time
-            )
+                filter_values["username"] = value
 
-            break
+            elif selected_filter == "service":
 
-        elif selected_filter == "status":
+                reporter.print_all_services()
 
-            status = input(
-                f"\nEnter status "
-                f"({Fore.GREEN}SUCCESS/"
-                f"{Fore.LIGHTRED_EX}FAILED"
-                f"{Fore.RESET}): "
-            ).strip().upper()
+                value = input(
+                    "\nEnter service: "
+                ).strip().upper()
 
-            if not status:
-                print_empty_message(
-                    "No status entered."
-                )
+                if value not in ["SSH", "FTP", "HTTP"]:
 
-                continue
+                    print_empty_message(
+                        "Invalid service. Use SSH, FTP, or HTTP."
+                    )
 
-            start_time, end_time = get_time_range()
+                    continue
 
-            show_function(
-                status=status,
-                start_time=start_time,
-                end_time=end_time
-            )
+                filter_values["service"] = value
 
-            break
+            elif selected_filter == "severity":
 
-        elif selected_filter == "back":
+                reporter.print_all_severities()
 
-            break
+                value = input(
+                    f"\nEnter severity: "
+                ).strip().upper()
 
-        else:
+                if value not in ["LOW", "MEDIUM", "HIGH"]:
 
-            print_empty_message(
-                f"'{choice}' is an invalid choice."
-            )
+                    print_empty_message(
+                        "Invalid severity. Use LOW, MEDIUM, or HIGH."
+                    )
+
+                    continue
+
+                filter_values["severity"] = value
+
+            elif selected_filter == "status":
+
+                reporter.print_all_statuses()
+
+                value = input(
+                    f"\nEnter status: "
+                ).strip().upper()
+
+                if value not in ["SUCCESS", "FAILED"]:
+
+                    print_empty_message(
+                        "Invalid status. Use SUCCESS or FAILED."
+                    )
+
+                    continue
+
+                filter_values["status"] = value
+
+            elif selected_filter == "method":
+
+                reporter.print_all_methods()
+
+                value = input(
+                    "\nEnter method: "
+                ).strip().upper()
+
+                if not value:
+                    print_empty_message(
+                        "No method entered."
+                    )
+
+                    continue
+
+                if value not in [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "PATCH",
+                    "HEAD",
+                    "OPTIONS"
+                ]:
+                    
+                    print_empty_message(
+                        "Invalid method. Use GET, POST, PUT, DELETE, PATCH, HEAD, or OPTIONS."
+                    )
+
+                    continue
+
+                filter_values["method"] = value
+
+            elif selected_filter == "path":
+
+                reporter.print_all_paths()
+
+                value = input(
+                    "\nEnter path: "
+                ).strip()
+
+                if not value:
+                    print_empty_message(
+                        "No path entered."
+                    )
+
+                    continue
+
+                filter_values["path"] = value
+
+            elif selected_filter == "status_code":
+
+                reporter.print_all_status_codes()
+
+                value = input(
+                    "\nEnter HTTP status code: "
+                ).strip()
+
+                if not value.isdigit():
+
+                    print_empty_message(
+                        "Invalid status code."
+                    )
+
+                    continue
+
+                filter_values["status_code"] = int(value)
+
+        start_time, end_time = get_time_range()
+
+        show_function(
+            **filter_values,
+            start_time=start_time,
+            end_time=end_time
+        )
+
+        break

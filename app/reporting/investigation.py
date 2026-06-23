@@ -30,8 +30,12 @@ class Investigation:
             username: str | None=None,
             severity: str | None=None,
             status: str | None=None,
+            service: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> list[LogEntry]:
         """
         Returns filtered suspicious activity.
@@ -63,11 +67,15 @@ class Investigation:
         )
 
         results = LogFilter.apply_filters(
-            results_,
+            results,
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -83,8 +91,12 @@ class Investigation:
             username: str | None=None,
             severity: str | None=None,
             status: str | None=None,
+            service: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> None:
         """
         Prints filtered suspicious activity.
@@ -114,7 +126,11 @@ class Investigation:
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -162,11 +178,11 @@ class Investigation:
                 entry.status
             )
 
-            method = entry.method or "-"
+            display_method = entry.method or "-"
 
-            path = entry.path or "-"
+            display_path = entry.path or "-"
 
-            status_code = (
+            display_status_code = (
                 entry.status_code
                 if entry.status_code is not None
                 else "-"
@@ -185,9 +201,9 @@ class Investigation:
                 + format_user_column(entry.user, 12)
                 + status_colour
                 + format_column(entry.ip, 16)
-                + format_column(method, 8, "^")
-                + format_column(path, 24, "^")
-                + format_column(status_code, 8, "^")
+                + format_column(display_method, 8, "^")
+                + format_column(display_path, 24, "^")
+                + format_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )
@@ -198,9 +214,13 @@ class Investigation:
             ip: str | None=None,
             username: str | None=None,
             severity: str | None=None,
+            service: str  | None=None,
             status: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> list[LogEntry]:
         """
         Returns a filtered activity timeline.
@@ -236,7 +256,11 @@ class Investigation:
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -253,9 +277,13 @@ class Investigation:
             ip: str | None=None,
             username: str | None=None,
             severity: str | None=None,
+            service: str | None=None,
             status: str | None=None,
             start_time: time | None=None,
-            end_time: time | None=None
+            end_time: time | None=None,
+            method: str | None=None,
+            path:  str | None=None,
+            status_code: int | None=None
         ) -> None:
         """
         Prints a filtered activity timeline.
@@ -285,7 +313,11 @@ class Investigation:
             ip=ip,
             username=username,
             severity=severity,
+            service=service,
             status=status,
+            method=method,
+            path=path,
+            status_code=status_code,
             start_time=start_time,
             end_time=end_time
         )
@@ -333,11 +365,11 @@ class Investigation:
                 entry.status
             )
 
-            method = entry.method or "-"
+            display_method = entry.method or "-"
 
-            path = entry.path or "-"
+            display_path = entry.path or "-"
 
-            status_code = (
+            display_status_code = (
                 entry.status_code
                 if entry.status_code is not None
                 else "-"
@@ -356,9 +388,9 @@ class Investigation:
                 + format_user_column(entry.user, 12)
                 + status_colour
                 + format_column(entry.ip, 16)
-                + format_column(method, 8, "^")
-                + format_column(path, 24, "^")
-                + format_column(status_code, 8, "^")
+                + format_column(display_method, 8, "^")
+                + format_column(display_path, 24, "^")
+                + format_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )
@@ -367,70 +399,3 @@ class Investigation:
             "End of Report",
             Fore.MAGENTA
         )
-
-    def print_all_usernames(self) -> None:
-        """
-        Prints all usernames found in the activity timeline.
-
-        Collects usernames from analysed failed and successful login events, removes
-        duplicates, sorts them, and displays the available values for filtering.
-
-        Returns:
-            None
-        """
-
-        timeline = self.get_activity_timeline()
-
-        unique_usernames = {
-            entry.user
-            for entry in timeline
-        }
-
-        if not unique_usernames:
-            print_empty_message(
-                "No usernames found."
-            )
-
-            return
-        
-        print_section_header(
-            "All Available Users",
-            Fore.GREEN
-        )
-
-        for user in sorted(unique_usernames):
-            print(f"   {user}")
-
-    def print_all_ips(self) -> None:
-        """
-        Prints all unique IP addresses found in the activity timeline.
-
-        Collects IP addresses from analysed failed and successful login events, removes
-        duplicates, sorts them, and displays the available values for filtering.
-
-        Returns:
-            None
-        """
-
-
-        timeline = self.get_activity_timeline()
-
-        unique_ips = {
-            entry.ip
-            for entry in timeline
-        }
-
-        if not unique_ips:
-            print_empty_message(
-                "No IP addresses found."
-            )
-
-            return
-
-        print_section_header(
-            "All Available IP Addresses",
-            Fore.GREEN
-        )
-
-        for ip in sorted(unique_ips):
-            print(f"   {ip}")

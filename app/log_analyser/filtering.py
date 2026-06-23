@@ -1,6 +1,5 @@
 from datetime import time
 
-
 from app.log_analyser.log_entry import LogEntry
 
 
@@ -16,31 +15,40 @@ class LogFilter:
     @staticmethod
     def apply_filters(
         entries: list[LogEntry],
-        ip: str | None=None,
-        username: str | None=None,
-        severity: str | None=None,
-        service: str | None=None,
-        status: str | None=None,
-        start_time: time | None=None,
-        end_time: time | None=None
+        ip: str | None = None,
+        username: str | None = None,
+        severity: str | None = None,
+        service: str | None = None,
+        status: str | None = None,
+        method: str | None = None,
+        path: str | None = None,
+        status_code: int | None = None,
+        start_time: time | None = None,
+        end_time: time | None = None
     ) -> list[LogEntry]:
         """
         Applies optional filters to a list of log entries.
 
-        Filters can be combined to narrow results by IP address, username, severity,
-        status, start time, and end time. Entries that do not match all selected
-        criteria are skipped.
+        Filters can be combined to narrow results by service, IP address,
+        username, severity, status, HTTP method, HTTP path, HTTP status code,
+        start time, and end time. Entries must match all selected filters to be
+        included.
 
         Args:
             entries (list[LogEntry]): Log entries to filter.
-            ip (str | None): IP address to match.
+            ip (str | None): IP address to match. Defaults to None.
+            username (str | None): Username to match case-insensitively.
                 Defaults to None.
-            username (str | None): Username to match. The comparison is
-                case-insensitive. Defaults to None.
-            severity (str | None): Severity level to match.
+            severity (str | None): Severity level to match, such as LOW,
+                MEDIUM, or HIGH. Defaults to None.
+            service (str | None): Service to match, such as SSH, FTP, or HTTP.
                 Defaults to None.
-            status (str | None): Login status to match, such as FAILED
+            status (str | None): Authentication status to match, such as FAILED
                 or SUCCESS. Defaults to None.
+            method (str | None): HTTP method to match, such as GET or POST.
+                Defaults to None.
+            path (str | None): HTTP path or partial path to match. Defaults to None.
+            status_code (int | None): HTTP status code to match. Defaults to None.
             start_time (time | None): Earliest event time to include.
                 Defaults to None.
             end_time (time | None): Latest event time to include.
@@ -60,13 +68,22 @@ class LogFilter:
             if username and entry.user.lower() != username.lower():
                 continue
 
-            if severity and entry.severity != severity:
+            if severity and entry.severity != severity.upper():
                 continue
 
             if service and entry.service != service.upper():
                 continue
 
-            if status and entry.status != status:
+            if status and entry.status != status.upper():
+                continue
+
+            if method and (entry.method or "").upper() != method.upper():
+                continue
+
+            if path and path.lower() not in (entry.path or "").lower():
+                continue
+
+            if status_code is not None and entry.status_code != status_code:
                 continue
 
             if (

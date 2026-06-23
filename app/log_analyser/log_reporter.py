@@ -3,6 +3,7 @@ from app.reporting.detection import Detection
 from app.reporting.investigation import Investigation
 from app.reporting.exports import Export
 from app.reporting.summary import Summary
+from app.reporting.filter_values import FilterValues
 
 
 class LogReporter(
@@ -10,7 +11,8 @@ class LogReporter(
     Detection,
     Investigation,
     Export,
-    Summary
+    Summary,
+    FilterValues
 ):
     """
     Combines reporting, detection, investigation, export, and summary features.

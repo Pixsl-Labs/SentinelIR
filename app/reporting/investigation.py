@@ -17,7 +17,6 @@ from app.utils.display import (
 from app.utils.formatting import (
     format_column,
     format_service_column,
-    format_servity_column,
     format_user_column,
     print_table_header
 )
@@ -67,7 +66,7 @@ class Investigation:
         )
 
         results = LogFilter.apply_filters(
-            results,
+            results_,
             ip=ip,
             username=username,
             severity=severity,

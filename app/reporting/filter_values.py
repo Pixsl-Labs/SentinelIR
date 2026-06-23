@@ -51,11 +51,11 @@ class FilterValues:
             None
         """
 
-        cleaned_values = (
+        cleaned_values = {
             value
             for value in values
             if value is not None and value != ""
-        )
+        }
 
         if not cleaned_values:
             print_empty_message(

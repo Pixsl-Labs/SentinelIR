@@ -174,6 +174,7 @@ class Interaction:
                         "ip",
                         "username",
                         "severity",
+                        "status",
                         "method",
                         "path",
                         "status_code"
@@ -191,6 +192,7 @@ class Interaction:
                         "ip",
                         "username",
                         "severity",
+                        "status",
                         "method",
                         "path",
                         "status_code"
@@ -209,7 +211,11 @@ class Interaction:
                     reporter=self.reporter,
                     title="Suspicious IPs",
                     show_function=self.reporter.print_suspicious_ips,
-                    filters=["ip", "severity"]
+                    filters=[
+                        "service",
+                        "ip", 
+                        "severity"
+                    ]
                 )
 
             elif choice == "9":

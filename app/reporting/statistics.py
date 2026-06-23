@@ -81,7 +81,6 @@ class Statistics:
 
         results = LogFilter.apply_filters(
             self.analyser.failed_logins,
-            results,
             ip=ip,
             username=username,
             severity=severity,
@@ -191,7 +190,6 @@ class Statistics:
         """
 
         results = self.get_failed_logins(
-            results,
             ip=ip,
             username=username,
             severity=severity,

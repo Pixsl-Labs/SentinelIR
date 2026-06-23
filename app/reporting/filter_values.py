@@ -4,6 +4,13 @@ from app.utils.display import (
     print_section_header,
     print_empty_message
 )
+from app.utils.colours import (
+    get_user_colour,
+    get_service_colour,
+    get_severity_colour,
+    get_status_colour,
+    get_status_code_colour
+)
 
 
 class FilterValues:
@@ -37,7 +44,9 @@ class FilterValues:
             self,
             title: str,
             values: set,
-            empty_message: str
+            empty_message: str,
+            colour: str = Fore.GREEN,
+            value_colour_function=None
         ) -> None:
         """
         Prints a sorted list of available filter values.
@@ -46,6 +55,10 @@ class FilterValues:
             title (str): Section title displayed above the available values.
             values (set): Unique values collected from analysed log entries.
             empty_message (str): Message displayed when no values are available.
+            colour (str): Colorama colour for the section header.
+                Default: Fore.GREEN
+            value_colour_function: Optional function used to colour each individual
+            value. Defaults: None.
 
         Returns:
             None
@@ -66,11 +79,18 @@ class FilterValues:
         
         print_section_header(
             title,
-            Fore.GREEN
+            colour
         )
 
         for value in sorted(cleaned_values):
-            print(f"    {value}")
+
+            value_colour = (
+                value_colour_function(value)
+                if value_colour_function
+                else colour
+            )
+
+            print(f"    {value_colour}{value}{Fore.RESET}")
 
     def print_all_services(self) -> None:
         """
@@ -93,7 +113,9 @@ class FilterValues:
         self._print_available_values(
             "All available Services",
             services,
-            "No services found."
+            "No services found.",
+            Fore.GREEN,
+            get_service_colour
         )
 
     def print_all_ips(self) -> None:
@@ -141,7 +163,9 @@ class FilterValues:
         self._print_available_values(
             "All Available Users",
             usernames,
-            "No usernames found."
+            "No usernames found.",
+            Fore.GREEN,
+            get_user_colour
         )
 
     def print_all_severities(self) -> None:
@@ -166,7 +190,9 @@ class FilterValues:
         self._print_available_values(
             "All Available Severities",
             severities,
-            "No severities found."
+            "No severities found.",
+            Fore.GREEN,
+            get_severity_colour
         )
 
     def print_all_statuses(self) -> None:
@@ -191,7 +217,9 @@ class FilterValues:
         self._print_available_values(
             "All Available Statuses",
             statuses,
-            "No statuses found."
+            "No statuses found.",
+            Fore.GREEN,
+            get_status_colour
         )
 
     def print_all_methods(self) -> None:
@@ -266,5 +294,7 @@ class FilterValues:
         self._print_available_values(
             "All Available HTTP Status Codes",
             status_codes,
-            "No HTTP status codes found."
+            "No HTTP status codes found.",
+            Fore.GREEN,
+            get_status_code_colour
         )

@@ -222,3 +222,44 @@ def get_user_colour(user: str | None) -> str:
         return Fore.LIGHTBLACK_EX
     
     return Fore.WHITE
+
+def get_status_code_colour(status_code: str | None) -> str:
+    """
+    Returns a colour for a status code based on standard conventions.
+
+    Args:
+        status_code (str | None): Status code such as '200', '401', '500'.
+
+    Returns:
+        str: Colorama foreground colour.
+    """
+
+    if status_code is None:
+        
+        return Fore.WHITE
+
+    try:
+
+        code = int(status_code)
+        
+    except ValueError:
+
+        return Fore.WHITE
+    
+    if 200 <= code <= 300:
+
+        return Fore.LIGHTGREEN_EX
+    
+    elif 300 <= code <= 400:
+
+        return Fore.LIGHTCYAN_EX
+    
+    elif 400 <= code <= 500:
+
+        return Fore.LIGHTYELLOW_EX
+    
+    elif 500 <= code <= 600:
+
+        return Fore.LIGHTRED_EX
+    
+    return Fore.WHITE

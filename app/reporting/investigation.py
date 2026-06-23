@@ -18,6 +18,7 @@ from app.utils.formatting import (
     format_column,
     format_service_column,
     format_user_column,
+    format_status_code_column,
     print_table_header
 )
 
@@ -202,7 +203,7 @@ class Investigation:
                 + format_column(entry.ip, 16)
                 + format_column(display_method, 8, "^")
                 + format_column(display_path, 24, "^")
-                + format_column(display_status_code, 8, "^")
+                + format_status_code_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )
@@ -389,7 +390,7 @@ class Investigation:
                 + format_column(entry.ip, 16)
                 + format_column(display_method, 8, "^")
                 + format_column(display_path, 24, "^")
-                + format_column(display_status_code, 8, "^")
+                + format_status_code_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )

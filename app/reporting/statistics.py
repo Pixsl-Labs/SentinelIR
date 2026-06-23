@@ -6,6 +6,7 @@ from app.utils.formatting import (
     print_table_header,
     format_column, 
     format_service_column,
+    format_status_code_column,
     format_user_column
 )
 from app.utils.severity import get_severity_level
@@ -264,7 +265,7 @@ class Statistics:
                 + format_column(display_path, 24, "^")
                 + format_column(display_status_code, 8, "^")
                 + severity_colour
-                + format_column(entry.severity, 12, "^")
+                + format_status_code_column(entry.severity, 12, "^")
             )
 
     def print_failed_logins_summary(
@@ -496,7 +497,7 @@ class Statistics:
                 + format_column(entry.ip, 16)
                 + format_column(display_method, 8, "^")
                 + format_column(display_path, 24, "^")
-                + format_column(display_status_code, 8, "^")
+                + format_status_code_column(display_status_code, 8, "^")
             )
 
     def get_total_failed_login_attempts(self) -> int:

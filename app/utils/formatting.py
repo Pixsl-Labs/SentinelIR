@@ -3,7 +3,8 @@ from colorama import Fore
 from app.utils.colours import (
     get_service_colour,
     get_user_colour,
-    get_severity_colour
+    get_severity_colour,
+    get_status_code_colour
 )
 
 
@@ -65,32 +66,77 @@ def format_user_column(
         + Fore.RESET
     )
 
-def format_servity_column(
-            servity: str | None,
+def format_severity_column(
+            severity: str | None,
             width: int | str,
             align: str = "<"
     ) -> str:
     """
-    Formats the servity column with user-specific colour.
+    Formats the severity column with user-specific colour.
 
     Args:
-        servity (str | None): Servity name such as "HIGH", "MEDIUM", "LOW"
+        severity (str | None): Severity name such as "HIGH", "MEDIUM", "LOW"
             or "NONE".
         width (int | str): Column width
         align (str): Alignment direction.
             Defaults to "<".
 
     Returns:
-        str: Colour-formatted servity column.
+        str: Colour-formatted severity column.
     """
 
     severity_text = (
-        servity or "UNKNOWN"
+        severity or "UNKNOWN"
     ).upper()
 
     return (
         get_severity_colour(severity_text)
         + format_column(severity_text, width, align)
+        + Fore.RESET
+    )
+
+def format_status_code_column(
+        status_code: int | str | None,
+        width: int | str,
+        align: str = "^"
+    ) -> str:
+    """
+    Formats an HTTP status code column with status-code-specific colour.
+
+    Args:
+        status_code (int | str | None): HTTP status code such as 200, 401,
+            or None when no status code is available.
+        width (int | str): Column width.
+        align (str): Alignment direction.
+            Defaults to "^".
+
+    Returns:
+        str: Colour-formatted HTTP status code column.
+    """
+
+    if status_code is None or status_code == "-":
+
+        return (
+            Fore.LIGHTBLACK_EX
+            + format_column("-", width, align)
+            + Fore.RESET
+        )
+
+    try:
+
+        status_code_value = int(status_code)
+
+    except (ValueError, TypeError):
+
+        return (
+            Fore.LIGHTBLACK_EX
+            + format_column("-", width, align)
+            + Fore.RESET
+        )
+
+    return (
+        get_status_code_colour(status_code_value)
+        + format_column(status_code_value, width, align)
         + Fore.RESET
     )
 

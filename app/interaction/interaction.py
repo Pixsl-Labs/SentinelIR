@@ -213,7 +213,8 @@ class Interaction:
                     show_function=self.reporter.print_suspicious_ips,
                     filters=[
                         "service",
-                        "ip", 
+                        "ip",
+                        "status",
                         "severity"
                     ]
                 )

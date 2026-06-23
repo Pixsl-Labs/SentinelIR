@@ -34,8 +34,8 @@ def test_attack_statistics_values_are_correct(brute_force_reporter):
             "brute_force_alerts": 1,
             "targeted_users": 1,
             "highest_severity": "LOW",
-            "top_attacker": "192.168.1.10 (5 attempts)",
-            "most_targeted_user": "root (5 attempts)"
+            "top_attacker": "SSH 192.168.1.10 (5 attempts)",
+            "most_targeted_user": "SSH root (5 attempts)"
         }
     
     assert results == expected_results

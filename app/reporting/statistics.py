@@ -208,8 +208,11 @@ class Statistics:
 
         columns = [
             ("Service", 12),
-            ("User", 10),
+            ("User", 12),
             ("IP Address", 16),
+            ("Method", 8, "^"),
+            ("Path", 24, "^"),
+            ("Code", 8, "^"),
             ("Severity", 12, "^")
         ]
 
@@ -221,12 +224,29 @@ class Statistics:
                 entry.severity
             )
 
+            method = entry.method or "-"
+
+            path = entry.path or "-"
+
+            status_code = (
+                entry.status_code
+                if entry.status_code is not None
+                else "-"
+            )
+
+            severity_colour = get_severity_colour(
+                entry.severity
+            )
+
             print(
                 "    "
-                + format_service_column(entry.service, 12)
-                + format_user_column(entry.user, 10)
+                + format_service_column(entry.service, 10)
+                + format_user_column(entry.user, 12)
                 + Fore.YELLOW
                 + format_column(entry.ip, 16)
+                + format_column(method, 8, "^")
+                + format_column(path, 24, "^")
+                + format_column(status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
             )
@@ -408,10 +428,13 @@ class Statistics:
 
         columns = [
             ("Service", 10),
-            ("Status", 11 ,"^"),
-            ("Timestamp", 26 ,"^"),
+            ("Status", 11, "^"),
+            ("Timestamp", 26, "^"),
             ("User", 12),
-            ("IP Address", 13)
+            ("IP Address", 16),
+            ("Method", 8, "^"),
+            ("Path", 24, "^"),
+            ("Code", 8, "^")
         ]
 
         print_table_header(columns)
@@ -424,6 +447,16 @@ class Statistics:
                 else "Unknown"
             )
 
+            method = entry.method or "-"
+
+            path = entry.path or "-"
+
+            status_code = (
+                entry.status_code
+                if entry.status_code is not None
+                else "-"
+            )
+
             print(
                 "    "
                 + format_service_column(entry.service, 10)
@@ -432,7 +465,10 @@ class Statistics:
                 + format_column(time_str, 26, "^")
                 + format_user_column(entry.user, 12)
                 + Fore.GREEN
-                + format_column(entry.ip, 13)
+                + format_column(entry.ip, 16)
+                + format_column(method, 8, "^")
+                + format_column(path, 24, "^")
+                + format_column(status_code, 8, "^")
             )
 
     def get_total_failed_login_attempts(self) -> int:

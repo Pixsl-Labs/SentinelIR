@@ -138,11 +138,14 @@ class Investigation:
 
         columns = [
             ("Service", 10),
-            ("Status", 11 ,"^"),
-            ("Timestamp", 26 ,"^"),
+            ("Status", 11, "^"),
+            ("Timestamp", 26, "^"),
             ("User", 12),
-            ("IP Address", 16), 
-            ("Status", 8)
+            ("IP Address", 16),
+            ("Method", 8, "^"),
+            ("Path", 24, "^"),
+            ("Code", 8, "^"),
+            ("Severity", 12, "^")
         ]
 
         print_table_header(columns)
@@ -159,6 +162,16 @@ class Investigation:
                 entry.status
             )
 
+            method = entry.method or "-"
+
+            path = entry.path or "-"
+
+            status_code = (
+                entry.status_code
+                if entry.status_code is not None
+                else "-"
+            )
+
             severity_colour = get_severity_colour(
                 entry.severity
             )
@@ -172,9 +185,13 @@ class Investigation:
                 + format_user_column(entry.user, 12)
                 + status_colour
                 + format_column(entry.ip, 16)
+                + format_column(method, 8, "^")
+                + format_column(path, 24, "^")
+                + format_column(status_code, 8, "^")
                 + severity_colour
-                + format_column(f"[{entry.severity}]", 8)
+                + format_column(entry.severity, 12, "^")
             )
+
 
     def get_activity_timeline(
             self,
@@ -292,10 +309,14 @@ class Investigation:
 
         columns = [
             ("Service", 10),
-            ("Status", 11 ,"^"),
-            ("Timestamp", 26 ,"^"),
+            ("Status", 11, "^"),
+            ("Timestamp", 26, "^"),
             ("User", 12),
-            ("IP Address", 13)
+            ("IP Address", 16),
+            ("Method", 8, "^"),
+            ("Path", 24, "^"),
+            ("Code", 8, "^"),
+            ("Severity", 12, "^")
         ]
 
         print_table_header(columns)
@@ -312,6 +333,20 @@ class Investigation:
                 entry.status
             )
 
+            method = entry.method or "-"
+
+            path = entry.path or "-"
+
+            status_code = (
+                entry.status_code
+                if entry.status_code is not None
+                else "-"
+            )
+
+            severity_colour = get_severity_colour(
+                entry.severity
+            )
+
             print(
                 "    "
                 + format_service_column(entry.service, 10)
@@ -320,7 +355,12 @@ class Investigation:
                 + format_column(time_str, 26, "^")
                 + format_user_column(entry.user, 12)
                 + status_colour
-                + format_column(entry.ip, 13)
+                + format_column(entry.ip, 16)
+                + format_column(method, 8, "^")
+                + format_column(path, 24, "^")
+                + format_column(status_code, 8, "^")
+                + severity_colour
+                + format_column(entry.severity, 12, "^")
             )
 
         print_section_header(

@@ -1,5 +1,18 @@
 from datetime import datetime
 
+
+EXPORT_LOG_ENTRY_COLUMNS = [
+    ("service", "Service", 10, "<"),
+    ("status", "Status", 11, "<"),
+    ("timestamp", "Timestamp", 26, "^"),
+    ("user", "User", 12, "<"),
+    ("ip", "IP Address", 16, "<"),
+    ("method", "Method", 8, "^"),
+    ("path", "Path", 24, "^"),
+    ("status_code", "Code", 8, "^"),
+    ("severity", "Severity", 10, "^")
+]
+
 def export_section_header(
             title: str
     ) -> str:
@@ -99,6 +112,25 @@ def export_missing_value(
     
     return str(value)
 
+def export_column(
+        value,
+        width: int,
+        align: str = "<"
+    ) -> str:
+    """
+    Formats a value into a fixed-width export column.
+
+    Args:
+        value: Value to format.
+        width (int): Column width.
+        align (str): Alignment direction.
+
+    Returns:
+        str: Fixed-width formatted value.
+    """
+
+    return f"{str(value):{align}{width}}"
+
 def export_log_entry_line(
         entry
     ) -> str:
@@ -132,15 +164,16 @@ def export_log_entry_line(
     )
 
     return (
-        f"{export_status_label(entry.status):<10}"
-        f"{timestamp:<22}"
-        f"{entry.service:<8}"
-        f"{entry.user:<14}"
-        f"{entry.ip:<16}"
-        f"{method:<8}"
-        f"{path:<26}"
-        f"{status_code:<8}"
-        f"{entry.severity}\n"
+        export_column(entry.service, 10, "<")
+        + export_column(export_status_label(entry.status), 11, "<")
+        + export_column(timestamp, 26, "^")
+        + export_column(entry.user, 12, "<")
+        + export_column(entry.ip, 16, "<")
+        + export_column(method, 8, "^")
+        + export_column(path, 24, "^")
+        + export_column(status_code, 8, "^")
+        + export_column(entry.severity, 10, "^")
+        + "\n"
     )
 
 def export_log_entry_header() -> str:
@@ -151,21 +184,33 @@ def export_log_entry_header() -> str:
         str: Plain-text column header and separator.
     """
 
-    header = (
-        f"{'Status':<10}"
-        f"{'Timestamp':<22}"
-        f"{'Service':<8}"
-        f"{'User':<14}"
-        f"{'IP Address':<16}"
-        f"{'Method':<8}"
-        f"{'Path':<26}"
-        f"{'Code':<8}"
-        f"{'Severity'}\n"
+    header = ""
+
+    total_width = 0
+
+    for (
+        _field_name,
+        label,
+        width,
+        align
+    ) in EXPORT_LOG_ENTRY_COLUMNS:
+
+        header += export_column(
+            label,
+            width,
+            align
+        )
+
+        total_width += width
+
+    separator = "-" * total_width
+
+    return (
+        header
+        + "\n"
+        + separator
+        + "\n"
     )
-
-    separator = "-" * 122 + "\n"
-
-    return header + separator
 
 def export_filter_summary(
             filters: dict | None

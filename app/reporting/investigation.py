@@ -154,7 +154,7 @@ class Investigation:
 
         columns = [
             ("Service", 10),
-            ("Risk", 11, "^"),
+            ("Status", 11, "^"),
             ("Timestamp", 26, "^"),
             ("User", 12),
             ("IP Address", 16),
@@ -341,7 +341,7 @@ class Investigation:
 
         columns = [
             ("Service", 10),
-            ("Risk", 11, "^"),
+            ("Status", 11, "^"),
             ("Timestamp", 26, "^"),
             ("User", 12),
             ("IP Address", 16),

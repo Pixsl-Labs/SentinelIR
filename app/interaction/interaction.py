@@ -214,7 +214,6 @@ class Interaction:
                     filters=[
                         "service",
                         "ip",
-                        "status",
                         "severity"
                     ]
                 )

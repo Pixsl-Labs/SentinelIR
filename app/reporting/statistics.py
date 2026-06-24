@@ -457,7 +457,7 @@ class Statistics:
 
         columns = [
             ("Service", 10),
-            ("Status", 11, "^"),
+            ("Risk", 11, "^"),
             ("Timestamp", 26, "^"),
             ("User", 12),
             ("IP Address", 16),

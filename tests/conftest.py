@@ -34,6 +34,19 @@ def malformed_reporter():
     return LogReporter(analyser)
 
 @pytest.fixture
+def mixed_service_reporter():
+
+    analyser = LogAnalyser()
+
+    analyser.analyse(
+        "tests/test_logs/generated.log"
+    )
+
+    return LogReporter(
+        analyser
+    )
+
+@pytest.fixture
 def empty_reporter():
     analyser = LogAnalyser()
     analyser.analyse("tests/test_logs/empty.log")

@@ -467,7 +467,7 @@ class Detection:
             ("Service", 12),
             ("IP Address", 15),
             ("Attempts", 12, "^"),
-            ("Status", 20, "^"),
+            ("Risk", 20, "^"),
             ("Severity", 12, "^")
         ]
 

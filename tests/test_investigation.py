@@ -1,4 +1,5 @@
 from datetime import time
+import pytest
 
 from conftest import (
     brute_force_reporter,
@@ -6,177 +7,169 @@ from conftest import (
 )
 
 
-def test_get_activity_timeline_returns_results(
-        brute_force_reporter
+@pytest.mark.parametrize(
+    "filter_kwargs, validator",
+    [
+        (
+            {"service": "HTTP"},
+            lambda entry: entry.service == "HTTP"
+        ),
+        (
+            {"username": "root"},
+            lambda entry: entry.user.lower() == "root"
+        ),
+        (
+            {"status": "FAILED"},
+            lambda entry: entry.status == "FAILED"
+        ),
+        (
+            {"method": "POST"},
+            lambda entry: entry.method == "POST"
+        ),
+        (
+            {"path": "/login"},
+            lambda entry: entry.path is not None and "/login" in entry.path
+        ),
+        (
+            {"status_code": 401},
+            lambda entry: entry.status_code == 401
+        ),
+    ]
+)
+
+def test_get_activity_timeline_filters(
+        mixed_service_reporter,
+        filter_kwargs,
+        validator
     ):
 
-    results = (
-        brute_force_reporter.get_activity_timeline()
-    )
-
-    assert len(results) > 0
-
-
-def test_get_activity_timeline_by_ip(
-        brute_force_reporter
-    ):
-
-    results = (
-        brute_force_reporter.get_activity_timeline(
-            ip="192.168.1.10"
-        )
-    )
-
-    assert len(results) > 0
-
-    assert all(
-        entry.ip == "192.168.1.10"
-        for entry in results
-    )
-
-
-def test_get_activity_timeline_by_username(
-        brute_force_reporter
-    ):
-
-    results = (
-        brute_force_reporter.get_activity_timeline(
-            username="root"
-        )
-    )
-
-    assert len(results) > 0
-
-    assert all(
-        entry.user.lower() == "root"
-        for entry in results
-    )
-
-
-def test_get_activity_timeline_time_range(
-        brute_force_reporter
-    ):
-
-    results = (
-        brute_force_reporter.get_activity_timeline(
-            start_time=time(12, 0, 0),
-            end_time=time(12, 0, 5)
-        )
+    results = mixed_service_reporter.get_activity_timeline(
+        **filter_kwargs
     )
 
     assert len(results) > 0
 
     assert all(
-        time(12, 0, 0)
-        <= entry.timestamp.time()
-        <= time(12, 0, 5)
+        validator(entry)
         for entry in results
     )
 
-
-def test_get_activity_timeline_no_results(
-        empty_reporter
+def test_get_activity_timeline_combined_http_filters(
+        mixed_service_reporter
     ):
 
-    results = (
-        empty_reporter.get_activity_timeline()
+    results = mixed_service_reporter.get_activity_timeline(
+        service="HTTP",
+        status="FAILED",
+        method="POST",
+        path="/login",
+        status_code=401
+    )
+
+    assert len(results) > 0
+
+    assert all(
+        entry.service == "HTTP"
+        and entry.status == "FAILED"
+        and entry.method == "POST"
+        and entry.path is not None
+        and "/login" in entry.path
+        and entry.status_code == 401
+        for entry in results
+    )
+
+def test_get_activity_timeline_http_filter_no_results(
+            mixed_service_reporter
+    ):
+
+    results = mixed_service_reporter.get_activity_timeline(
+        service="HTTP",
+        method="GET",
+        status_code=999
     )
 
     assert results == []
 
-
-def test_get_suspicious_activity_returns_results(
-        brute_force_reporter
+def test_get_activity_timeline_time_range(
+        mixed_service_reporter
     ):
 
-    results = (
-        brute_force_reporter.get_suspicious_activity()
-    )
+    start = time(12, 0, 0)
+    end = time(12, 0, 5)
 
-    assert len(results) > 0
-
-
-def test_get_suspicious_activity_by_ip(
-        brute_force_reporter
-    ):
-
-    results = (
-        brute_force_reporter.get_suspicious_activity(
-            ip="192.168.1.10"
-        )
+    results = mixed_service_reporter.get_activity_timeline(
+        start_time=start,
+        end_time=end
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.ip == "192.168.1.10"
+        start <= entry.timestamp.time() <= end
         for entry in results
     )
 
 
-def test_get_suspicious_activity_by_username(
-        brute_force_reporter
+@pytest.mark.parametrize(
+    "filter_kwargs, validator",
+    [
+        (
+            {"service": "HTTP"},
+            lambda result: result.service == "HTTP"
+        ),
+        (
+            {"ip": "203.0.113.11"},
+            lambda result: result.ip == "203.0.113.11"
+        ),
+        (
+            {"severity": "LOW"},
+            lambda result: result.severity == "LOW"
+        )
+    ]
+)
+
+def test_get_suspicious_ips_filters(
+        mixed_service_reporter,
+        filter_kwargs,
+        validator
     ):
 
-    results = (
-        brute_force_reporter.get_suspicious_activity(
-            username="root"
-        )
+    results = mixed_service_reporter.get_suspicious_ips(
+        **filter_kwargs
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.user.lower() == "root"
+        validator(entry)
         for entry in results
     )
 
-
-def test_get_suspicious_activity_by_severity(
-        brute_force_reporter
+def test_get_suspicious_ips_combined_http_filters(
+        mixed_service_reporter
     ):
 
-    results = (
-        brute_force_reporter.get_suspicious_activity(
-            severity="LOW"
-        )
+    results = mixed_service_reporter.get_suspicious_ips(
+        service="HTTP",
+        ip="203.0.113.11",
+        severity="LOW"
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.severity == "LOW"
-        for entry in results
+        result.service == "HTTP"
+        and result.ip == "203.0.113.11"
+        and result.severity == "LOW"
+        for result in results
     )
 
-
-def test_get_suspicious_activity_time_range(
-        brute_force_reporter
+def test_get_suspicious_ips_http_filter_no_results(
+            mixed_service_reporter
     ):
 
-    results = (
-        brute_force_reporter.get_suspicious_activity(
-            start_time=time(12, 0, 0),
-            end_time=time(12, 0, 5)
-        )
-    )
-
-    assert len(results) > 0
-
-    assert all(
-        time(12, 0, 0)
-        <= entry.timestamp.time()
-        <= time(12, 0, 5)
-        for entry in results
-    )
-
-
-def test_get_suspicious_activity_no_results(
-        empty_reporter
-    ):
-
-    results = (
-        empty_reporter.get_suspicious_activity()
+    results = mixed_service_reporter.get_suspicious_ips(
+        service="SMTP"
     )
 
     assert results == []

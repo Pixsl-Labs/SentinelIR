@@ -14,9 +14,47 @@ from app.utils.export_formatting import (
     export_status_label,
     export_missing_value,
     export_log_entry_line,
-    export_log_entry_header
+    export_log_entry_header,
+    export_filter_summary
 )
 
+
+def serialise_filters(
+            filters: dict | None
+    ) -> dict:
+    """
+    Converts export filters values into JSON-safe values.
+
+    Args:
+        filters (dict | None): Filters applied to the exported report.
+
+    Returns:
+        dict: JSON-safe filter dictionary.
+    """
+
+    if not filters:
+
+        return {}
+    
+    serialised = {}
+
+    for key, value in filters.items():
+
+        if value is None:
+
+            continue
+
+        if hasattr(value, "strftime"):
+
+            serialised[key] = value.strftime(
+                "%H:%M:%S"
+            )
+
+        else:
+
+            serialised[key] = value
+
+    return serialised
 
 class Export:
     """
@@ -29,7 +67,8 @@ class Export:
             self,
             filename: str,
             title: str,
-            data: list
+            data: list,
+            filters: dict | None = None
         ) -> None:
         """
         Exports filtered results to a TXT file.
@@ -42,6 +81,8 @@ class Export:
             filename (str): Output TXT file path.
             title (str): Report title written at the top of the file.
             data (list): Results to export.
+            filters (dict | None): Filters applied to the exported report.
+                Defaults to None.
 
         Returns:
             None
@@ -61,6 +102,10 @@ class Export:
             f.write(
                 export_generated_timestamp()
                 )
+            
+            f.write(
+                export_filter_summary(filters)
+            )
 
             if not data:
                 f.write(
@@ -133,7 +178,7 @@ class Export:
                 ),
                 "title": title,
                 "result_count": len(data),
-                "filters": filters or {}
+                "filters": serialise_filters(filters)
             },
             
             "results": [

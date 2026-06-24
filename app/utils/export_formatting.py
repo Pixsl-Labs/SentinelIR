@@ -166,3 +166,36 @@ def export_log_entry_header() -> str:
     separator = "-" * 122 + "\n"
 
     return header + separator
+
+def export_filter_summary(
+            filters: dict | None
+    ) -> str:
+    """
+    Formats applied filters for a plain-text exported report.
+
+    Args:
+        filters (dict | None): Filters applied to the exported report.
+
+    Returns:
+        str: Formatted filter summary for the TXT report.
+    """
+
+    if not filters:
+
+        return "Filters: None\n\n"
+    
+    lines = [
+        "Filters Applied:\n"
+    ]
+
+    for key, value in filters.items():
+
+        if value is None:
+
+            continue
+
+        lines.append(
+            f"- {key}: {value}\n"
+        )
+
+    return "".join(lines) + "\n"

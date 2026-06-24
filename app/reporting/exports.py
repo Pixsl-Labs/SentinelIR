@@ -1,12 +1,21 @@
-from app.utils.display import (
-    print_info
-)
-
-
 import json
 from datetime import datetime
 from dataclasses import asdict, is_dataclass
 from colorama import Fore
+
+from app.utils.display import (
+    print_info
+)
+from app.utils.export_formatting import (
+    export_section_header,
+    export_generated_timestamp,
+    export_empty_message,
+    export_separator,
+    export_status_label,
+    export_missing_value,
+    export_log_entry_line,
+    export_log_entry_header
+)
 
 
 class Export:
@@ -40,44 +49,54 @@ class Export:
 
         now = datetime.now()
 
-        with open(filename, "w") as f:
-
-            f.write(f"=== {title} ===\n\n")
+        with open(
+                filename, 
+                "w"
+            ) as f:
 
             f.write(
-                now.strftime(
-                    "Generated: %Y-%m-%d %H:%M:%S\n\n"
-                )
+                export_section_header(title)
             )
 
+            f.write(
+                export_generated_timestamp()
+                )
+
             if not data:
-                f.write("No results found.\n")
+                f.write(
+                    export_empty_message(
+                        "No results found."
+                    )
+                )
 
             else:
-                for item in data:
-                    if hasattr(item, "ip"):
+                
+                if all(
+                    (hasattr(item, "ip")
+                        and hasattr(item, "status")
+                        for item in data)
+                ):
+                    
+                    f.write(
+                        f"Total Result: {len(data)}\n\n"
+                    )
 
-                        timestamp = (
-                            item.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-                            if item.timestamp
-                            else "Unknown"
-                        )
+                    f.write(
+                        export_log_entry_header()
+                    )
+
+                for item in data:
+
+                    if (hasattr(item, "ip")
+                        and hasattr(item, "status")):
 
                         f.write(
-                            f"[{item.status:<7}] "
-                            f"{timestamp} "
-                            f"{item.user:<12} "
-                            f"{item.ip:<15} "
-                            f"[{item.severity}]\n"
+                            export_log_entry_line(item)
                         )
 
                     else:
-                        f.write(f"{item}\n")
 
-        print_info(
-            Fore.YELLOW
-            + f"\nTXT report exported to {filename}"
-        )
+                        f.write(f"{item}\n")
 
     def export_json(
             self,

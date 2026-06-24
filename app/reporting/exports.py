@@ -102,19 +102,22 @@ class Export:
             self,
             filename: str,
             title: str,
-            data: list
+            data: list,
+            filters: dict | None = None
         ) -> None:
         """
-        Exports filtered results to a JSON file.
+        Exports filtered results to a structured JSON file.
 
-        Creates a structured JSON report containing a generation timestamp, title, and
-        serialised result data. Dataclass object are converted into dictionaries before
+        Creates a JSON report containing metadata, selected filters, result count, and
+        serialised result data. Dataclass objects are converted into dictionaries before
         being written.
 
         Args:
             filename (str): Output JSON file path.
             title (str): Report title stored in the JSON output.
             data (list): Results to export.
+            filters (dict | None): Filters applied to the exported report.
+                Defaults to None.
 
         Returns:
             None
@@ -123,13 +126,18 @@ class Export:
         now = datetime.now()
 
         export_data = {
-            "generated_at": now.strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-
-            "title": title,
+            "metadata": {
+                "version": "1.0",
+                "generated_at": now.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+                "title": title,
+                "result_count": len(data),
+                "filters": filters or {}
+            },
             
             "results": [
+
                 {
                     key: (
                         value.strftime("%Y-%m-%d %H:%M:%S")
@@ -146,8 +154,16 @@ class Export:
             ]
         }
 
-        with open(filename, "w") as f:
-            json.dump(export_data, f, indent=4)
+        with open(
+            filename, 
+            "w"
+            ) as f:
+
+            json.dump(
+                export_data, 
+                f, 
+                indent=4
+            )
 
         print_info(
             Fore.YELLOW

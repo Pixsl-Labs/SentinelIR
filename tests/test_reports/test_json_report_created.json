@@ -1,6 +1,11 @@
 {
-    "generated_at": "2026-06-24 10:24:56",
-    "title": "Failed Logins",
+    "metadata": {
+        "version": "1.0",
+        "generated_at": "2026-06-24 21:22:48",
+        "title": "Failed Logins",
+        "result_count": 5,
+        "filters": {}
+    },
     "results": [
         {
             "ip": "192.168.1.10",

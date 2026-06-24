@@ -10,10 +10,20 @@ from app.config.security_config import (
     BRUTE_FORCE_TIME_WINDOW
 )
 
-from app.interaction.menus import display_log_analysis_menu, current_config
-from app.interaction.filters import integer_validation, handle_filter_menu, get_time_range
+from app.interaction.menus import (
+    display_log_analysis_menu, 
+    current_config
+)
+from app.interaction.filters import (
+    integer_validation, 
+    handle_filter_menu, 
+    collect_filter_values
+)
 from app.interaction.configuration import configure
-from app.utils.colours import get_count_colour, get_attempt_colour
+from app.utils.colours import (
+    get_count_colour, 
+    get_attempt_colour
+)
 from app.utils.display import (
     print_section_header,
     print_empty_message,
@@ -326,61 +336,98 @@ class Interaction:
             # === Configuration ===
 
             elif choice == "17":
-                
+
                 print_section_header(
                     "Export Options",
                     Fore.GREEN
                 )
+
                 print("1. Failed Logins")
                 print("2. Successful Logins")
                 print("3. Activity Timeline")
+
+                export_reports = {
+                    "1": {
+                        "title": "Failed Logins",
+                        "getter": self.reporter.get_failed_logins,
+                        "filters": [
+                            "service",
+                            "ip",
+                            "username",
+                            "severity",
+                            "status",
+                            "method",
+                            "path",
+                            "status_code"
+                        ]
+                    },
+
+                    "2": {
+                        "title": "Successful Logins",
+                        "getter": self.reporter.get_successful_logins,
+                        "filters": [
+                            "service",
+                            "ip",
+                            "username",
+                            "severity",
+                            "status",
+                            "method",
+                            "path",
+                            "status_code"
+                        ]
+                    },
+
+                    "3": {
+                        "title": "Activity Timeline",
+                        "getter": self.reporter.get_activity_timeline,
+                        "filters": [
+                            "service",
+                            "ip",
+                            "username",
+                            "severity",
+                            "status",
+                            "method",
+                            "path",
+                            "status_code"
+                        ]
+                    }
+                }
 
                 export_choice = input(
                     "\nSelect export option: "
                 ).strip()
 
-                data = []
+                export_config = export_reports.get(
+                    export_choice
+                )
 
-                title = ""
-
-                if export_choice == "1":
-
-                    severity = input(
-                        "\nSeverity filter (optional): "
-                    ).strip().upper()
-
-                    severity = severity if severity else None
-
-                    data = self.reporter.get_failed_logins(
-                        severity=severity
-                    )
-
-                    title = "Failed Logins"
-
-                elif export_choice == "2":
-
-                    data = self.reporter.get_successful_logins()
-
-                    title = "Successful Logins"
-
-                elif export_choice == "3":
-
-                    start_time, end_time = get_time_range()
-
-                    data = self.reporter.get_activity_timeline(
-                        start_time=start_time,
-                        end_time=end_time
-                    )
-
-                    title = "Activity Timeline"
-
-                else:
+                if export_config is None:
 
                     print_empty_message(
                         "Invalid export option."
                     )
 
                     continue
+
+                title = export_config["title"]
+
+                getter = export_config["getter"]
+
+                filters = export_config["filters"]
+
+                filter_values = collect_filter_values(
+                    reporter=self.reporter,
+                    title=title,
+                    filters=filters
+                )
+
+                if filter_values is None:
+
+                    continue
+
+                data = getter(
+                    **filter_values
+                )
 
                 file_path = input(
                     "\nEnter report filename (.txt/.json): "
@@ -396,7 +443,8 @@ class Interaction:
                     self.reporter.export_txt(
                         file_path,
                         title,
-                        data
+                        data,
+                        filters=filter_values
                     )
 
                 elif file_path.endswith(".json"):
@@ -404,7 +452,8 @@ class Interaction:
                     self.reporter.export_json(
                         file_path,
                         title,
-                        data
+                        data,
+                        filters=filter_values
                     )
 
                 else:

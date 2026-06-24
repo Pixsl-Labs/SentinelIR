@@ -211,31 +211,58 @@ def handle_filter_menu(
     """
     Handles a reusable multi-filter menu for report and investigation views.
 
-    Builds a filter menu from the supplied filter names, allows the user to select
-    one or more filters, collects values for each selected filter, optionally applies
-    a time range, and calls the provided report display function with the selected
-    keyword arguments.
-
-    Supported filters include service, IP address, username, severity, status,
-    HTTP method, HTTP path, and HTTP status code. Multiple filters can be selected
-    using + or commas, for example "service + username" or "2 + 4".
+    Collects filter values using the shared filter collection helper, then calls
+    the selected display function with those filters.
 
     Args:
-        reporter: Log reporter instance used to display available filter values,
-            such as known IP addresses and usernames.
-        title (str): Name of the report being filtered, displayed in the menu title.
+        reporter: Log reporter instance used to display available filter values.
+        title (str): Name of the report being filtered.
         show_function: Report printing function called after filters are collected.
-            The function must accept the selected filter names as keyword arguments.
-        filters (list[str]): Available filter keys for this report, such as service,
-            ip, username, severity, status, method, path, or status_code.
+        filters (list[str]): Available filter keys for this report.
 
     Returns:
         None
     """
 
+    filter_values = collect_filter_values(
+        reporter=reporter,
+        title=title,
+        filters=filters
+    )
+
+    if filter_values is None:
+
+        return
+
+    show_function(
+        **filter_values
+    )
+
+def collect_filter_values(
+            reporter,
+            title: str,
+            filters: list[str]
+    ) -> dict | None:
+    """
+    Collects selected filter values from the reusable CLI filter menu.
+
+    Builds a dynamic filter menu, allows the user to select one or more filters,
+    collects values for each selected filter, optionally applies a time range, and
+    returns the selected filters as keyword arguments.
+
+    Args:
+        reporter: Log reporter instance used to display available filter values.
+        title (str): Name of the report being filtered.
+        filters (list[str]): Available filter keys for this report.
+
+    Returns:
+        dict | None: Dictionary of selected filter values, or None if the user
+        chooses Back.
+    """
+
     while True:
 
-        print(f"\nFilter {title} by:\n")
+        print(f"\nFilter {title} by: \n")
 
         options = {}
 
@@ -243,7 +270,7 @@ def handle_filter_menu(
 
         print(f"{option_number}. None")
 
-        options[str(option_number)] = "none"
+        options[str(option_number)] = "None"
 
         option_number += 1
 
@@ -276,22 +303,22 @@ def handle_filter_menu(
 
             continue
 
+        if selected_filters == ["back"]:
+
+            return None
+        
         if selected_filters == ["none"]:
 
             start_time, end_time = get_time_range()
 
-            show_function(
-                start_time=start_time,
-                end_time=end_time
-            )
-
-            break
-
-        if selected_filters == ["back"]:
-
-            break
-
+            return {
+                "start_time": start_time,
+                "end_time": end_time
+            }
+        
         filter_values = {}
+
+        invalid_filter = False
 
         for selected_filter in selected_filters:
 
@@ -308,7 +335,8 @@ def handle_filter_menu(
                         "No IP entered."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["ip"] = value
 
@@ -325,7 +353,8 @@ def handle_filter_menu(
                         "No username entered."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["username"] = value
 
@@ -343,7 +372,8 @@ def handle_filter_menu(
                         "Invalid service. Use SSH, FTP, or HTTP."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["service"] = value
 
@@ -361,7 +391,8 @@ def handle_filter_menu(
                         "Invalid severity. Use LOW, MEDIUM, or HIGH."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["severity"] = value
 
@@ -379,7 +410,8 @@ def handle_filter_menu(
                         "Invalid status. Use SUCCESS or FAILED."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["status"] = value
 
@@ -396,7 +428,8 @@ def handle_filter_menu(
                         "No method entered."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 if value not in [
                     "GET",
@@ -412,7 +445,8 @@ def handle_filter_menu(
                         "Invalid method. Use GET, POST, PUT, DELETE, PATCH, HEAD, or OPTIONS."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["method"] = value
 
@@ -429,7 +463,8 @@ def handle_filter_menu(
                         "No path entered."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["path"] = value
 
@@ -447,16 +482,18 @@ def handle_filter_menu(
                         "Invalid status code."
                     )
 
-                    continue
+                    invalid_filter = True
+                    break
 
                 filter_values["status_code"] = int(value)
 
+        if invalid_filter:
+
+            continue
+
         start_time, end_time = get_time_range()
 
-        show_function(
-            **filter_values,
-            start_time=start_time,
-            end_time=end_time
-        )
+        filter_values["start_time"] = start_time
+        filter_values["end_time"] = end_time
 
-        break
+        return filter_values

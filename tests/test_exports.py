@@ -46,8 +46,7 @@ def test_export_json_contains_expected_keys(brute_force_reporter):
         data = json.load(file)
 
     expected_keys = {
-        "generated_at",
-        "title",
+        "metadata",
         "results"
     }
 

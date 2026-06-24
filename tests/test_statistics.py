@@ -1,120 +1,99 @@
 from conftest import brute_force_reporter
+import pytest
 
 from datetime import time
 
 
-def test_get_failed_logins_returns_all(
-        brute_force_reporter
+@pytest.mark.parametrize(
+    "filter_kwargs, validator",
+    [
+        (
+            {"service": "HTTP"},
+            lambda entry: entry.service == "HTTP"
+        ),
+        (
+            {"ip": "203.0.113.5"},
+            lambda entry: entry.ip == "203.0.113.5"
+        ),
+        (
+            {"username": "root"},
+            lambda entry: entry.user.lower() == "root"
+        ),
+        (
+            {"severity": "LOW"},
+            lambda result: result.severity == "LOW"
+        ),
+        (
+            {"status": "FAILED"},
+            lambda entry: entry.status == "FAILED"
+        ),
+        (
+            {"method": "POST"},
+            lambda entry: entry.method == "POST"
+        ),
+        (
+            {"path": "/login"},
+            lambda entry: entry.path is not None and "/login" in entry.path
+        ),
+        (
+            {"status_code": 401},
+            lambda entry: entry.status_code == 401
+        ),
+    ]
+)
+
+def test_get_failed_logins_filters(
+        mixed_service_reporter,
+        filter_kwargs,
+        validator
     ):
 
-    results = brute_force_reporter.get_failed_logins()
-
-    assert len(results) > 0
-
-def test_get_failed_logins_by_ip(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_failed_logins(
-        ip="192.168.1.10"
-    )
-    
-    assert len(results) > 0
-
-    assert all(
-        entry.ip == "192.168.1.10"
-        for entry in results
-    )
-
-def test_get_failed_logins_by_username(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_failed_logins(
-        username="root"
-    )
-    
-
-    assert len(results) > 0
-
-    assert all(
-        entry.user.lower() == "root"
-        for entry in results
-    )
-
-def test_get_failed_logins_username_case_insensitive(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_failed_logins(
-        username="ROOT"
-    )
-
-    assert len(results) > 0
-
-    assert all(
-        entry.user.lower() == "root"
-        for entry in results
-    )
-
-def test_get_failed_logins_by_severity(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_failed_logins(
-        severity="LOW"
+    results = mixed_service_reporter.get_failed_logins(
+        **filter_kwargs
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.severity == "LOW"
+        validator(entry)
         for entry in results
     )
 
-def test_get_failed_logins_by_status(
-        brute_force_reporter
+def test_get_failed_logins_combined_http_filters(
+        mixed_service_reporter
     ):
 
-    results = brute_force_reporter.get_failed_logins(
-        status="FAILED"
+    results = mixed_service_reporter.get_failed_logins(
+        service="HTTP",
+        status="FAILED",
+        method="POST",
+        path="/login",
+        status_code=401
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.status == "FAILED"
+        entry.service == "HTTP"
+        and entry.status == "FAILED"
+        and entry.method == "POST"
+        and entry.path is not None
+        and "/login" in entry.path
+        and entry.status_code == 401
         for entry in results
     )
 
-def test_get_failed_logins_no_results(
-        brute_force_reporter
+def test_get_failed_logins_http_filter_no_results(
+            mixed_service_reporter
     ):
 
-    results = brute_force_reporter.get_failed_logins(
-        ip="999.999.999.999"
+    results = mixed_service_reporter.get_failed_logins(
+        service="HTTP",
+        method="GET",
+        status_code=999
     )
 
     assert results == []
-
-def test_get_failed_logins_multiple_filters(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_failed_logins(
-        ip="192.168.1.10",
-        severity="LOW",
-        status="FAILED"
-    )
-
-    assert len(results) > 0
-
-    assert all(
-        entry.ip == "192.168.1.10"
-        and entry.severity == "LOW"
-        and entry.status == "FAILED"
-        for entry in results
-    )
 
 def test_get_failed_logins_time_range(
         brute_force_reporter
@@ -145,66 +124,93 @@ def test_get_failed_logins_time_range_no_results(
 
     assert results == []
 
-def test_get_successful_logins_returns_results(
-        brute_force_reporter
+
+@pytest.mark.parametrize(
+    "filter_kwargs, validator",
+    [
+        (
+            {"service": "HTTP"},
+            lambda entry: entry.service == "HTTP"
+        ),
+        (
+            {"ip": "192.168.2.4"},
+            lambda entry: entry.ip == "192.168.2.4"
+        ),
+        (
+            {"username": "guest"},
+            lambda entry: entry.user.lower() == "guest"
+        ),
+        (
+            {"severity": "LOW"},
+            lambda entry: entry.severity == "LOW"
+        ),
+        (
+            {"status": "SUCCESS"},
+            lambda entry: entry.status == "SUCCESS"
+        ),
+        (
+            {"method": "POST"},
+            lambda entry: entry.method == "POST"
+        ),
+        (
+            {"path": "/login"},
+            lambda entry: entry.path is not None and "/login" in entry.path
+        ),
+        (
+            {"status_code": 200},
+            lambda entry: entry.status_code == 200
+        ),
+    ]
+)
+def test_get_successful_logins_filters(
+        mixed_service_reporter,
+        filter_kwargs,
+        validator
     ):
 
-    results = brute_force_reporter.get_successful_logins()
-
-    assert len(results) > 0
-
-def test_get_successful_logins_by_ip(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_successful_logins(
-        ip="192.168.1.10"
+    results = mixed_service_reporter.get_successful_logins(
+        **filter_kwargs
     )
-    
+
     assert len(results) > 0
 
     assert all(
-        entry.ip == "192.168.1.10"
+        validator(entry)
         for entry in results
     )
 
-def test_get_successful_logins_by_username(
-        brute_force_reporter
+def test_get_successful_logins_combined_http_filters(
+        mixed_service_reporter
     ):
 
-    results = brute_force_reporter.get_successful_logins(
-        username="root"
-    )
-    
-
-    assert len(results) > 0
-
-    assert all(
-        entry.user.lower() == "root"
-        for entry in results
-    )
-
-def test_get_successful_logins_by_severity(
-        brute_force_reporter
-    ):
-
-    results = brute_force_reporter.get_successful_logins(
-        status="SUCCESS"
+    results = mixed_service_reporter.get_successful_logins(
+        service="HTTP",
+        status="SUCCESS",
+        method="POST",
+        path="/login",
+        status_code=200
     )
 
     assert len(results) > 0
 
     assert all(
-        entry.status == "SUCCESS"
+        entry.service == "HTTP"
+        and entry.status == "SUCCESS"
+        and entry.method == "POST"
+        and entry.path is not None
+        and "/login" in entry.path
+        and entry.status_code == 200
         for entry in results
     )
 
-def test_get_successful_logins_no_results(
-        brute_force_reporter
+def test_get_successful_logins_http_filter_no_results(
+            mixed_service_reporter
     ):
 
-    results = brute_force_reporter.get_successful_logins(
-        ip="999.999.999.999"
+    results = mixed_service_reporter.get_successful_logins(
+        service="HTTP",
+        method="GET",
+        status_code=999
     )
 
     assert results == []

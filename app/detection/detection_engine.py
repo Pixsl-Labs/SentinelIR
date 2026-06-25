@@ -478,17 +478,20 @@ class DetectionEngine:
 
         threshold = self.brute_force_threshold
 
-        for ip, attempts in analyser.failed_ip_counts.items():
+        for (service, ip), attempts in analyser.failed_service_ip_counts.items():
+            
+            alert_key = f"{service}: {ip}"
 
             if (
                 attempts >= threshold 
-                and not self.has_alerted(BRUTE_FORCE_ALERT, ip)
+                and not self.has_alerted(BRUTE_FORCE_ALERT, alert_key)
             ):
 
                 print_alert(
                     severity="HIGH",
                     title="Brute Force Detected",
                     message=(
+                        f"Service: {service} | "
                         f"IP: {ip} | "
                         f"Attempts: {attempts}\n"
                     )
@@ -496,7 +499,7 @@ class DetectionEngine:
 
                 self.mark_alerted(
                     BRUTE_FORCE_ALERT,
-                    ip
+                    alert_key
                 )
 
     def detect_live_suspicious_success(
@@ -524,6 +527,7 @@ class DetectionEngine:
         }
 
         for entry in analyser.successful_logins:
+
 
             if (
                 entry.ip in failed_ips

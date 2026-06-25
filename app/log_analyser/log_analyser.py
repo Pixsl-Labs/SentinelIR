@@ -32,6 +32,7 @@ class LogAnalyser:
         self.failed_logins: list[LogEntry] = []
         self.successful_logins: list[LogEntry] = []
         self.failed_ip_counts: dict[str, int] = {}
+        self.failed_service_ip_counts: dict[tuple[str, str], int] = {}
         self.detection_engine = DetectionEngine()
 
     def reset(self) -> None:
@@ -47,6 +48,7 @@ class LogAnalyser:
         self.failed_logins = []
         self.successful_logins = []
         self.failed_ip_counts = {}
+        self.failed_service_ip_counts = {}
 
         self.detection_engine.reset_alert_state()
 
@@ -106,7 +108,16 @@ class LogAnalyser:
                 self.failed_ip_counts.get(entry.ip, 0) + 1
             )
 
-            attempts = self.failed_ip_counts[entry.ip]
+            service_ip_key = (
+                entry.service,
+                entry.ip
+            )
+
+            self.failed_service_ip_counts[service_ip_key] = (
+                self.failed_service_ip_counts.get(service_ip_key, 0) + 1
+            )
+
+            attempts = self.failed_service_ip_counts[service_ip_key]
 
             entry.severity = get_severity_level(attempts)
 

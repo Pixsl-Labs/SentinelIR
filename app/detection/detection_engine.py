@@ -480,7 +480,7 @@ class DetectionEngine:
 
         for (service, ip), attempts in analyser.failed_service_ip_counts.items():
             
-            alert_key = f"{service}: {ip}"
+            alert_key = f"{service}:{ip}"
 
             if (
                 attempts >= threshold 
@@ -507,11 +507,12 @@ class DetectionEngine:
             analyser
         ) -> None:
         """
-        Detects live successful logins from IPs that previously failed authentication.
+        Detects live successful logins from service/IP pairs that previously failed
+        authentication.
 
-        If a successful login comes from an IP address already seen in failed login
-        activity, a suspicious-success alert is printed. Each IP address only triggers
-        this alert once during the live session.
+        If a successful login comes from the same service and IP address as a previous
+        failed login, a suspicious-success alert is printed. Each service/IP pair only
+        triggers this alert once during the live session.
 
         Args:
             analyser: Log analyser instance containing live failed and successful
@@ -521,23 +522,33 @@ class DetectionEngine:
             None
         """
 
-        failed_ips = {
-            entry.ip
+        failed_service_ips = {
+            (
+                entry.service,
+                entry.ip
+            )
             for entry in analyser.failed_logins
         }
 
         for entry in analyser.successful_logins:
 
+            service_ip_key = (
+                entry.service,
+                entry.ip
+            )
+
+            alert_key = f"{entry.service}:{entry.ip}"
 
             if (
-                entry.ip in failed_ips
-                and not self.has_alerted(SUSPICIOUS_SUCCESS_ALERT, entry.ip)
+                service_ip_key in failed_service_ips
+                and not self.has_alerted(SUSPICIOUS_SUCCESS_ALERT, alert_key)
             ):
                 
                 print_alert(
                     severity="MEDIUM",
                     title="Suspicious Success Detected",
                     message=(
+                        f"Service: {entry.service} | "
                         f"IP: {entry.ip} | "
                         f"User: {entry.user} | "
                         f"Successful login after failure\n"
@@ -546,19 +557,19 @@ class DetectionEngine:
 
                 self.mark_alerted(
                     SUSPICIOUS_SUCCESS_ALERT,
-                    entry.ip
+                    alert_key
                 )
 
     def detect_live_user_targeting(
             self,
             analyser
-    ) -> None:
+        ) -> None:
         """
         Detects live distributed user-targeting activity.
 
-        Builds a mapping of usernames to unique attacking IP addresses. If a username
-        is targeted by enough unique IPs to meet the configured threshold, an alert
-        is printed once for the user.
+        Builds a mapping of service/username pairs to unique attacking IP addresses.
+        If a username is targeted by enough unique IPs within the same service, an
+        alert is printed once for that service/user pair.
 
         Args:
             analyser: Log analyser instance containing live failed login entries.
@@ -567,25 +578,40 @@ class DetectionEngine:
             None
         """
 
-        user_to_ips = defaultdict(set)
+        service_user_to_ips = defaultdict(set)
 
         for entry in analyser.failed_logins:
 
-            user_to_ips[entry.user].add(entry.ip)
+            service_user_key = (
+                entry.service,
+                entry.user
+            )
 
-        for user, ips in user_to_ips.items():
+            service_user_to_ips[service_user_key].add(
+                entry.ip
+            )
 
-            unique_ip_count = len(ips)
+        for (
+            service,
+            user
+        ), ips in service_user_to_ips.items():
+
+            unique_ip_count = len(
+                ips
+            )
+
+            alert_key = f"{service}:{user}"
 
             if (
                 unique_ip_count >= self.user_targeting_threshold
-                and not self.has_alerted(USER_TARGETING_ALERT, user)
+                and not self.has_alerted(USER_TARGETING_ALERT, alert_key)
             ):
                 
                 print_alert(
                     severity="HIGH",
                     title="User Targeting Detected",
                     message=(
+                        f"Service: {service} | "
                         f"User: {user} | "
                         f"Unique IPs: {unique_ip_count} | "
                         f"Threshold: {self.user_targeting_threshold}\n"
@@ -594,5 +620,5 @@ class DetectionEngine:
 
                 self.mark_alerted(
                     USER_TARGETING_ALERT,
-                    user
+                    alert_key
                 )

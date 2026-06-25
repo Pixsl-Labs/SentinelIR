@@ -2,6 +2,7 @@ from datetime import datetime
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.monitoring.live_event_processor import LiveEventProcessor
+from app.detection.detection_engine import DetectionEngine
 
 from app.detection.alert_types import (
     BRUTE_FORCE_ALERT,
@@ -449,3 +450,47 @@ def test_live_processor_ignores_malformed_http_line():
     assert len(analyser.successful_logins) == 0
     assert len(analyser.failed_logins) == 0
     assert processor.events_processed == 0
+
+def test_alert_cooldown_blocks_duplicate_alerts():
+    engine = DetectionEngine()
+
+    engine.alert_cooldown_seconds = 60
+
+    alert_key = "SSH:192.168.70.10"
+
+    assert engine.can_alert(
+        BRUTE_FORCE_ALERT,
+        alert_key,
+        current_time=1000
+    )
+
+    engine.mark_alerted(
+        BRUTE_FORCE_ALERT,
+        alert_key,
+        current_time=1000
+    )
+
+    assert not engine.can_alert(
+        BRUTE_FORCE_ALERT,
+        alert_key,
+        current_time=1030
+    )
+
+def test_alert_count_tracks_actual_alert_events():
+    engine = DetectionEngine()
+
+    alert_key = "SSH:192.168.70.10"
+
+    engine.mark_alerted(
+        BRUTE_FORCE_ALERT,
+        alert_key,
+        current_time=1000
+    )
+
+    engine.mark_alerted(
+        BRUTE_FORCE_ALERT,
+        alert_key,
+        current_time=1061
+    )
+
+    assert engine.get_alert_count(BRUTE_FORCE_ALERT) == 2

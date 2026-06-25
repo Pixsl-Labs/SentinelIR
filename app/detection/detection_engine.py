@@ -1,12 +1,13 @@
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW,
-    USER_TARGETING_THRESHOLD
+    USER_TARGETING_THRESHOLD,
+    ALERT_COOLDOWN_SECONDS
 )
 from app.detection.alert_types import (
     BRUTE_FORCE_ALERT,
     SUSPICIOUS_SUCCESS_ALERT,
-    USER_TARGETING_ALERT
+    USER_TARGETING_ALERT,
 )
 
 from app.models.detection_results import (
@@ -22,6 +23,7 @@ from app.utils.display import (
 )
 
 from collections import defaultdict
+import time as time_module
 
 
 class DetectionEngine:
@@ -66,6 +68,16 @@ class DetectionEngine:
             BRUTE_FORCE_ALERT: set(),
             SUSPICIOUS_SUCCESS_ALERT: set(),
             USER_TARGETING_ALERT: set()
+        }
+
+        self.alert_cooldown_seconds = ALERT_COOLDOWN_SECONDS
+
+        self.alert_last_seen = {}
+
+        self.alert_event_counts = {
+            BRUTE_FORCE_ALERT: 0,
+            SUSPICIOUS_SUCCESS_ALERT: 0,
+            USER_TARGETING_ALERT: 0
         }
 
     def configure_threshold(
@@ -125,7 +137,8 @@ class DetectionEngine:
     def mark_alerted(
             self,
             alert_type: str,
-            entity: str
+            entity: str,
+            current_time: float | None = None
     ) -> None:
         """
         Records that an entity has triggered a specific alert type.
@@ -144,6 +157,62 @@ class DetectionEngine:
         
         self.alert_state[alert_type].add(entity)
 
+        if current_time is None:
+
+            current_time = time_module.time()
+
+        cooldown_key = (
+            alert_type,
+            entity
+        )
+
+        self.alert_last_seen[cooldown_key] = current_time
+
+        self.alert_event_counts[alert_type] = (
+            self.alert_event_counts.get(alert_type, 0) + 1
+        )
+
+    def can_alert(
+        self,
+        alert_type: str,
+        entity: str,
+        current_time: float | None = None
+    ) -> bool:
+        """
+        Checks whether an alert can be raised based on the cooldown period.
+
+        Args:
+            alert_type (str): Alert type being checked.
+            entity (str): Service-aware alert key.
+            current_time (float | None): Optional timestamp used for tests.
+                Defaults to None.
+
+        Returns:
+            bool: True if the alert can be raised, otherwise False.
+        """
+
+        if current_time is None:
+
+            current_time = time_module.time()
+
+        cooldown_key = (
+            alert_type,
+            entity
+        )
+
+        last_alert_time = self.alert_last_seen.get(
+            cooldown_key
+        )
+
+        if last_alert_time is None:
+
+            return True
+        
+        return (
+            current_time - last_alert_time
+            >= self.alert_cooldown_seconds
+        )
+
     def reset_alert_state(self) -> None:
         """
         Clears all live alert tracking state.
@@ -158,26 +227,28 @@ class DetectionEngine:
         for alert_entries in self.alert_state.values():
             alert_entries.clear()
 
+        self.alert_last_seen.clear()
+
+        for alert_type in self.alert_event_counts:
+            self.alert_event_counts[alert_type] = 0
     
     def get_alert_count(
             self,
             alert_type: str
-    ) -> int:
+        ) -> int:
         """
-        Returns the number of entities that triggered a specific alert type.
+        Returns the number of alert events raised for a specific alert type.
 
         Args:
             alert_type (str): The alert type to count.
 
         Returns:
-            int: Number of unique entities that have triggered the alert type.
+            int: Number of alert events raised for the selected alert type.
         """
 
-        return len(
-            self.alert_state.get(
-                alert_type,
-                set()
-            )
+        return self.alert_event_counts.get(
+            alert_type,
+            0
         )
     
     def get_total_alerts(
@@ -191,8 +262,7 @@ class DetectionEngine:
         """
 
         return sum(
-            len(alerted_entities)
-            for alerted_entities in self.alert_state.values()
+            self.alert_event_counts.values()
         )
     
     def get_alert_summary(
@@ -457,6 +527,25 @@ class DetectionEngine:
         self.detect_live_suspicious_success(analyser)
 
         self.detect_live_user_targeting(analyser)
+
+    @staticmethod
+    def build_alert_key(
+            *parts
+        ) -> str:
+        """
+        Builds a consistent service-aware alert key.
+
+        Args:
+            *parts: Alert key parts such as service, IP address, or username.
+
+        Returns:
+            str: Joined alert key.
+        """
+
+        return ":".join(
+            str(part)
+            for part in parts
+        )
         
     def detect_live_brute_force(
             self,
@@ -480,11 +569,14 @@ class DetectionEngine:
 
         for (service, ip), attempts in analyser.failed_service_ip_counts.items():
             
-            alert_key = f"{service}:{ip}"
+            alert_key = self.build_alert_key(
+                service,
+                ip
+            )
 
             if (
                 attempts >= threshold 
-                and not self.has_alerted(BRUTE_FORCE_ALERT, alert_key)
+                and self.can_alert(BRUTE_FORCE_ALERT, alert_key)
             ):
 
                 print_alert(
@@ -537,11 +629,14 @@ class DetectionEngine:
                 entry.ip
             )
 
-            alert_key = f"{entry.service}:{entry.ip}"
+            alert_key = self.build_alert_key(
+                entry.service,
+                entry.ip
+            )
 
             if (
                 service_ip_key in failed_service_ips
-                and not self.has_alerted(SUSPICIOUS_SUCCESS_ALERT, alert_key)
+                and self.can_alert(SUSPICIOUS_SUCCESS_ALERT, alert_key)
             ):
                 
                 print_alert(
@@ -600,11 +695,14 @@ class DetectionEngine:
                 ips
             )
 
-            alert_key = f"{service}:{user}"
+            alert_key = self.build_alert_key(
+                service,
+                user
+            )
 
             if (
                 unique_ip_count >= self.user_targeting_threshold
-                and not self.has_alerted(USER_TARGETING_ALERT, alert_key)
+                and self.can_alert(USER_TARGETING_ALERT, alert_key)
             ):
                 
                 print_alert(

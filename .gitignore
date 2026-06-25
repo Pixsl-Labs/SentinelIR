@@ -22,3 +22,5 @@ reports/*.json
 
 # OS
 .DS_Store
+
+docs/ethan_meeting.md

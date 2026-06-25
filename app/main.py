@@ -105,7 +105,7 @@ def run_interactive() -> None:
         file_name = input("Enter log file name (e.g. auth.log): ").strip()
 
         if file_name.lower() == "exit":
-            print("Exiting...")
+            print("Exiting...\n")
             return
 
         if not file_name:
@@ -157,4 +157,4 @@ if __name__ == "__main__":
             run_interactive()
 
     except KeyboardInterrupt:
-        print("\n\nExiting...")
+        print("\n\nExiting...\n")

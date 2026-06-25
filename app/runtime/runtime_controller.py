@@ -106,7 +106,7 @@ class RunTimeController:
 
             elif choice == "5":
 
-                print("\nExiting application...")
+                print("\nExiting application...\n")
                 break
 
             else:

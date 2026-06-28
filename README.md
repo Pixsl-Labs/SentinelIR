@@ -60,6 +60,9 @@ The long-term direction is to expand SentinelIR into a broader investigation pla
 - Prints live alerts when suspicious behaviour is detected
 - Displays periodic live monitoring status
 - Prints a live session summary when monitoring ends
+- Uses service-aware alert keys so SSH, FTP, and HTTP activity is tracked separately.
+- Applies cooldown-based alert suppression to reduce repeated alert spam.
+- Persists live alerts to logs/alerts.log for later investigation.
 
 # Scenario Generator
 

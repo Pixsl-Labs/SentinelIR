@@ -134,9 +134,14 @@ class LiveRuntime:
             USER_TARGETING_ALERT
         )
 
-        print_section_header(            
+        print_section_header(
             "Live Monitoring Summary",
             Fore.GREEN
+        )
+
+        print(
+            Fore.LIGHTYELLOW_EX
+            + "Session Activity"
         )
 
         brute_force_colour = get_live_status_colour("brute_force_alert", brute_force_alerts)
@@ -145,7 +150,22 @@ class LiveRuntime:
         
         user_targeting_colour = get_live_status_colour("user_targeting", user_targeting_alerts)
 
-        processor.print_live_stats()
+        processor.print_session_activity()
+
+        print(
+            Fore.LIGHTYELLOW_EX
+            + "Alert Summary"
+        )
+
+        print_stat_row(
+            "Total alerts raised",
+            self.analyser.detection_engine.get_total_alerts(),
+            get_live_status_colour(
+                "alerts_raised",
+                self.analyser.detection_engine.get_total_alerts()
+            ),
+            28
+        )
 
         print_stat_row(
             "Brute-force alerts",
@@ -165,5 +185,17 @@ class LiveRuntime:
             "User-targeting alerts",
             user_targeting_alerts,
             user_targeting_colour,
+            28
+        )
+
+        print(
+            Fore.LIGHTYELLOW_EX
+            + "\nEvidence"
+        )
+
+        print_stat_row(
+            "Alert log path",
+            "logs/alerts.log",
+            Fore.CYAN,
             28
         )

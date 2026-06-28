@@ -104,7 +104,7 @@ class LiveEventProcessor:
 
         self.track_processed_event()
 
-    def print_live_stats(self) -> None:
+    def print_session_activity(self) -> None:
         """
         Prints live monitoring statistics.
 
@@ -172,4 +172,4 @@ class LiveEventProcessor:
             Fore.GREEN
         )
 
-        self.print_live_stats()
+        self.print_session_activity()

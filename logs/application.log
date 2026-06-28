@@ -291,3 +291,10 @@
 2026-06-25 13:37:03,987 - INFO - Analysing File: log_files/generated.log
 2026-06-25 13:49:49,089 - INFO - Analysing File: log_files/generated.log
 2026-06-25 14:05:39,695 - INFO - Analysing File: log_files/generated.log
+2026-06-28 18:02:43,734 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:06:56,173 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:21:31,292 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:22:59,422 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:23:48,878 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:38:13,364 - INFO - [33mMonitoring file: log_files/generated.log
+2026-06-28 18:41:53,171 - INFO - [33mMonitoring file: log_files/generated.log

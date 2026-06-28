@@ -21,6 +21,9 @@ from app.utils.severity import get_severity_level
 from app.utils.display import (
     print_alert
 )
+from app.monitoring.alert_logger import (
+    write_alert_log
+)
 
 from collections import defaultdict
 import time as time_module
@@ -579,14 +582,24 @@ class DetectionEngine:
                 and self.can_alert(BRUTE_FORCE_ALERT, alert_key)
             ):
 
+                alert_message = (
+                    f"Service: {service} | "
+                    f"IP: {ip} | "
+                    f"Attempts: {attempts}\n"
+                )
+
                 print_alert(
                     severity="HIGH",
                     title="Brute Force Detected",
-                    message=(
-                        f"Service: {service} | "
-                        f"IP: {ip} | "
-                        f"Attempts: {attempts}\n"
-                    )
+                    message=alert_message
+                )
+
+                write_alert_log(
+                    alert_type=BRUTE_FORCE_ALERT,
+                    severity="HIGH",
+                    service=service,
+                    entity=ip,
+                    message=alert_message
                 )
 
                 self.mark_alerted(
@@ -639,15 +652,25 @@ class DetectionEngine:
                 and self.can_alert(SUSPICIOUS_SUCCESS_ALERT, alert_key)
             ):
                 
+                alert_message = (
+                    f"Service: {entry.service} | "
+                    f"IP: {entry.ip} | "
+                    f"User: {entry.user} | "
+                    f"Successful login after failure\n"
+                )
+
                 print_alert(
                     severity="MEDIUM",
                     title="Suspicious Success Detected",
-                    message=(
-                        f"Service: {entry.service} | "
-                        f"IP: {entry.ip} | "
-                        f"User: {entry.user} | "
-                        f"Successful login after failure\n"
-                    )
+                    message=alert_message
+                )
+
+                write_alert_log(
+                    alert_type=SUSPICIOUS_SUCCESS_ALERT,
+                    severity="MEDIUM",
+                    service=entry.service,
+                    entity=entry.ip,
+                    message=alert_message
                 )
 
                 self.mark_alerted(
@@ -705,15 +728,25 @@ class DetectionEngine:
                 and self.can_alert(USER_TARGETING_ALERT, alert_key)
             ):
                 
+                alert_message = (
+                    f"Service: {service} | "
+                    f"User: {user} | "
+                    f"Unique IPs: {unique_ip_count} | "
+                    f"Threshold: {self.user_targeting_threshold}\n"
+                )
+
                 print_alert(
                     severity="HIGH",
                     title="User Targeting Detected",
-                    message=(
-                        f"Service: {service} | "
-                        f"User: {user} | "
-                        f"Unique IPs: {unique_ip_count} | "
-                        f"Threshold: {self.user_targeting_threshold}\n"
-                    )
+                    message=alert_message
+                )
+
+                write_alert_log(
+                    alert_type=USER_TARGETING_ALERT,
+                    severity="HIGH",
+                    service=service,
+                    entity=user,
+                    message=alert_message
                 )
 
                 self.mark_alerted(

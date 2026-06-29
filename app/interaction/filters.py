@@ -139,6 +139,98 @@ def format_filter_display_name(
         filter_name.title()
     )
 
+def format_filter_value(
+        value: str
+) -> str:
+    """
+    Converts a filter value into readable display text.
+    """
+
+    if value is None:
+
+        return "None applied."
+    
+    if hasattr(value, "strftime"):
+
+        return value.strftime(
+            "%H:%M:%S"
+        )
+    
+    return str(
+        value
+    )
+
+def confirm_filter_value(
+        title: str,
+        filter_values: dict
+) -> str:
+    """
+    Shows selected filter values and asks the user how to continue.
+
+    Returns:
+        str: apply, restart, or cancel.
+    """
+
+    print(
+        Fore.GREEN
+        + f"\n=== {title} Filter Summary ===\n"
+    )
+
+    if not confirm_filter_value:
+
+        print("No filters applied.")
+
+    else:
+
+        for filter_name, value in filter_values.items():
+
+            display_name = format_filter_display_name(
+                filter_name
+            )
+
+            print(
+                Fore.CYAN
+                + f"{display_name}: "
+                + Fore.LIGHTMAGENTA_EX
+                + f"{format_filter_value(value)}"
+            )
+
+    print(
+        Fore.LIGHTGREEN_EX
+        + "\n1. Apply filters"
+    )
+
+    print(
+        Fore.LIGHTYELLOW_EX
+        + "2. Start again"
+    )
+    
+    print(
+        Fore.LIGHTRED_EX
+        + "3. Cancel"
+    )
+
+    choice = input(
+        "\nSelect option: "
+    ).strip()
+
+    if choice == "1":
+
+        return "apply"
+    
+    if choice == "2":
+
+        return "restart"
+    
+    if choice == "3":
+
+        return "cancel"
+    
+    print_empty_message(
+        "Invalid option. Starting again."
+    )
+
+    return "restart"
 
 def parse_filter_selection(
         choice: str,
@@ -270,7 +362,7 @@ def collect_filter_values(
 
         print(f"{option_number}. None")
 
-        options[str(option_number)] = "None"
+        options[str(option_number)] = "none"
 
         option_number += 1
 
@@ -496,4 +588,19 @@ def collect_filter_values(
         filter_values["start_time"] = start_time
         filter_values["end_time"] = end_time
 
-        return filter_values
+        decision = confirm_filter_value(
+            title,
+            filter_values
+        )
+
+        if decision == "apply":
+
+            return filter_values
+        
+        if decision == "cancel":
+
+            return None
+        
+        if decision == "restart":
+
+            continue

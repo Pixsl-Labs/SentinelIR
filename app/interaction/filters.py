@@ -75,14 +75,15 @@ def get_time_range() -> tuple[time | None, time | None]:
     ).strip().lower()
 
     if use_time_filter != "y":
+
         return None, None
     
     start = input(
-        "Start time (HH:MM:SS) "
+        "Start time (HH:MM:SS): "
     ).strip()
 
     end = input(
-        "End time (HH:MM:SS) "
+        "End time (HH:MM:SS): "
     ).strip()
 
     try:
@@ -330,6 +331,98 @@ def handle_filter_menu(
         **filter_values
     )
 
+def get_available_filter_values(
+        reporter,
+        filter_name: str
+    ) -> list:
+    """
+    Returns available values for a selected filter.
+
+    This is used before asking the user for a value so filters with no
+    available data can be skipped cleanly.
+    """
+
+    filter_extractors = {
+        "ip": lambda entry: entry.ip,
+        "username": lambda entry: entry.user,
+        "service": lambda entry: entry.service,
+        "severity": lambda entry: entry.severity,
+        "status": lambda entry: entry.status,
+        "method": lambda entry: entry.method,
+        "path": lambda entry: entry.path,
+        "status_code": lambda entry: entry.status_code
+    }
+
+    extractor = filter_extractors.get(
+        filter_name
+    )
+
+    if extractor is None:
+
+        return []
+
+    values = set()
+
+    for entry in reporter.get_filter_entries():
+
+        value = extractor(
+            entry
+        )
+
+        if value is None or value == "":
+
+            continue
+
+        values.add(
+            value
+        )
+
+    return sorted(
+        values
+    )
+
+
+def filter_has_available_values(
+        reporter,
+        filter_name: str
+    ) -> bool:
+    """
+    Checks whether a selected filter has any values available.
+    """
+
+    return bool(
+        get_available_filter_values(
+            reporter,
+            filter_name
+        )
+    )
+
+
+def print_unavailable_filter_message(
+        filter_name: str
+    ) -> None:
+    """
+    Prints a readable message when a selected filter has no available values.
+    """
+
+    unavailable_messages = {
+        "ip": "No IP addresses found. Skipping IP filter.",
+        "username": "No usernames found. Skipping username filter.",
+        "service": "No services found. Skipping service filter.",
+        "severity": "No severities found. Skipping severity filter.",
+        "status": "No statuses found. Skipping status filter.",
+        "method": "No HTTP methods found. Skipping method filter.",
+        "path": "No HTTP paths found. Skipping path filter.",
+        "status_code": "No HTTP status codes found. Skipping status code filter."
+    }
+
+    print_empty_message(
+        unavailable_messages.get(
+            filter_name,
+            f"No available values for {filter_name}. Skipping filter."
+        )
+    )
+
 def collect_filter_values(
             reporter,
             title: str,
@@ -413,6 +506,17 @@ def collect_filter_values(
         invalid_filter = False
 
         for selected_filter in selected_filters:
+
+            if not filter_has_available_values(
+                reporter,
+                selected_filter
+            ):
+
+                print_unavailable_filter_message(
+                    selected_filter
+                )
+
+                continue
 
             if selected_filter == "ip":
 
@@ -580,6 +684,14 @@ def collect_filter_values(
                 filter_values["status_code"] = int(value)
 
         if invalid_filter:
+
+            continue
+
+        if not filter_values:
+
+            print_empty_message(
+                "No usable filters were selected. Please choose again."
+            )
 
             continue
 

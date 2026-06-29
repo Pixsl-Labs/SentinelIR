@@ -117,8 +117,7 @@ def format_status_code_column(
     if status_code is None or status_code == "-":
 
         return (
-            Fore.LIGHTBLACK_EX
-            + format_column("-", width, align)
+            format_column("-", width, align)
             + Fore.RESET
         )
 
@@ -129,8 +128,7 @@ def format_status_code_column(
     except (ValueError, TypeError):
 
         return (
-            Fore.LIGHTBLACK_EX
-            + format_column("-", width, align)
+            format_column("-", width, align)
             + Fore.RESET
         )
 

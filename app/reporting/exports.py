@@ -123,7 +123,7 @@ class Export:
                 ):
                     
                     f.write(
-                        f"Total Result: {len(data)}\n\n"
+                        f"Total Results: {len(data)}\n\n"
                     )
 
                     f.write(

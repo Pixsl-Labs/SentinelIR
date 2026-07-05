@@ -13,6 +13,7 @@ from app.utils.display import (
     print_section_header,
     print_empty_message,
     print_total_count,
+    print_generated_timestamp
 )
 from app.utils.formatting import (
     format_column,
@@ -146,6 +147,8 @@ class Investigation:
             Fore.GREEN
         )
 
+        print_generated_timestamp()
+
         print_total_count(
             "Total Events",
             len(results),
@@ -206,6 +209,7 @@ class Investigation:
                 + format_status_code_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
+                + Fore.RESET
             )
 
 
@@ -333,6 +337,8 @@ class Investigation:
             Fore.GREEN
         )
 
+        print_generated_timestamp()
+
         print_total_count(
             "Total Events",
             len(results),
@@ -393,6 +399,7 @@ class Investigation:
                 + format_status_code_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_column(entry.severity, 12, "^")
+                + Fore.RESET
             )
 
         print_section_header(

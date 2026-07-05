@@ -1,6 +1,5 @@
 import os
 from colorama import Fore
-from datetime import datetime
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
@@ -27,7 +26,8 @@ from app.utils.colours import (
 from app.utils.display import (
     print_section_header,
     print_empty_message,
-    print_total_count
+    print_total_count,
+    print_generated_timestamp
 )
 
 
@@ -90,12 +90,7 @@ class Interaction:
                     Fore.GREEN
                 )
 
-                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-                print(
-                    Fore.CYAN
-                    + f"Generated: {now}\n"
-                )
+                print_generated_timestamp()
 
                 if not self.analyser.failed_logins and not self.analyser.successful_logins:
                     print_empty_message(

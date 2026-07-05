@@ -16,7 +16,8 @@ from app.utils.risk import get_risk_level
 from app.utils.display import (
     print_section_header,
     print_empty_message,
-    print_total_count
+    print_total_count,
+    print_generated_timestamp
 )
 from app.utils.colours import (
     get_severity_colour,
@@ -92,10 +93,12 @@ class Detection:
             Fore.LIGHTRED_EX
         )
 
+        print_generated_timestamp()
+
         attempt_colour = get_count_colour(len(results))
 
         print_total_count(
-            "Brute force Alerts",
+            "Brute-force alerts",
             len(results),
             attempt_colour
         )
@@ -130,6 +133,7 @@ class Detection:
                 + severity_colour
                 + format_column(result.time_window, 16, "^")
                 + format_column(result.severity, 10, "^")
+                + Fore.RESET
             )
 
     def print_brute_force(
@@ -200,12 +204,14 @@ class Detection:
             Fore.YELLOW
         )
 
+        print_generated_timestamp()
+
         attempt_colour = get_count_colour(
             len(results)
         )
 
         print_total_count(
-            "Matching IPs",
+            "Suspicious successes",
             len(results),
             attempt_colour
         )
@@ -237,6 +243,7 @@ class Detection:
                 + format_column(result.attempts, 16, "^")
                 + severity_colour
                 + format_column(result.severity, 14, "^")
+                + Fore.RESET
             )
 
     def print_user_targeting(
@@ -274,6 +281,8 @@ class Detection:
             "User Targeted Attacks",
             Fore.LIGHTRED_EX
         )
+
+        print_generated_timestamp()
 
         attempt_colour = get_count_colour(len(results))
         
@@ -317,6 +326,7 @@ class Detection:
                 + format_column(result.attempts, 12, "^")
                 + severity_colour
                 + format_column(result.severity, 10, "^")
+                + Fore.RESET
             )
 
     def get_suspicious_ips(
@@ -453,6 +463,8 @@ class Detection:
             Fore.YELLOW
         )
 
+        print_generated_timestamp()
+
         attempt_colour = get_count_colour(
             len(results)
         )
@@ -494,6 +506,7 @@ class Detection:
                 + format_column(result.risk_status, 20, "^")
                 + severity_colour
                 + format_column(result.severity, 12, "^")
+                + Fore.RESET
             )
 
     def print_anonymous_ftp_logins(self) -> None:
@@ -521,6 +534,8 @@ class Detection:
             Fore.YELLOW
         )
 
+        print_generated_timestamp()
+
         print_total_count(
             "Anonymous FTP Logins",
             len(results),
@@ -547,4 +562,5 @@ class Detection:
                 + format_column(result.ip, 16)
                 + format_column(result.username, 14)
                 + format_column(result.severity, 10)
+                + Fore.RESET
             )

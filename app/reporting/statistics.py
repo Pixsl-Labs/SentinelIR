@@ -215,6 +215,8 @@ class Statistics:
             Fore.YELLOW
         )
 
+        print_generated_timestamp()
+
         attempt_colour = get_count_colour(len(results))
 
         print_total_count(
@@ -266,6 +268,7 @@ class Statistics:
                 + format_column(display_status_code, 8, "^")
                 + severity_colour
                 + format_status_code_column(entry.severity, 12, "^")
+                + Fore.RESET
             )
 
     def print_failed_logins_summary(
@@ -295,6 +298,8 @@ class Statistics:
             "Failed Login Summary",
             Fore.YELLOW
         )
+
+        print_generated_timestamp()
 
         count_colour = get_count_colour(len(results))
 
@@ -329,6 +334,7 @@ class Statistics:
                 + format_column(result.attempts, 14, "^")
                 + severity_colour
                 + format_column(result.severity, 12, "^")
+                + Fore.RESET
             )
 
     def get_successful_logins(
@@ -449,6 +455,8 @@ class Statistics:
             Fore.GREEN
         )
 
+        print_generated_timestamp()
+
         print_total_count(
             "Successful Logins",
             len(results),
@@ -498,6 +506,7 @@ class Statistics:
                 + format_column(display_method, 8, "^")
                 + format_column(display_path, 24, "^")
                 + format_status_code_column(display_status_code, 8, "^")
+                + Fore.RESET
             )
 
     def get_total_failed_login_attempts(self) -> int:
@@ -720,6 +729,8 @@ class Statistics:
             "Most Targeted Users"
         )
 
+        print_generated_timestamp()
+
         attempt_colour = get_count_colour(len(sorted_users))
 
         print_total_count(
@@ -755,6 +766,7 @@ class Statistics:
                 + format_column(result.attempts, 8, "^")
                 + severity_colour
                 + format_column(result.severity, 16, "^")
+                + Fore.RESET
             )
 
     def print_attack_statistics(self) -> None:

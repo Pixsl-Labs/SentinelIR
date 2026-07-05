@@ -57,55 +57,121 @@ def integer_validation(
 
         return default
     
+def prompt_time_value(
+        label: str
+) -> tuple[time | None, bool]:
+    """
+    Prompts for a single time value until valid, skipped or cancelled.
+
+    Returns:
+        tuple[time | None, bool]: Parsed time value and cancel flag.
+    """
+
+    while True:
+
+        value = input(
+            Fore.LIGHTGREEN_EX
+            + f"{label} time "
+            + Fore.CYAN
+            + "(HH:MM:SS, Enter = skip, back = cancel): "
+            + Fore.RESET
+        ).strip()
+
+        if value == "":
+
+            return None, False
+        
+        if value.lower() in ["back", "cancel", "q", "quit"]:
+
+            return None, True
+        
+        try: 
+
+            parsed_time = datetime.strptime(
+                value,
+                "%H:%M:%S"
+            ).time()
+
+            return parsed_time, False
+        
+        except ValueError:
+
+            print_empty_message(
+                "Invalid time format. Use HH:MM:SS, e.g. 13:45:00."
+            )
+    
 def get_time_range() -> tuple[time | None, time | None]:
     """
     Prompts the user for an optional time range filter.
 
-    If the user chooses to apply a time filter, start and end times are collected
-    in HH:MM:SS format and converted into time objects. Invalid or skipped input
-    returns no time range.
+    Users can retry invalid formats, skip individual time values with Enter,
+    or cancel the time range using back/cancel.
 
     Returns:
-        tuple[time | None, time | None]: Start and end time values, or None values
-        when no valid time range is supplied.
+        tuple[time | None, time | None]: Start and end time values.
     """
 
     use_time_filter = input(
-        "\nApply time range? (y/n): "
+        Fore.CYAN
+        + "\nApply time range? (y/n): "
+        + Fore.RESET
     ).strip().lower()
 
     if use_time_filter != "y":
 
         return None, None
     
-    start = input(
-        "Start time (HH:MM:SS): "
-    ).strip()
+    while True:
 
-    end = input(
-        "End time (HH:MM:SS): "
-    ).strip()
-
-    try:
-
-        start_time = (
-            datetime.strptime(start, "%H:%M:%S").time()
-            if start else None
+        start_time, cancelled = prompt_time_value(
+            "\nStart"
         )
 
-        end_time = (
-            datetime.strptime(end, "%H:%M:%S").time()
-            if end else None
+        if cancelled:
+
+            print_empty_message(
+                "Time range cancelled."
+            )
+
+            return None, None
+        
+        end_time, cancelled = prompt_time_value(
+            "\nEnd"
         )
+
+        if cancelled:
+
+            print_empty_message(
+                "Time range cancelled."
+            )
+
+            return None, None
+        
+        if (
+            start_time is None
+            and end_time is None
+        ):
+            
+            print_empty_message(
+                "No time range applied."
+            )
+
+            return None, None
+        
+        if (
+            start_time is not None
+            and end_time is not None
+            and end_time < start_time
+        ):
+            
+            print_empty_message(
+                "End time cannot be earlier than start time. Please try again."
+            )
+
+            continue
 
         return start_time, end_time
-    
-    except ValueError:
 
-        logging.error(f"Error: Invalid time format, using default.")
-
-        return None, None
-    
 def format_filter_display_name(
         filter_name: str
     ) -> str:
@@ -194,21 +260,25 @@ def confirm_filter_value(
                 + f"{display_name}: "
                 + Fore.LIGHTMAGENTA_EX
                 + f"{format_filter_value(value)}"
+                + Fore.RESET
             )
 
     print(
         Fore.LIGHTGREEN_EX
         + "\n1. Apply filters"
+        + Fore.RESET
     )
 
     print(
         Fore.LIGHTYELLOW_EX
         + "2. Start again"
+        + Fore.RESET
     )
     
     print(
         Fore.LIGHTRED_EX
         + "3. Cancel"
+        + Fore.RESET
     )
 
     choice = input(

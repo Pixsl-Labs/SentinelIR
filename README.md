@@ -569,7 +569,7 @@ The project can support investigation into:
 
 Planned or possible future work includes:
 
-- GUI interface
+- Expand the existing GUI scaffold into a usable anaylst dashboard
 - Cross-platform log support
 - Windows Event Log support
 - macOS log support
@@ -596,7 +596,7 @@ Current limitations:
 - Primarily supports Linux-style SSH + FTP + HTTP event logs
 - Detection rules are heuristic-based
 - No database or persistent case storage yet
-- No GUI yet
+- GUI scaffold exists, but the main usable workflow is still CLI-based
 - No cross-platform event parsing yet
 - No external threat intelligence enrichment yet
 - No file scanning yet

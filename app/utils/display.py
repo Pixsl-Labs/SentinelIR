@@ -87,6 +87,7 @@ def print_info(
     print(
         colour
         + message
+        + Fore.RESET
     )
 
 def print_total_count(
@@ -245,6 +246,7 @@ def print_status_line(
     print(
         f"{label + ':':<{width}} "
         f"{colour}{value}"
+        f"{Fore.RESET}"
     )
 
 def print_generated_timestamp() -> None:
@@ -260,6 +262,7 @@ def print_generated_timestamp() -> None:
     print(
         Fore.CYAN
         + f"Generated: {now}\n"
+        + Fore.RESET
     )
 
 
@@ -290,4 +293,5 @@ def print_stat_row(
         f"{label + ':':<{width}} "
         f"{colour}"
         f"{display_value}"
+        f"{Fore.RESET}"
     )

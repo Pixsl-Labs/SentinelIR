@@ -100,10 +100,10 @@ class GeneratorRuntime:
         )
 
     def preview_scenario(
-                self,
-                scenario_name: str,
-                lines: list[str]
-        ) -> None:
+            self,
+            scenario_name: str,
+            lines: list[str]
+            ) -> None:
         """
         Prints a preview of the selected generated scenario.
 
@@ -172,7 +172,7 @@ class GeneratorRuntime:
             self,
             output_file: str,
             append: bool
-        ) -> None:
+            ) -> None:
         """
         Prepares the output file before streaming generated logs.
 
@@ -192,8 +192,8 @@ class GeneratorRuntime:
                 pass
 
     def select_output_file(
-                self
-        ) -> str | None:
+            self
+            ) -> str | None:
         """
         Prompts the user for the output log file path.
 
@@ -224,7 +224,7 @@ class GeneratorRuntime:
             output_file: str,
             lines: list[str],
             append: bool
-        )-> None:
+            ) -> None:
         """
         Prompts the user to write or stream generated log lines.
 
@@ -317,7 +317,7 @@ class GeneratorRuntime:
 
                 print(
                     Fore.LIGHTCYAN_EX
-                    +f"{'Mode:'} {self.get_write_mode_label(append)}"
+                    + f"{'Mode:'} {self.get_write_mode_label(append)}"
                 )
 
                 print_section_header(
@@ -372,9 +372,9 @@ class GeneratorRuntime:
                 )
 
     def get_write_mode_label(
-                self,
-                append: bool
-        ) -> str:
+            self,
+            append: bool
+            ) -> str:
         """
         Converts a write mode boolean into a readable label.
 
@@ -385,11 +385,11 @@ class GeneratorRuntime:
             str: Write mode label, either append or overwrite.
         """
 
-        if append == True:
+        if append is True:
 
             return "append"
 
-        elif append == False:
+        elif append is False:
 
             return "overwrite"
 

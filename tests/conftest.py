@@ -33,6 +33,7 @@ def malformed_reporter():
     analyser.analyse("tests/test_logs/malformed.log")
     return LogReporter(analyser)
 
+
 @pytest.fixture
 def mixed_service_reporter():
 
@@ -46,11 +47,13 @@ def mixed_service_reporter():
         analyser
     )
 
+
 @pytest.fixture
 def empty_reporter():
     analyser = LogAnalyser()
     analyser.analyse("tests/test_logs/empty.log")
     return LogReporter(analyser)
+
 
 @pytest.fixture
 def store_parsed_line():
@@ -61,7 +64,7 @@ def store_parsed_line():
     def _store_parsed_line(
             analyser: LogAnalyser,
             line: str
-        ) -> None:
+            ) -> None:
         entry = parse_log_line(
             line
         )

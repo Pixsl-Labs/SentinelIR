@@ -3,7 +3,7 @@ from app.detection.detection_engine import DetectionEngine
 
 def test_get_suspicious_ips_returns_results(
         brute_force_reporter
-    ):
+        ):
 
     results = brute_force_reporter.get_suspicious_ips()
 
@@ -12,7 +12,7 @@ def test_get_suspicious_ips_returns_results(
 
 def test_get_suspicious_ips_by_ip(
         brute_force_reporter
-    ):
+        ):
 
     results = brute_force_reporter.get_suspicious_ips(
         ip="192.168.1.10"
@@ -28,7 +28,7 @@ def test_get_suspicious_ips_by_ip(
 
 def test_get_suspicious_ips_by_severity(
         brute_force_reporter
-    ):
+        ):
 
     results = brute_force_reporter.get_suspicious_ips(
         severity="LOW"
@@ -44,7 +44,7 @@ def test_get_suspicious_ips_by_severity(
 
 def test_get_suspicious_ips_no_results(
         empty_reporter
-    ):
+        ):
 
     results = empty_reporter.get_suspicious_ips()
 
@@ -53,7 +53,7 @@ def test_get_suspicious_ips_no_results(
 
 def test_get_bruteforce_returns_results(
         brute_force_reporter
-    ):
+        ):
 
     results = DetectionEngine.get_brute_force(brute_force_reporter.analyser, 5, 10)
 
@@ -62,7 +62,7 @@ def test_get_bruteforce_returns_results(
 
 def test_get_bruteforce_no_results(
         empty_reporter
-    ):
+        ):
 
     results = DetectionEngine.get_brute_force(empty_reporter.analyser, 5, 10)
 
@@ -71,7 +71,7 @@ def test_get_bruteforce_no_results(
 
 def test_get_user_targeting_returns_results(
         distributed_reporter
-    ):
+        ):
 
     results = DetectionEngine.get_user_targeting(distributed_reporter.analyser, 5)
 
@@ -80,11 +80,12 @@ def test_get_user_targeting_returns_results(
 
 def test_get_user_targeting_no_results(
         empty_reporter
-    ):
+        ):
 
     results = DetectionEngine.get_user_targeting(empty_reporter.analyser, 5)
 
     assert results == []
+
 
 def test_detection_engine_configure_threshold_updates_values():
     detection_engine = DetectionEngine()

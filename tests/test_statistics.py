@@ -40,12 +40,11 @@ from datetime import time
         ),
     ]
 )
-
 def test_get_failed_logins_filters(
         mixed_service_reporter,
         filter_kwargs,
         validator
-    ):
+        ):
 
     results = mixed_service_reporter.get_failed_logins(
         **filter_kwargs
@@ -58,9 +57,10 @@ def test_get_failed_logins_filters(
         for entry in results
     )
 
+
 def test_get_failed_logins_combined_http_filters(
         mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_failed_logins(
         service="HTTP",
@@ -82,9 +82,10 @@ def test_get_failed_logins_combined_http_filters(
         for entry in results
     )
 
+
 def test_get_failed_logins_http_filter_no_results(
             mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_failed_logins(
         service="HTTP",
@@ -94,9 +95,10 @@ def test_get_failed_logins_http_filter_no_results(
 
     assert results == []
 
+
 def test_get_failed_logins_time_range(
         brute_force_reporter
-    ):
+        ):
 
     results = brute_force_reporter.get_failed_logins(
         start_time=time(12, 0, 0),
@@ -112,9 +114,10 @@ def test_get_failed_logins_time_range(
         for entry in results
     )
 
+
 def test_get_failed_logins_time_range_no_results(
         brute_force_reporter
-    ):
+        ):
 
     results = brute_force_reporter.get_failed_logins(
         start_time=time(23, 0, 0),
@@ -165,7 +168,7 @@ def test_get_successful_logins_filters(
         mixed_service_reporter,
         filter_kwargs,
         validator
-    ):
+        ):
 
     results = mixed_service_reporter.get_successful_logins(
         **filter_kwargs
@@ -178,9 +181,10 @@ def test_get_successful_logins_filters(
         for entry in results
     )
 
+
 def test_get_successful_logins_combined_http_filters(
         mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_successful_logins(
         service="HTTP",
@@ -202,9 +206,10 @@ def test_get_successful_logins_combined_http_filters(
         for entry in results
     )
 
+
 def test_get_successful_logins_http_filter_no_results(
-            mixed_service_reporter
-    ):
+        mixed_service_reporter
+        ):
 
     results = mixed_service_reporter.get_successful_logins(
         service="HTTP",

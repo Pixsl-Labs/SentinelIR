@@ -92,6 +92,7 @@ def build_detection_menu(window) -> None:
         alert_summary_action
     )
 
+
 def brute_force_detection(window) -> None:
     """
     Handles the Brute-force Detection menu action.
@@ -104,6 +105,7 @@ def brute_force_detection(window) -> None:
     """
 
     print("Brute-force Detection clicked")
+
 
 def suspicious_success(window) -> None:
     """
@@ -118,6 +120,7 @@ def suspicious_success(window) -> None:
 
     print("Suspicious Success clicked")
 
+
 def user_targeting(window) -> None:
     """
     Handles the User Targeting menu action.
@@ -131,6 +134,7 @@ def user_targeting(window) -> None:
 
     print("User Targeting clicked")
 
+
 def suspicious_ips(window) -> None:
     """
     Handles the Suspicious IPs menu action.
@@ -143,6 +147,7 @@ def suspicious_ips(window) -> None:
     """
 
     print("Suspicious IPs clicked")
+
 
 def alert_summary(window) -> None:
     """

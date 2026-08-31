@@ -9,7 +9,7 @@ def write_alert_log(
         entity: str,
         message: str,
         log_path: str = "logs/alerts.log"
-    ) -> None:
+        ) -> None:
     """
     Writes a live alert to a persistent human-readable alert log file.
 

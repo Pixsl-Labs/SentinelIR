@@ -71,10 +71,11 @@ def display_log_analysis_menu() -> None:
         Fore.MAGENTA
     )
 
+
 def display_configuration_menu(
         threshold: int,
         window_seconds: int
-    ) -> None:
+        ) -> None:
     """
     Prints the configuration menu.
 
@@ -104,10 +105,11 @@ def display_configuration_menu(
         Fore.MAGENTA
     )
 
+
 def current_config(
         threshold: int,
         window_seconds: int
-    ) -> None:
+        ) -> None:
     """
     Prints the current detection configuration.
 

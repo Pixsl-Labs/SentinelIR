@@ -21,6 +21,7 @@ def is_ftp_line(line: str) -> bool:
 
     return "ftp login" in line.lower()
 
+
 def is_ftp_successful_login(line: str) -> bool:
     """
     Checks whether a log line is a successful FTP login attempt.
@@ -34,6 +35,7 @@ def is_ftp_successful_login(line: str) -> bool:
 
     return "ftp login success" in line.lower()
 
+
 def is_ftp_failed_login(line: str) -> bool:
     """
     Checks whether a log line is a failed FTP login attempt.
@@ -46,6 +48,7 @@ def is_ftp_failed_login(line: str) -> bool:
     """
 
     return "ftp login failed" in line.lower()
+
 
 def extract_ftp_status(line: str) -> str | None:
     """
@@ -67,6 +70,7 @@ def extract_ftp_status(line: str) -> str | None:
         return "FAILED"
 
     return None
+
 
 def extract_ftp_username(line: str) -> str:
     """
@@ -90,6 +94,7 @@ def extract_ftp_username(line: str) -> str:
         if match
         else "unknown"
     )
+
 
 def parse_ftp_line(line: str) -> LogEntry | None:
     """
@@ -134,6 +139,7 @@ def parse_ftp_line(line: str) -> LogEntry | None:
         status=status,
         service="FTP"
     )
+
 
 def is_anonymous_ftp_login(line: str) -> bool:
     """

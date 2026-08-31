@@ -44,7 +44,7 @@ class DetectionEngine:
             brute_force_threshold: int = BRUTE_FORCE_THRESHOLD,
             brute_force_time_window: int = BRUTE_FORCE_TIME_WINDOW,
             user_targeting_threshold: int = USER_TARGETING_THRESHOLD
-        ) -> None:
+            ) -> None:
         """
         Initialises the detection engine alert state and threshold settings.
 
@@ -88,7 +88,7 @@ class DetectionEngine:
             brute_force_threshold: int | None = None,
             brute_force_time_window: int | None = None,
             user_targeting_threshold: int | None = None
-        ) -> None:
+            ) -> None:
         """
         Updates detection threshold settings.
 
@@ -121,7 +121,7 @@ class DetectionEngine:
             self,
             alert_type: str,
             entity: str
-    ) -> bool:
+            ) -> bool:
         """
         Checks whether an alert has already been raised for an entity.
 
@@ -142,7 +142,7 @@ class DetectionEngine:
             alert_type: str,
             entity: str,
             current_time: float | None = None
-    ) -> None:
+            ) -> None:
         """
         Records that an entity has triggered a specific alert type.
 
@@ -176,11 +176,11 @@ class DetectionEngine:
         )
 
     def can_alert(
-        self,
-        alert_type: str,
-        entity: str,
-        current_time: float | None = None
-    ) -> bool:
+            self,
+            alert_type: str,
+            entity: str,
+            current_time: float | None = None
+            ) -> bool:
         """
         Checks whether an alert can be raised based on the cooldown period.
 
@@ -238,7 +238,7 @@ class DetectionEngine:
     def get_alert_count(
             self,
             alert_type: str
-        ) -> int:
+            ) -> int:
         """
         Returns the number of alert events raised for a specific alert type.
 
@@ -256,7 +256,7 @@ class DetectionEngine:
 
     def get_total_alerts(
             self
-    ) -> int:
+            ) -> int:
         """
         Returns the total number of live alerts raised across all alert types.
 
@@ -270,7 +270,7 @@ class DetectionEngine:
 
     def get_alert_summary(
             self
-    ) -> dict[str, int]:
+            ) -> dict[str, int]:
         """
         Returns alert counts grouped by alert type.
 
@@ -286,13 +286,12 @@ class DetectionEngine:
             for alert_type, alerted_entities in self.alert_state.items()
         }
 
-
     @staticmethod
     def get_brute_force(
-        analyser,
-        threshold=BRUTE_FORCE_THRESHOLD,
-        window_seconds=BRUTE_FORCE_TIME_WINDOW
-    ) -> list[BruteForceResult]:
+            analyser,
+            threshold=BRUTE_FORCE_THRESHOLD,
+            window_seconds=BRUTE_FORCE_TIME_WINDOW
+            ) -> list[BruteForceResult]:
         """
         Detects brute-force activity from failed login timestamps.
 
@@ -358,8 +357,8 @@ class DetectionEngine:
 
     @staticmethod
     def get_suspicious_success(
-        analyser
-    ) -> list[SuspiciousSuccessResult]:
+            analyser
+            ) -> list[SuspiciousSuccessResult]:
         """
         Detects successful logins from service/IP pairs that previously failed
         authentication.
@@ -412,9 +411,9 @@ class DetectionEngine:
 
     @staticmethod
     def get_user_targeting(
-        analyser,
-        threshold=USER_TARGETING_THRESHOLD
-    ) -> list[UserTargetingResult]:
+            analyser,
+            threshold=USER_TARGETING_THRESHOLD
+            ) -> list[UserTargetingResult]:
         """
         Detects distributed user-targeting activity.
 
@@ -476,7 +475,7 @@ class DetectionEngine:
     @staticmethod
     def get_anonymous_ftp_logins(
             analyser
-        ) -> list[AnonymousFTPResult]:
+            ) -> list[AnonymousFTPResult]:
         """
         Detects successful anonymous FTP logins.
 
@@ -511,7 +510,7 @@ class DetectionEngine:
     def process_live_detection(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Runs all live detection checks against the current analyser state.
 
@@ -534,7 +533,7 @@ class DetectionEngine:
     @staticmethod
     def build_alert_key(
             *parts
-        ) -> str:
+            ) -> str:
         """
         Builds a consistent service-aware alert key.
 
@@ -553,7 +552,7 @@ class DetectionEngine:
     def detect_live_brute_force(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live brute-force activity and prints an alert when triggered.
 
@@ -610,7 +609,7 @@ class DetectionEngine:
     def detect_live_suspicious_success(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live successful logins from service/IP pairs that previously failed
         authentication.
@@ -681,7 +680,7 @@ class DetectionEngine:
     def detect_live_user_targeting(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live distributed user-targeting activity.
 

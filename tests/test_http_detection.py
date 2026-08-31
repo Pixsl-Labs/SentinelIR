@@ -23,12 +23,13 @@ def test_http_failed_login_is_stored_in_failed_logins(store_parsed_line) -> None
 
     assert entry.ip == "203.0.113.11"
     assert entry.user == "admin"
-    assert entry.timestamp == datetime(2026, 4, 17, 12, 1, 4) #"%d/%b/%Y:%H:%M:%S"
+    assert entry.timestamp == datetime(2026, 4, 17, 12, 1, 4)  # "%d/%b/%Y:%H:%M:%S"
     assert entry.status == "FAILED"
     assert entry.service == "HTTP"
     assert entry.method == "POST"
     assert entry.path == "/login?user=admin"
     assert entry.status_code == 401
+
 
 def test_http_login_keeps_method_path_and_status_code(store_parsed_line) -> None:
 
@@ -50,7 +51,7 @@ def test_http_login_keeps_method_path_and_status_code(store_parsed_line) -> None
 
     assert entry.ip == "203.0.113.11"
     assert entry.user == "admin"
-    assert entry.timestamp == datetime(2026, 4, 17, 12, 1, 10) #"%d/%b/%Y:%H:%M:%S"
+    assert entry.timestamp == datetime(2026, 4, 17, 12, 1, 10)  # "%d/%b/%Y:%H:%M:%S"
     assert entry.status == "SUCCESS"
     assert entry.service == "HTTP"
     assert entry.method == "POST"

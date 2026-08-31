@@ -32,6 +32,7 @@ def test_parse_http_line_returns_log_entry_for_failed_login(store_parsed_line) -
     assert entry.path == "/login?user=admin"
     assert entry.status_code == 401
 
+
 def test_parse_http_line_returns_log_entry_for_successful_login(store_parsed_line) -> None:
 
     analyser = LogAnalyser()
@@ -59,6 +60,7 @@ def test_parse_http_line_returns_log_entry_for_successful_login(store_parsed_lin
     assert entry.path == "/login?user=guest"
     assert entry.status_code == 200
 
+
 def test_parse_http_line_returns_none_for_non_login_path() -> None:
 
     line = (
@@ -70,6 +72,7 @@ def test_parse_http_line_returns_none_for_non_login_path() -> None:
 
     assert entry is None
 
+
 def test_extract_http_status_ignores_404_for_now() -> None:
 
     line = (
@@ -80,6 +83,7 @@ def test_extract_http_status_ignores_404_for_now() -> None:
     entry = parse_log_line(line)
 
     assert entry is None
+
 
 def test_parser_router_parses_http_log_line() -> None:
 

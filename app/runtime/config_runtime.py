@@ -33,7 +33,7 @@ class ConfigRuntime:
             analyser,
             reporter,
             config_path: str = "sentinel_config.json"
-        ) -> None:
+            ) -> None:
         """
         Initialises the configuration runtime.
 
@@ -108,10 +108,10 @@ class ConfigRuntime:
         )
 
     def start_monitoring_file(
-                self,
-                file_path: str,
-                config
-        ) -> None:
+            self,
+            file_path: str,
+            config
+            ) -> None:
         """
         Starts live monitoring for a selected configuration file.
 
@@ -141,9 +141,9 @@ class ConfigRuntime:
         runtime.start()
 
     def start_configured_monitoring(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Starts configuration-driven monitoring actions.
 
@@ -255,9 +255,9 @@ class ConfigRuntime:
                 return
 
     def apply_detection_thresholds(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Applies configured threshold values to the detection engine.
 
@@ -278,9 +278,9 @@ class ConfigRuntime:
         )
 
     def validate_watched_files(
-                self,
-                watched_files: list[str]
-        ) -> bool:
+            self,
+            watched_files: list[str]
+            ) -> bool:
         """
         Validates that all configured watched files exist.
 
@@ -320,9 +320,9 @@ class ConfigRuntime:
         return True
 
     def select_watched_file(
-                self,
-                watched_files: list[str]
-        ) -> str | None:
+            self,
+            watched_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select a configured watched file.
 
@@ -397,9 +397,9 @@ class ConfigRuntime:
             return "BACK"
 
     def select_available_log_file(
-                self,
-                available_files: list[str]
-        ) -> str | None:
+            self,
+            available_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select an available log file.
 
@@ -461,9 +461,9 @@ class ConfigRuntime:
             return None
 
     def add_watched_file_from_log_directory(
-                self,
-                config
-        ) -> bool:
+            self,
+            config
+            ) -> bool:
         """
         Adds a watched file from the log_files directory.
 
@@ -542,9 +542,9 @@ class ConfigRuntime:
         return False
 
     def select_watched_file_to_remove(
-                self,
-                watched_files: list[str]
-        ) -> str | None:
+            self,
+            watched_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select a watched file to remove.
 
@@ -575,7 +575,6 @@ class ConfigRuntime:
 
                 back_option = len(watched_files) + 1
                 cancel_option = len(watched_files) + 2
-
 
                 print(f"{back_option}. Back")
                 print(f"{cancel_option}. Cancel\n")
@@ -619,9 +618,9 @@ class ConfigRuntime:
             return "BACK"
 
     def remove_watched_file_from_config(
-                self,
-                config
-        ) -> bool:
+            self,
+            config
+            ) -> bool:
         """
         Removes a selected watched file from the configuration.
 
@@ -727,9 +726,9 @@ class ConfigRuntime:
             )
 
     def print_config_summary(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Prints a summary of the loaded configuration.
 

@@ -24,5 +24,6 @@ def main() -> None:
 
     print("SentinelIR Web interface is not implemented yet.")
 
+
 if __name__ == "__main__":
     main()

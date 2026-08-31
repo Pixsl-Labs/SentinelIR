@@ -138,7 +138,7 @@ class LogAnalyser:
     def analyse(
             self,
             file_path: str
-        ) -> bool:
+            ) -> bool:
         """
         Reads and processes an authentication log file.
 

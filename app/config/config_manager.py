@@ -5,9 +5,9 @@ from app.config.config_loader import load_config_dict
 
 
 def save_config_dict(
-            config_path: str,
-            config_data: dict
-    ) -> None:
+        config_path: str,
+        config_data: dict
+        ) -> None:
     """
     Saves raw configuration data to a JSON file.
 
@@ -27,9 +27,10 @@ def save_config_dict(
             indent=4
         )
 
+
 def list_available_log_files(
-            log_dir: str = "log_files"
-    ) -> list[str]:
+        log_dir: str = "log_files"
+        ) -> list[str]:
     """
     Returns available log files from the configured log directory.
 
@@ -56,10 +57,11 @@ def list_available_log_files(
         if file_path.is_file()
     )
 
+
 def add_watched_file(
-            config_path: str,
-            file_path: str
-    ) -> bool:
+        config_path: str,
+        file_path: str
+        ) -> bool:
     """
     Adds a file path to the watched_file configuration list.
 
@@ -99,10 +101,11 @@ def add_watched_file(
 
     return True
 
+
 def remove_watched_file(
-            config_path: str,
-            file_path: str
-    ) -> bool:
+        config_path: str,
+        file_path: str
+        ) -> bool:
     """
     Removes a file path from the watched_files configuration list.
 

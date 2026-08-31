@@ -53,6 +53,7 @@ def identify_log_line(line: str) -> str | None:
 
     return None
 
+
 def parse_log_line(line: str) -> LogEntry | None:
     """
     Routes a raw log line to the correct parser.
@@ -83,6 +84,7 @@ def parse_log_line(line: str) -> LogEntry | None:
         return parse_ssh_line(line)
 
     return None
+
 
 def is_supported_log_line(line: str) -> bool:
     """

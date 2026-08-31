@@ -38,6 +38,7 @@ from app.runtime.generator_selection import (
     generate_ftp_http_mixed_attack_scenario
 )
 
+
 @pytest.mark.parametrize(
     "scenario_function, expected_text",
     [
@@ -49,11 +50,12 @@ from app.runtime.generator_selection import (
 def test_failed_login_scenarios_generate_single_failed_login(
         scenario_function,
         expected_text
-    ):
+        ):
     lines = scenario_function()
 
     assert len(lines) == 1
     assert expected_text in lines[0]
+
 
 @pytest.mark.parametrize(
     "scenario_function, expected_text",
@@ -66,11 +68,12 @@ def test_failed_login_scenarios_generate_single_failed_login(
 def test_failed_login_scenarios_generate_expected_attempt_count(
         scenario_function,
         expected_text
-    ):
+        ):
     lines = scenario_function()
 
     assert len(lines) == 1
     assert all(expected_text in line for line in lines)
+
 
 @pytest.mark.parametrize(
     "scenario_function, attempts, expected_text",
@@ -84,13 +87,14 @@ def test_brute_force_scenarios_generate_expected_attempt_count(
         scenario_function,
         attempts,
         expected_text
-    ):
+        ):
     lines = scenario_function(
         attempts=attempts
     )
 
     assert len(lines) == attempts
     assert all(expected_text in line for line in lines)
+
 
 @pytest.mark.parametrize(
     "scenario_function, failed_text, success_text",
@@ -116,7 +120,7 @@ def test_suspicious_success_scenarios_end_with_success(
         scenario_function,
         failed_text,
         success_text
-    ):
+        ):
     lines = scenario_function(
         failed_attempts=3
     )
@@ -124,6 +128,7 @@ def test_suspicious_success_scenarios_end_with_success(
     assert len(lines) == 4
     assert success_text in lines[-1]
     assert all(failed_text in line for line in lines[:-1])
+
 
 @pytest.mark.parametrize(
     "scenario_function, expected_text",
@@ -136,11 +141,12 @@ def test_suspicious_success_scenarios_end_with_success(
 def test_single_failed_scenarios_generate_failed_login(
         scenario_function,
         expected_text
-    ):
+        ):
     lines = scenario_function()
 
     assert len(lines) == 1
     assert expected_text in lines[0]
+
 
 @pytest.mark.parametrize(
     "scenario_function, expected_text",
@@ -153,11 +159,12 @@ def test_single_failed_scenarios_generate_failed_login(
 def test_single_success_scenarios_generate_successful_login(
         scenario_function,
         expected_text
-    ):
+        ):
     lines = scenario_function()
 
     assert len(lines) == 1
     assert expected_text in lines[0]
+
 
 def test_anonymous_ftp_scenario_generates_anonymous_login():
     lines = generate_anonymous_ftp_scenario()
@@ -166,6 +173,7 @@ def test_anonymous_ftp_scenario_generates_anonymous_login():
     assert "FTP LOGIN SUCCESS" in lines[0]
     assert "user=anonymous" in lines[0]
 
+
 def test_mixed_service_attack_scenario_contains_ssh_ftp_and_http_lines():
     lines = generate_mixed_service_attack_scenario()
 
@@ -173,16 +181,25 @@ def test_mixed_service_attack_scenario_contains_ssh_ftp_and_http_lines():
     assert any("FTP LOGIN" in line for line in lines)
     assert any("HTTP/1.1" in line for line in lines)
 
+
 def test_mixed_service_attack_scenario_contains_failed_and_successful_activity():
     lines = generate_mixed_service_attack_scenario()
 
-    assert any("Failed password" in line or "FTP LOGIN FAILED" in line or "401" in line for line in lines)
-    assert any("Accepted password" in line or "FTP LOGIN SUCCESS" in line or "200" in line for line in lines)
+    assert any(
+        "Failed password" in line or
+        "FTP LOGIN FAILED" in line or "401" in line for line in lines
+    )
+    assert any(
+        "Accepted password" in line or
+        "FTP LOGIN SUCCESS" in line or "200" in line for line in lines
+    )
+
 
 def test_mixed_service_attack_scenario_generates_expected_line_count():
     lines = generate_mixed_service_attack_scenario()
 
     assert len(lines) > 0
+
 
 def test_ssh_ftp_mixed_attack_scenario_contains_ssh_and_ftp_lines():
     lines = generate_ssh_ftp_mixed_attack_scenario()
@@ -191,12 +208,14 @@ def test_ssh_ftp_mixed_attack_scenario_contains_ssh_and_ftp_lines():
     assert any("FTP LOGIN" in line for line in lines)
     assert not any("HTTP/1.1" in line for line in lines)
 
+
 def test_ssh_http_mixed_attack_scenario_contains_ssh_and_http_lines():
     lines = generate_ssh_http_mixed_attack_scenario()
 
     assert any("sshd" in line for line in lines)
     assert any("HTTP/1.1" in line for line in lines)
     assert not any("FTP LOGIN" in line for line in lines)
+
 
 def test_ftp_http_mixed_attack_scenario_contains_ftp_and_http_lines():
     lines = generate_ftp_http_mixed_attack_scenario()

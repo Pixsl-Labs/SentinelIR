@@ -4,6 +4,7 @@ def test_attack_statistics_returns_dictionary(brute_force_reporter):
 
     assert isinstance(results, dict)
 
+
 def test_attack_statistics_contains_expected_keys(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()
 
@@ -20,6 +21,7 @@ def test_attack_statistics_contains_expected_keys(brute_force_reporter):
 
     assert all(key in results for key in expected_keys)
 
+
 def test_attack_statistics_values_are_correct(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()
 
@@ -35,6 +37,7 @@ def test_attack_statistics_values_are_correct(brute_force_reporter):
         }
 
     assert results == expected_results
+
 
 def test_attack_statistics_empty_log(empty_reporter):
     results = empty_reporter.get_attack_statistics()

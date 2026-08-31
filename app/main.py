@@ -65,6 +65,7 @@ def run_cli(args) -> None:
 
     controller.start()
 
+
 def run_interactive() -> None:
     """
     Runs SentinelIR in interactive mode.

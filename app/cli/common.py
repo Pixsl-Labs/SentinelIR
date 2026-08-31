@@ -13,6 +13,7 @@ from app.log_analyser.log_reporter import LogReporter
 
 LOG_FILES_DIR = Path("log_files")
 
+
 def initialise_cli() -> None:
     """
     Initialises shared SentinelIR CLI behaviour.
@@ -38,6 +39,7 @@ def initialise_cli() -> None:
         autoreset=True
     )
 
+
 def create_analysis_components() -> tuple[LogAnalyser, LogReporter]:
     """
     Creates a shared SentinelIR analysis object.
@@ -54,9 +56,10 @@ def create_analysis_components() -> tuple[LogAnalyser, LogReporter]:
 
     return analyser, reporter
 
+
 def resolve_log_file(
         file_name: str
-    ) -> Path:
+        ) -> Path:
     """
     Resolves a log filename inside the SentinelIR log directory.
 
@@ -82,6 +85,7 @@ def resolve_log_file(
         )
 
     return file_path
+
 
 def prompts_for_log_file() -> Path:
     """

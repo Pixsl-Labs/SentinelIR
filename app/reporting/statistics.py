@@ -45,17 +45,17 @@ class Statistics:
     """
     def get_failed_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns filtered failed login attempts.
 
@@ -101,7 +101,7 @@ class Statistics:
 
     def get_failed_login_summary(
             self
-        ) -> list[FailedLoginSummaryResult]:
+            ) -> list[FailedLoginSummaryResult]:
         """
         Returns failed login results grouped by username and IP address.
 
@@ -155,17 +155,17 @@ class Statistics:
 
     def print_failed_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints filtered failed login attempts.
 
@@ -273,7 +273,7 @@ class Statistics:
 
     def print_failed_logins_summary(
             self
-        ) -> None:
+            ) -> None:
         """
         Prints grouped failed login summary results.
 
@@ -339,17 +339,17 @@ class Statistics:
 
     def get_successful_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns filtered successful login entries.
 
@@ -395,17 +395,17 @@ class Statistics:
 
     def print_successful_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints filtered successful login entries.
 

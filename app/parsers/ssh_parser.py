@@ -20,6 +20,7 @@ def is_ssh_failed_login(line: str) -> bool:
 
     return "failed password" in line.lower()
 
+
 def is_ssh_successful_login(line: str) -> bool:
     """
     Checks whether a log line is a successful SSH login attempt.
@@ -34,9 +35,11 @@ def is_ssh_successful_login(line: str) -> bool:
             otherwise False
     """
 
-    return ("accepted password" in line.lower()
-            or "session opened" in line.lower()
-    )
+    return (
+        "accepted password" in line.lower()
+        or "session opened" in line.lower()
+        )
+
 
 def is_ssh_line(line: str) -> bool:
     """
@@ -56,7 +59,8 @@ def is_ssh_line(line: str) -> bool:
     return (
         is_ssh_failed_login(line)
         or is_ssh_successful_login(line)
-    )
+        )
+
 
 def extract_ssh_username(line: str) -> str:
     """
@@ -97,6 +101,7 @@ def extract_ssh_username(line: str) -> str:
 
     return "unknown"
 
+
 def extract_ssh_status(line: str) -> str | None:
     """
     Extracts the authentication status from an SSH log line.
@@ -119,6 +124,7 @@ def extract_ssh_status(line: str) -> str | None:
         return "SUCCESS"
 
     return None
+
 
 def parse_ssh_line(line: str) -> LogEntry | None:
     """

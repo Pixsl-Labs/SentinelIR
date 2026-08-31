@@ -479,7 +479,7 @@ class Interaction:
 
                 print(
                     Fore.LIGHTGREEN_EX
-                    +"Goodbye!"
+                    + "Goodbye!"
                 )
 
                 self.running = False

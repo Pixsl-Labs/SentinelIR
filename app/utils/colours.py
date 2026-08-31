@@ -27,8 +27,8 @@ def get_severity_colour(
 
 
 def get_status_colour(
-    status: str
-) -> str:
+        status: str
+        ) -> str:
     """
     Returns a display colour for a login status.
 
@@ -47,9 +47,10 @@ def get_status_colour(
 
     return Fore.WHITE
 
+
 def get_attempt_colour(
-    count: int
-) -> str:
+        count: int
+        ) -> str:
     """
     Returns a display colour based on an attempt count.
 
@@ -74,9 +75,10 @@ def get_attempt_colour(
 
     return Fore.LIGHTGREEN_EX
 
+
 def get_count_colour(
-    count: int
-) -> str:
+        count: int
+        ) -> str:
     """
     Returns a display colour based on a general count value.
 
@@ -101,10 +103,11 @@ def get_count_colour(
 
     return Fore.LIGHTBLACK_EX
 
+
 def get_live_status_colour(
         label: str,
         value: int
-) -> str:
+        ) -> str:
     """
     Returns a display colour for live monitoring status values.
 
@@ -153,6 +156,7 @@ def get_live_status_colour(
 
     return Fore.WHITE
 
+
 def get_service_colour(service: str | None) -> str:
     """
     Returns a colour for a log service.
@@ -181,6 +185,7 @@ def get_service_colour(service: str | None) -> str:
         return Fore.LIGHTBLUE_EX
 
     return Fore.WHITE
+
 
 def get_user_colour(user: str | None) -> str:
     """
@@ -222,6 +227,7 @@ def get_user_colour(user: str | None) -> str:
         return Fore.LIGHTBLACK_EX
 
     return Fore.WHITE
+
 
 def get_status_code_colour(status_code: str | None) -> str:
     """

@@ -25,7 +25,7 @@ class RunTimeController:
             analyser,
             reporter,
             log_file
-        ) -> None:
+            ) -> None:
         """
         Initialises the runtime controller.
 
@@ -43,7 +43,7 @@ class RunTimeController:
 
     def start(
             self
-        ) -> None:
+            ) -> None:
         """
         Runs the runtime mode selection loop.
 

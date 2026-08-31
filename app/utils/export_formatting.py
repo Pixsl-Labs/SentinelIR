@@ -13,9 +13,10 @@ EXPORT_LOG_ENTRY_COLUMNS = [
     ("severity", "Severity", 10, "^")
 ]
 
+
 def export_section_header(
-            title: str
-    ) -> str:
+        title: str
+        ) -> str:
     """
     Formats a plain-text section header for exported reports.
 
@@ -27,6 +28,7 @@ def export_section_header(
     """
 
     return f"\n=== {title} ===\n\n"
+
 
 def export_generated_timestamp() -> str:
     """
@@ -42,9 +44,10 @@ def export_generated_timestamp() -> str:
 
     return f"Generated: {now}\n\n"
 
+
 def export_empty_message(
-            message: str
-    ) -> str:
+        message: str
+        ) -> str:
     """
     Formats a plain-text empty-result or error-style message for exported
     reports.
@@ -58,9 +61,10 @@ def export_empty_message(
 
     return f"\n{message}"
 
+
 def export_separator(
-            width: int = 80
-    ) -> str:
+        width: int = 80
+        ) -> str:
     """
     Creates a plain-text separator line for exported reports.
 
@@ -74,9 +78,10 @@ def export_separator(
 
     return "-" * width + "\n"
 
+
 def export_status_label(
-            status: str | None
-    ) -> str:
+        status: str | None
+        ) -> str:
     """
     Formats an authentication status for exported reports.
 
@@ -93,9 +98,10 @@ def export_status_label(
 
     return f"[{status.upper()}]"
 
+
 def export_missing_value(
-            value
-    ) -> str:
+        value
+        ) -> str:
     """
     Converts missing value into a readable export placeholder.
 
@@ -112,11 +118,12 @@ def export_missing_value(
 
     return str(value)
 
+
 def export_column(
         value,
         width: int,
         align: str = "<"
-    ) -> str:
+        ) -> str:
     """
     Formats a value into a fixed-width export column.
 
@@ -131,9 +138,10 @@ def export_column(
 
     return f"{str(value):{align}{width}}"
 
+
 def export_log_entry_line(
         entry
-    ) -> str:
+        ) -> str:
     """
     Formats a LogEntry object as one plain-text export line.
 
@@ -176,6 +184,7 @@ def export_log_entry_line(
         + "\n"
     )
 
+
 def export_log_entry_header() -> str:
     """
     Formats the column header for exported LogEntry report rows.
@@ -212,9 +221,10 @@ def export_log_entry_header() -> str:
         + "\n"
     )
 
+
 def export_filter_summary(
-            filters: dict | None
-    ) -> str:
+        filters: dict | None
+        ) -> str:
     """
     Formats applied filters for a plain-text exported report.
 

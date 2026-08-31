@@ -15,7 +15,7 @@ def integer_validation(
         prompt,
         default,
         label="value"
-    ) -> int:
+        ) -> int:
     """
     Prompts the user for an integer input.
 
@@ -57,9 +57,10 @@ def integer_validation(
 
         return default
 
+
 def prompt_time_value(
         label: str
-) -> tuple[time | None, bool]:
+        ) -> tuple[time | None, bool]:
     """
     Prompts for a single time value until valid, skipped or cancelled.
 
@@ -99,6 +100,7 @@ def prompt_time_value(
             print_empty_message(
                 "Invalid time format. Use HH:MM:SS, e.g. 13:45:00."
             )
+
 
 def get_time_range() -> tuple[time | None, time | None]:
     """
@@ -172,9 +174,10 @@ def get_time_range() -> tuple[time | None, time | None]:
 
         return start_time, end_time
 
+
 def format_filter_display_name(
         filter_name: str
-    ) -> str:
+        ) -> str:
     """
     Converts an internal filter key into a readable menu label.
 
@@ -206,6 +209,7 @@ def format_filter_display_name(
         filter_name.title()
     )
 
+
 def format_filter_value(
         value: str
 ) -> str:
@@ -227,10 +231,11 @@ def format_filter_value(
         value
     )
 
+
 def confirm_filter_value(
         title: str,
         filter_values: dict
-) -> str:
+        ) -> str:
     """
     Shows selected filter values and asks the user how to continue.
 
@@ -303,10 +308,11 @@ def confirm_filter_value(
 
     return "restart"
 
+
 def parse_filter_selection(
         choice: str,
         options: dict[str, str]
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Parses one or more selected filter options from user input.
 
@@ -370,7 +376,7 @@ def handle_filter_menu(
         title,
         show_function,
         filters
-    ) -> None:
+        ) -> None:
     """
     Handles a reusable multi-filter menu for report and investigation views.
 
@@ -401,10 +407,11 @@ def handle_filter_menu(
         **filter_values
     )
 
+
 def get_available_filter_values(
         reporter,
         filter_name: str
-    ) -> list:
+        ) -> list:
     """
     Returns available values for a selected filter.
 
@@ -455,7 +462,7 @@ def get_available_filter_values(
 def filter_has_available_values(
         reporter,
         filter_name: str
-    ) -> bool:
+        ) -> bool:
     """
     Checks whether a selected filter has any values available.
     """
@@ -470,7 +477,7 @@ def filter_has_available_values(
 
 def print_unavailable_filter_message(
         filter_name: str
-    ) -> None:
+        ) -> None:
     """
     Prints a readable message when a selected filter has no available values.
     """
@@ -493,11 +500,12 @@ def print_unavailable_filter_message(
         )
     )
 
+
 def collect_filter_values(
-            reporter,
-            title: str,
-            filters: list[str]
-    ) -> dict | None:
+        reporter,
+        title: str,
+        filters: list[str]
+        ) -> dict | None:
     """
     Collects selected filter values from the reusable CLI filter menu.
 

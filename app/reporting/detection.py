@@ -49,7 +49,7 @@ class Detection:
             self,
             threshold=BRUTE_FORCE_THRESHOLD,
             window_seconds=BRUTE_FORCE_TIME_WINDOW
-        ) -> None:
+            ) -> None:
         """
         Prints detected brute-force login activity.
 
@@ -241,7 +241,7 @@ class Detection:
     def print_user_targeting(
             self,
             threshold=USER_TARGETING_THRESHOLD
-        ) -> None:
+            ) -> None:
         """
         Prints distributed user-targeting detection results.
 
@@ -326,7 +326,7 @@ class Detection:
             service: str | None = None,
             ip: str | None = None,
             severity: str | None = None,
-        ) -> list[SuspiciousIPResult]:
+            ) -> list[SuspiciousIPResult]:
         """
         Returns suspicious IP results with optional filtering.
 
@@ -413,7 +413,7 @@ class Detection:
             severity: str | None = None,
             start_time: time | None = None,
             end_time: time | None = None
-        ) -> None:
+            ) -> None:
         """
         Prints suspicious IP results.
 

@@ -10,6 +10,7 @@ def test_brute_force_detected():
 
     assert len(results) > 0
 
+
 def test_no_brute_force_detected():
     analyser = LogAnalyser()
     analyser.analyse("tests/test_logs/clean.log")

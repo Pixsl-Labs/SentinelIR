@@ -23,7 +23,7 @@ class LiveEventProcessor:
             analyser,
             show_new_logs: bool = True,
             status_interval: int = 10
-        ):
+            ):
         """
         Initialises the live event processor.
 
@@ -65,7 +65,7 @@ class LiveEventProcessor:
     def process_line(
             self,
             line: str
-        ) -> None:
+            ) -> None:
         """
         Processes a single live log line.
 

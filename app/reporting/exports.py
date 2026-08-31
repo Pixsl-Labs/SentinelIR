@@ -17,8 +17,8 @@ from app.utils.export_formatting import (
 
 
 def serialise_filters(
-            filters: dict | None
-    ) -> dict:
+        filters: dict | None
+        ) -> dict:
     """
     Converts export filters values into JSON-safe values.
 
@@ -53,6 +53,7 @@ def serialise_filters(
 
     return serialised
 
+
 class Export:
     """
     Provides report export functionality.
@@ -66,7 +67,7 @@ class Export:
             title: str,
             data: list,
             filters: dict | None = None
-        ) -> None:
+            ) -> None:
         """
         Exports filtered results to a TXT file.
 
@@ -88,7 +89,7 @@ class Export:
         with open(
                 filename,
                 "w"
-            ) as f:
+                ) as f:
 
             f.write(
                 export_section_header(title)
@@ -127,8 +128,10 @@ class Export:
 
                 for item in data:
 
-                    if (hasattr(item, "ip")
-                        and hasattr(item, "status")):
+                    if (
+                        hasattr(item, "ip")
+                        and hasattr(item, "status")
+                            ):
 
                         f.write(
                             export_log_entry_line(item)
@@ -144,7 +147,7 @@ class Export:
             title: str,
             data: list,
             filters: dict | None = None
-        ) -> None:
+            ) -> None:
         """
         Exports filtered results to a structured JSON file.
 
@@ -195,9 +198,9 @@ class Export:
         }
 
         with open(
-            filename,
-            "w"
-            ) as f:
+                filename,
+                "w"
+                ) as f:
 
             json.dump(
                 export_data,

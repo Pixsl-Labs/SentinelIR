@@ -27,17 +27,17 @@ from app.utils.formatting import (
 class Investigation:
     def get_suspicious_activity(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns filtered suspicious activity.
 
@@ -88,17 +88,17 @@ class Investigation:
 
     def print_suspicious_activity(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints filtered suspicious activity.
 
@@ -212,20 +212,19 @@ class Investigation:
                 + Fore.RESET
             )
 
-
     def get_activity_timeline(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str  | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns a filtered activity timeline.
 
@@ -278,17 +277,17 @@ class Investigation:
 
     def print_activity_timeline(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints a filtered activity timeline.
 

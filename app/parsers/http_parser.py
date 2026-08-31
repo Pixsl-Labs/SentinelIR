@@ -34,6 +34,7 @@ def is_http_line(line: str) -> bool:
 
     return match is not None
 
+
 def is_http_login(line: str) -> bool:
     """
     Checks whether an HTTP log line targets a login-related path.
@@ -57,12 +58,12 @@ def is_http_login(line: str) -> bool:
 
     path = path.lower()
 
-
     return (
         path.startswith("/login")
         or path.startswith("/admin")
         or path.startswith("/wp")
     )
+
 
 def extract_http_ip(line: str) -> str | None:
     """
@@ -76,6 +77,7 @@ def extract_http_ip(line: str) -> str | None:
     """
 
     return extract_ip(line)
+
 
 def extract_http_timestamp(line: str) -> datetime | None:
     """
@@ -108,6 +110,7 @@ def extract_http_timestamp(line: str) -> datetime | None:
 
     return None
 
+
 def extract_http_method(line: str) -> str | None:
     """
     Extracts the HTTP request method from an HTTP access log line.
@@ -131,6 +134,7 @@ def extract_http_method(line: str) -> str | None:
 
     return None
 
+
 def extract_http_path(line: str) -> str | None:
     """
     Extracts the requested URL path from an HTTP access log line.
@@ -153,6 +157,7 @@ def extract_http_path(line: str) -> str | None:
         return match.group(1)
 
     return None
+
 
 def extract_http_username(line: str) -> str:
     """
@@ -180,6 +185,7 @@ def extract_http_username(line: str) -> str:
         else "unknown"
     )
 
+
 def extract_http_status_code(line: str) -> int | None:
     """
     Extracts the HTTP response status code from an HTTP access log line.
@@ -202,6 +208,7 @@ def extract_http_status_code(line: str) -> int | None:
         return int(match.group(1))
 
     return None
+
 
 def extract_http_status(line: str) -> str | None:
     """
@@ -230,6 +237,7 @@ def extract_http_status(line: str) -> str | None:
         return "FAILED"
 
     return None
+
 
 def parse_http_line(line: str) -> LogEntry | None:
     """

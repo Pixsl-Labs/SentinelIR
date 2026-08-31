@@ -90,6 +90,7 @@ def select_scenario_type() -> str | None:
             "Invalid scenario type."
         )
 
+
 def select_ssh_scenario() -> tuple[str, list[str]] | None:
     """
     Prompts the user to select an SSH log generation scenario.
@@ -158,6 +159,7 @@ def select_ssh_scenario() -> tuple[str, list[str]] | None:
             print_empty_message(
                 "Invalid scenario choice."
             )
+
 
 def select_ftp_scenario() -> tuple[str, list[str]] | None:
     """
@@ -233,6 +235,7 @@ def select_ftp_scenario() -> tuple[str, list[str]] | None:
                 "Invalid scenario choice."
             )
 
+
 def select_http_scenario() -> tuple[str, list[str]] | None:
     """
     Prompts the user to select an HTTP access log scenario.
@@ -302,6 +305,7 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
                 "Invalid scenario choice."
             )
 
+
 def select_mixed_services() -> tuple[str, list[str]] | None:
     """
     Prompts the user to select a mixed service attack scenario.
@@ -355,9 +359,10 @@ def select_mixed_services() -> tuple[str, list[str]] | None:
             "Invalid mixed service scenario choice."
         )
 
+
 def generate_mixed_service_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed multi-service attack scenario.
 
@@ -399,9 +404,10 @@ def generate_mixed_service_attack_scenario(
 
     return lines
 
+
 def generate_ssh_ftp_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed SSH and FTP attack scenario.
 
@@ -436,9 +442,10 @@ def generate_ssh_ftp_mixed_attack_scenario(
 
     return lines
 
+
 def generate_ssh_http_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed SSH and HTTP attack scenario.
 
@@ -473,9 +480,10 @@ def generate_ssh_http_mixed_attack_scenario(
 
     return lines
 
+
 def generate_ftp_http_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed FTP and HTTP attack scenario.
 

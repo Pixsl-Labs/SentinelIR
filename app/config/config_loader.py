@@ -10,8 +10,8 @@ from app.models.app_config import (
 
 
 def load_config(
-            config_path: str = "sentinel_config.json"
-    ) -> AppConfig:
+        config_path: str = "sentinel_config.json"
+        ) -> AppConfig:
     """
     Loads the SentinelIR application configuration.
 
@@ -34,9 +34,10 @@ def load_config(
         config_data
     )
 
+
 def load_config_dict(
-            config_path: str
-    ) -> dict:
+        config_path: str
+        ) -> dict:
     """
     Reads raw configuration data from a JSON file.
 
@@ -59,9 +60,10 @@ def load_config_dict(
 
         return json.load(file)
 
+
 def build_app_config(
-            config_data: dict
-    ) -> AppConfig:
+        config_data: dict
+        ) -> AppConfig:
     """
     Builds an AppConfig object from raw dictionary data.
 

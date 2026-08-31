@@ -18,7 +18,7 @@ class StaticRuntime:
             analyser,
             reporter,
             log_file
-        ) -> None:
+            ) -> None:
         """
         Initialises the static runtime.
 

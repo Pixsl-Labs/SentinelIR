@@ -40,6 +40,7 @@ def test_load_config_returns_app_config(tmp_path):
 
     assert isinstance(config, AppConfig)
 
+
 def test_load_config_reads_watched_files(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
 
@@ -80,6 +81,7 @@ def test_load_config_reads_watched_files(tmp_path):
         "log_files/auth.log"
     ]
 
+
 def test_load_config_reads_thresholds(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
 
@@ -118,6 +120,7 @@ def test_load_config_reads_thresholds(tmp_path):
     assert config.thresholds.brute_force_time_window == 10
     assert config.thresholds.user_targeting_threshold == 5
 
+
 def test_load_config_uses_defaults_when_optional_sections_missing(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
 
@@ -145,10 +148,11 @@ def test_load_config_uses_defaults_when_optional_sections_missing(tmp_path):
 
     assert config.live_monitoring.poll_interval == 0.2
     assert config.live_monitoring.status_interval == 10
-    assert config.live_monitoring.show_new_logs == True
+    assert config.live_monitoring.show_new_logs is True
 
     assert config.outputs.reports_dir == "reports"
     assert config.outputs.logs_dir == "logs"
+
 
 def test_build_app_config_reads_live_monitoring_settings(tmp_path):
     config_file = tmp_path / "sentinel_config.json"

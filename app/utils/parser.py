@@ -44,6 +44,7 @@ def extract_ip(
 
         return None
 
+
 def extract_timestamp(
     line: str
 ) -> datetime | None:

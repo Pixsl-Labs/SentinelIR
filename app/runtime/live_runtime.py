@@ -36,7 +36,7 @@ class LiveRuntime:
             status_interval: int = 10,
             poll_interval: float = 0.2,
             mode_title: str = "Live Monitoring Mode"
-        ) -> None:
+            ) -> None:
         """
         Initialises the live runtime.
 
@@ -106,9 +106,9 @@ class LiveRuntime:
             )
 
     def print_live_session_summary(
-                self,
-                processor
-        ) -> None:
+            self,
+            processor
+            ) -> None:
         """
         Prints a summary of the live monitoring session.
 

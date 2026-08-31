@@ -1,5 +1,12 @@
 #!/bin/bash
-set -e
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+cd "$SCRIPT_DIR"
+
+set -euo pipefail
 
 # Check Python is installed
 if ! command -v python3 &>/dev/null; then
@@ -10,23 +17,23 @@ fi
 # Create venv
 python3 -m venv .venv
 
-# Activate
-source .venv/bin/activate
-
 # Update pip
-pip install --upgrade pip
+.venv/bin/python -m pip install --upgrade pip
 
 # Install dependencies
-pip install -r requirements.txt
+.venv/bin/python -m pip install -r requirements.txt
 
 mkdir -p logs reports
 
+chmod +x analyse monitor generate web
+
 echo
 echo "SentinelIR is now installed!"
+echo
 echo "Run using:"
-echo "  sentinelir analyse"
-echo "  sentinelir monitor"
-echo "  sentinelir generate"
-echo "  sentinelir web"
+echo "  ./analyse"
+echo "  ./monitor"
+echo "  ./generate"
+echo "  ./web"
 
 exit 0

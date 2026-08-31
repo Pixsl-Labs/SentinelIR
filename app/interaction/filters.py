@@ -243,7 +243,7 @@ def confirm_filter_value(
         + f"\n=== {title} Filter Summary ===\n"
     )
 
-    if not confirm_filter_value:
+    if not filter_values:
 
         print("No filters applied.")
 

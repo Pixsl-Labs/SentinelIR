@@ -2,12 +2,41 @@
 Shared helpers for SentinelIR CLI entry points
 """
 
+import logging
+
 from pathlib import Path
+from colorama import init
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
 
+
 LOG_FILES_DIR = Path("log_files")
+
+def initialise_cli() -> None:
+    """
+    Initialises shared SentinelIR CLI behaviour.
+    """
+
+    Path("logs").mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler(
+                "logs/application.log"
+            )
+        ]
+    )
+
+    init(
+        autoreset=True
+    )
 
 def create_analysis_components() -> tuple[LogAnalyser, LogReporter]:
     """

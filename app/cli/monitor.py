@@ -11,26 +11,26 @@ from app.cli.common import (
     initialise_cli
 )
 
-from app.runtime.static_runtime import StaticRuntime
+from app.runtime.live_runtime import LiveRuntime
 
 
 def main() -> None:
     """
-    Starts SentinelIR static analysis.
+    Starts SentinelIR live monitoring.
     """
 
     initialise_cli()
 
     parser = argparse.ArgumentParser(
-        prog="analyse",
-        description="Analyse authentication logs with SentinelIR."
+        prog="monitor",
+        description="Monitor authentication logs with SentinelIR."
     )
 
     parser.add_argument(
         "file",
         nargs="?",
         metavar="LOG_FILE",
-        help="Log file to analyse."
+        help="Log file to monitor."
     )
 
     args = parser.parse_args()
@@ -55,7 +55,7 @@ def main() -> None:
 
     analyser, reporter = create_analysis_components()
 
-    runtime = StaticRuntime(
+    runtime = LiveRuntime(
         analyser=analyser,
         reporter=reporter,
         log_file=str(log_file)

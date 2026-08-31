@@ -29,24 +29,6 @@ from app.log_analyser.log_reporter import LogReporter
 
 import argparse
 import os
-import logging
-from colorama import init
-
-
-os.makedirs("logs", exist_ok=True)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(
-            "logs/application.log"
-        )
-    ]
-)
-
-init(autoreset=True)
 
 
 def run_cli(args) -> None:

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentinelir"
+version = "0.8.0"
+description = "Lightweight incident response and SOC investigation toolkit"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "colorama>=0.4.6"
+]
+
+[project.optional-dependencies]
+
+dev = [
+    "pytest",
+    "flake8"
+]

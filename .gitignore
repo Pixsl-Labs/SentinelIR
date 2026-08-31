@@ -13,8 +13,7 @@ venv/
 
 # Runtime output
 logs/
-reports/*.txt
-reports/*.json
+reports/
 
 # IDE
 .vscode/
@@ -23,4 +22,6 @@ reports/*.json
 # OS
 .DS_Store
 
-docs/ethan_meeting.md
+# Personal
+docs/
+sentinel_config.json

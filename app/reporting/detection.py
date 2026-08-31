@@ -6,7 +6,7 @@ from app.config.security_config import (
 
 
 from app.utils.formatting import (
-    format_column, 
+    format_column,
     print_table_header,
     format_service_column,
     format_user_column
@@ -21,13 +21,13 @@ from app.utils.display import (
 )
 from app.utils.colours import (
     get_severity_colour,
-    get_attempt_colour, 
+    get_attempt_colour,
     get_count_colour
 )
 
 
 from app.models.detection_results import (
-    SuspiciousIPResult, 
+    SuspiciousIPResult,
     BruteForceResult,
     UserTargetingResult,
     SuspiciousSuccessResult
@@ -87,7 +87,7 @@ class Detection:
             )
 
             return
-        
+
         print_section_header(
             "Brute Force Detected",
             Fore.LIGHTRED_EX
@@ -126,7 +126,7 @@ class Detection:
             print(
                 "    "
                 + format_service_column(result.service, 12)
-                + severity_colour                
+                + severity_colour
                 + format_column(result.ip, 14)
                 + attempt_colour
                 + format_column(result.attempts, 12, "^")
@@ -166,7 +166,7 @@ class Detection:
             )
 
             return
-        
+
         for result in results:
 
             print(
@@ -198,7 +198,7 @@ class Detection:
             )
 
             return
-        
+
         print_section_header(
             "Success After Failure",
             Fore.YELLOW
@@ -238,7 +238,7 @@ class Detection:
             print(
                 "    "
                 + format_service_column(result.service, 12)
-                + attempt_colour                
+                + attempt_colour
                 + format_column(result.ip, 14)
                 + format_column(result.attempts, 16, "^")
                 + severity_colour
@@ -285,7 +285,7 @@ class Detection:
         print_generated_timestamp()
 
         attempt_colour = get_count_colour(len(results))
-        
+
         print_total_count(
             "Distributed Attacks Detected",
             len(results),
@@ -413,7 +413,7 @@ class Detection:
             )
 
         return results
-    
+
     def print_suspicious_ips(
             self,
             service: str | None = None,
@@ -457,7 +457,7 @@ class Detection:
             )
 
             return
-        
+
         print_section_header(
             "Suspicious IPs (Failed Attempts)",
             Fore.YELLOW
@@ -500,7 +500,7 @@ class Detection:
             print(
                 "    "
                 + format_service_column(result.service, 12)
-                + attempt_colour                
+                + attempt_colour
                 + format_column(result.ip, 15)
                 + format_column(result.attempts, 12, "^")
                 + format_column(result.risk_status, 20, "^")
@@ -528,7 +528,7 @@ class Detection:
             )
 
             return
-        
+
         print_section_header(
             "Anonymous FTP Logins Detected",
             Fore.YELLOW

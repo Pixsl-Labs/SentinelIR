@@ -17,7 +17,7 @@ def test_write_lines_to_file_writes_all_lines(tmp_path):
         lines=lines,
         append=True
     )
-    
+
     assert output_file.read_text().splitlines() == lines
 
 def test_write_lines_to_file_appends_to_existing_file(tmp_path):
@@ -90,5 +90,5 @@ def test_stream_lines_to_file_writes_all_lines(tmp_path):
         lines=lines,
         delay_seconds=0
     )
-    
+
     assert output_file.read_text().splitlines() == lines

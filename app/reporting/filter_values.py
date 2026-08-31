@@ -76,7 +76,7 @@ class FilterValues:
             )
 
             return
-        
+
         print_section_header(
             title,
             colour

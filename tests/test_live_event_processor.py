@@ -312,7 +312,7 @@ def test_live_ftp_event_counter_increments():
         "Apr 12 2026 12:00:08 server vsftpd[2103]: "
         "FTP LOGIN SUCCESS user=anonymous ip=203.0.113.50"
     )
-    
+
     second_line = (
         "Apr 12 2026 12:00:24 server vsftpd[2107]: "
         "FTP LOGIN SUCCESS user=anonymous ip=198.51.100.77"
@@ -416,7 +416,7 @@ def test_live_http_event_counter_increments():
         '203.0.113.10 - - [17/Apr/2026:12:00:08 +0000] '
         '"POST /login?user=guest HTTP/1.1" 200 532'
     )
-    
+
     second_line = (
         '203.0.113.11 - - [17/Apr/2026:12:01:10 +0000] '
         '"POST /login?user=admin HTTP/1.1" 200 532'

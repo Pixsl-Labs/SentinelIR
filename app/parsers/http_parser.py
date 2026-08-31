@@ -54,7 +54,7 @@ def is_http_login(line: str) -> bool:
     if path is None:
 
         return False
-    
+
     path = path.lower()
 
 
@@ -224,11 +224,11 @@ def extract_http_status(line: str) -> str | None:
     if status_code in [200, 201, 204, 302]:
 
         return "SUCCESS"
-    
+
     if status_code in [401, 403]:
 
         return "FAILED"
-    
+
     return None
 
 def parse_http_line(line: str) -> LogEntry | None:

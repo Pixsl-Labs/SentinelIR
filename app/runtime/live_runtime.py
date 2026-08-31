@@ -147,7 +147,7 @@ class LiveRuntime:
         brute_force_colour = get_live_status_colour("brute_force_alert", brute_force_alerts)
 
         suspicious_colour = get_live_status_colour("suspicious_success", suspicious_success_alerts)
-        
+
         user_targeting_colour = get_live_status_colour("user_targeting", user_targeting_alerts)
 
         processor.print_session_activity()

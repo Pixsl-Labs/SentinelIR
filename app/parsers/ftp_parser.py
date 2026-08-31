@@ -33,7 +33,7 @@ def is_ftp_successful_login(line: str) -> bool:
     """
 
     return "ftp login success" in line.lower()
-    
+
 def is_ftp_failed_login(line: str) -> bool:
     """
     Checks whether a log line is a failed FTP login attempt.
@@ -61,11 +61,11 @@ def extract_ftp_status(line: str) -> str | None:
     if is_ftp_successful_login(line):
 
         return "SUCCESS"
-    
+
     if is_ftp_failed_login(line):
 
         return "FAILED"
-    
+
     return None
 
 def extract_ftp_username(line: str) -> str:
@@ -112,19 +112,19 @@ def parse_ftp_line(line: str) -> LogEntry | None:
     if status is None:
 
         return None
-    
+
     ip = extract_ip(line)
 
     if not ip:
 
         return None
-    
+
     timestamp = extract_timestamp(line)
 
     if not timestamp:
 
         return None
-    
+
     username = extract_ftp_username(line)
 
     return LogEntry(

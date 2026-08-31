@@ -82,9 +82,9 @@ def extract_ssh_username(line: str) -> str:
     )
 
     if match:
-        
+
         return match.group(1)
-    
+
     session_match = re.search(
         r"session opened for user (\w+)",
         line,
@@ -113,11 +113,11 @@ def extract_ssh_status(line: str) -> str | None:
     if is_ssh_failed_login(line):
 
         return "FAILED"
-    
+
     if is_ssh_successful_login(line):
 
         return "SUCCESS"
-    
+
     return None
 
 def parse_ssh_line(line: str) -> LogEntry | None:
@@ -141,19 +141,19 @@ def parse_ssh_line(line: str) -> LogEntry | None:
     if status is None:
 
         return None
-    
+
     ip = extract_ip(line)
 
     if not ip:
 
         return None
-    
+
     timestamp = extract_timestamp(line)
 
     if not timestamp:
 
         return None
-    
+
     username = extract_ssh_username(line)
 
     return LogEntry(

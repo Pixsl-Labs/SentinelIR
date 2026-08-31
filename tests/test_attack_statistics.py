@@ -37,7 +37,7 @@ def test_attack_statistics_values_are_correct(brute_force_reporter):
             "top_attacker": "SSH 192.168.1.10 (5 attempts)",
             "most_targeted_user": "SSH root (5 attempts)"
         }
-    
+
     assert results == expected_results
 
 def test_attack_statistics_empty_log(empty_reporter):
@@ -53,5 +53,5 @@ def test_attack_statistics_empty_log(empty_reporter):
             "top_attacker": None,
             "most_targeted_user": None
         }
-    
+
     assert results == expected_results

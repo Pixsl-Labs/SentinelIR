@@ -29,7 +29,7 @@ SQL Injection
 Directory / subdomain enumeration
 Cross-Write Scripting (XSS)
 XML Injection
-SSTI -> 
+SSTI ->
 Service Side Request Forgery -> provide web service with a URL
 File Inclusion Vulnerabilities (similiar to SSRF)
 Maybe: Race conditions -> very similar to brute-force

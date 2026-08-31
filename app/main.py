@@ -47,7 +47,7 @@ def run_cli(args) -> None:
     """
 
     analyser = LogAnalyser()
-    
+
     reporter = LogReporter(
         analyser
     )
@@ -109,11 +109,11 @@ def run_interactive() -> None:
             print_empty_message(
                 "Analysis failed. Try again\n"
             )
-            
+
             continue
-        
+
         break
-    
+
     reporter = LogReporter(analyser)
 
     reporter.print_analysis_summary()

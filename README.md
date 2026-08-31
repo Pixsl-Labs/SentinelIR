@@ -217,7 +217,7 @@ The monitoring layer watches a target log file, processes new lines as they arri
 
 ---
 
-## Generator Layer 
+## Generator Layer
 
 Responsible for creating controlled log scenarios for testing and demonstrations.
 
@@ -525,7 +525,7 @@ Current tested areas include:
 - Scenario generation
 - Log writing and streaming
 
---- 
+---
 
 # Design Goals
 

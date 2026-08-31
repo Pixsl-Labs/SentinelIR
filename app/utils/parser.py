@@ -29,13 +29,13 @@ def extract_ip(
 
     if not match:
         return None
-    
+
     ip = match.group()
 
     try:
         ipaddress.ip_address(ip)
         return ip
-    
+
     except ValueError:
 
         logging.warning(
@@ -68,7 +68,7 @@ def extract_timestamp(
 
     if not match:
         return None
-    
+
     timestamp = match.group()
 
     try:
@@ -76,7 +76,7 @@ def extract_timestamp(
             timestamp,
             "%b %d %Y %H:%M:%S"
         )
-    
+
     except ValueError:
 
         logging.warning(

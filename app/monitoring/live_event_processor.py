@@ -26,7 +26,7 @@ class LiveEventProcessor:
         ):
         """
         Initialises the live event processor.
-        
+
         Stores the analyser, display settings, status interval, and processed event
         counter used during live monitoring.
 
@@ -83,13 +83,13 @@ class LiveEventProcessor:
         if not line:
 
             return
-        
+
         entry = parse_log_line(line)
 
         if entry is None:
 
             return
-                
+
         if self.show_new_logs:
 
             print(f"[NEW LOG] {line}")
@@ -167,7 +167,7 @@ class LiveEventProcessor:
             None
         """
 
-        print_section_header(            
+        print_section_header(
             "Live Monitoring Status",
             Fore.GREEN
         )

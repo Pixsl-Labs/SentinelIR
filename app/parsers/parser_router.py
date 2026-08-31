@@ -24,7 +24,7 @@ def identify_log_line(line: str) -> str | None:
 
     The router checks known parser modules in a controlled order. FTP is checked
     before SSH because FTP log lines use a clear "FTP LOGIN" pattern, while SSH
-    lines use authentication phrases such as "failed password" and 
+    lines use authentication phrases such as "failed password" and
     "accepted password".
 
     Args:
@@ -38,19 +38,19 @@ def identify_log_line(line: str) -> str | None:
     if not line:
 
         return None
-    
+
     if is_ftp_line(line):
 
         return "FTP"
-    
+
     if is_http_line(line):
 
         return "HTTP"
-    
+
     if is_ssh_line(line):
 
         return "SSH"
-    
+
     return None
 
 def parse_log_line(line: str) -> LogEntry | None:
@@ -73,15 +73,15 @@ def parse_log_line(line: str) -> LogEntry | None:
     if log_type == "FTP":
 
         return parse_ftp_line(line)
-    
+
     if log_type == "HTTP":
 
         return parse_http_line(line)
-    
+
     if log_type == "SSH":
 
         return parse_ssh_line(line)
-    
+
     return None
 
 def is_supported_log_line(line: str) -> bool:

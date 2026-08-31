@@ -16,7 +16,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4",
-    "flake8"
+    "flake8",
+    "pre-commit"
 ]
 
 gui = [

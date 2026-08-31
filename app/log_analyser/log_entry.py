@@ -8,10 +8,10 @@ class LogEntry:
     Represents a parsed authentication log event.
 
     Stores the key fields extracted from a log line, including source IP address,
-    username, timestamp, login status, severity level, source service, method, 
+    username, timestamp, login status, severity level, source service, method,
     path, and status code.
     """
-    
+
     ip: str
     user: str
     timestamp: datetime

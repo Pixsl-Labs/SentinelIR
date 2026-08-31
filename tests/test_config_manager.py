@@ -77,7 +77,7 @@ def test_add_watched_file_prevents_duplicates(tmp_path):
 
 def test_remove_watched_file_updates_config(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
-    
+
     real_log_file = tmp_path / "auth.log"
     real_log_file.write_text("log content")
 

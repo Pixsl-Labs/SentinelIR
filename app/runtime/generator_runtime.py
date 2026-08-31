@@ -167,7 +167,7 @@ class GeneratorRuntime:
             print_empty_message(
                 "Invalid choice. Press Enter/y for yes or n for no."
             )
-    
+
     def prepare_output_file(
             self,
             output_file: str,
@@ -282,7 +282,7 @@ class GeneratorRuntime:
                 )
 
                 return
-            
+
             if choice == "2":
 
                 self.prepare_output_file(
@@ -326,11 +326,11 @@ class GeneratorRuntime:
                 )
 
                 return
-            
+
             if choice == "3":
-                
+
                 return
-            
+
             else:
 
                 print_empty_message(
@@ -360,11 +360,11 @@ class GeneratorRuntime:
             if choice == "1":
 
                 return True
-            
+
             elif choice == "2":
 
                 return False
-            
+
             else:
 
                 print_empty_message(
@@ -392,7 +392,7 @@ class GeneratorRuntime:
         elif append == False:
 
             return "overwrite"
-        
+
         else:
 
             print_empty_message(
@@ -413,9 +413,9 @@ class GeneratorRuntime:
         choice = input("\nEnter stream delay seconds (default: 0.5): ").strip()
 
         if not choice:
-            
+
             return 0.5
-        
+
         try:
 
             delay = float(choice)
@@ -427,7 +427,7 @@ class GeneratorRuntime:
             )
 
             return 0.5
-        
+
         if delay < 0:
 
             print_empty_message(

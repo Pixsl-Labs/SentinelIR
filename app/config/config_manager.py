@@ -49,7 +49,7 @@ def list_available_log_files(
     if not log_path.exists():
 
         return []
-    
+
     return sorted(
         str(file_path)
         for file_path in log_path.glob("*.log")
@@ -87,7 +87,7 @@ def add_watched_file(
     if file_path in watched_files:
 
         return False
-    
+
     watched_files.append(
         file_path
     )
@@ -129,7 +129,7 @@ def remove_watched_file(
     if file_path not in watched_files:
 
         return False
-    
+
     watched_files.remove(
         file_path
     )

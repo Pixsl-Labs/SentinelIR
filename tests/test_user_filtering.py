@@ -12,7 +12,7 @@ def test_get_failed_logins_by_user_returns_results(brute_force_reporter):
     assert len(results) > 0
     assert all(entry.user == username for entry in results)
 
-def test_failed_logins_by_user_case_insensitive(brute_force_reporter):   
+def test_failed_logins_by_user_case_insensitive(brute_force_reporter):
     username = ["root", "ROOT", "rOoT"]
 
     for user_ in username:

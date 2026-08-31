@@ -13,7 +13,7 @@ def test_user_targeting_detected():
 def test_no_user_targeting_detected():
     analyser = LogAnalyser()
     analyser.analyse("tests/test_logs/clean.log")
-    
+
     results = DetectionEngine.get_user_targeting(analyser, 5)
 
     assert len(results) == 0

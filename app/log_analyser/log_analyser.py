@@ -86,7 +86,7 @@ class LogAnalyser:
             grouped_attempts[entry.ip].append(entry.timestamp)
 
         return grouped_attempts
-    
+
     def store_entry(self, entry: LogEntry) -> None:
         """
         Stores a parsed log entry in the correct analyser collection.
@@ -124,13 +124,13 @@ class LogAnalyser:
             self.failed_logins.append(entry)
 
             return
-        
+
         if entry.status == "SUCCESS":
 
             self.successful_logins.append(entry)
 
             return
-        
+
         logging.warning(
             f"Skipping parsed entry with unsupported status: {entry.status}"
         )
@@ -158,7 +158,7 @@ class LogAnalyser:
         found_success = False
 
         try:
-            
+
             logging.info(
                 f"Analysing File: {file_path}"
             )

@@ -20,7 +20,7 @@ def display_log_analysis_menu() -> None:
     Returns:
         None
     """
-    
+
     print_section_header(
         "Log Analysis Menu",
         Fore.GREEN
@@ -74,7 +74,7 @@ def display_log_analysis_menu() -> None:
     )
 
 def display_configuration_menu(
-        threshold: int, 
+        threshold: int,
         window_seconds: int
     ) -> None:
     """
@@ -107,7 +107,7 @@ def display_configuration_menu(
     )
 
 def current_config(
-        threshold: int, 
+        threshold: int,
         window_seconds: int
     ) -> None:
     """

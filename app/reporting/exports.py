@@ -35,7 +35,7 @@ def serialise_filters(
     if not filters:
 
         return {}
-    
+
     serialised = {}
 
     for key, value in filters.items():
@@ -91,7 +91,7 @@ class Export:
         now = datetime.now()
 
         with open(
-                filename, 
+                filename,
                 "w"
             ) as f:
 
@@ -102,7 +102,7 @@ class Export:
             f.write(
                 export_generated_timestamp()
                 )
-            
+
             f.write(
                 export_filter_summary(filters)
             )
@@ -115,13 +115,13 @@ class Export:
                 )
 
             else:
-                
+
                 if all(
                     (hasattr(item, "ip")
                         and hasattr(item, "status")
                         for item in data)
                 ):
-                    
+
                     f.write(
                         f"Total Results: {len(data)}\n\n"
                     )
@@ -180,7 +180,7 @@ class Export:
                 "result_count": len(data),
                 "filters": serialise_filters(filters)
             },
-            
+
             "results": [
 
                 {
@@ -200,13 +200,13 @@ class Export:
         }
 
         with open(
-            filename, 
+            filename,
             "w"
             ) as f:
 
             json.dump(
-                export_data, 
-                f, 
+                export_data,
+                f,
                 indent=4
             )
 

@@ -89,7 +89,7 @@ class FileMonitor:
                     )
 
             return True
-        
+
         except FileNotFoundError:
 
             logging_error(
@@ -97,7 +97,7 @@ class FileMonitor:
             )
 
             return False
-        
+
         except KeyboardInterrupt:
 
             print_empty_message(

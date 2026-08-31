@@ -12,8 +12,8 @@ from colorama import Fore
 
 
 def integer_validation(
-        prompt, 
-        default, 
+        prompt,
+        default,
         label="value"
     ) -> int:
     """
@@ -41,11 +41,11 @@ def integer_validation(
         )
 
         return default
-    
+
     try:
 
         return int(value)
-    
+
     except ValueError:
 
         logging.error(f"Error: Invalid input, using default.")
@@ -56,7 +56,7 @@ def integer_validation(
         )
 
         return default
-    
+
 def prompt_time_value(
         label: str
 ) -> tuple[time | None, bool]:
@@ -80,12 +80,12 @@ def prompt_time_value(
         if value == "":
 
             return None, False
-        
+
         if value.lower() in ["back", "cancel", "q", "quit"]:
 
             return None, True
-        
-        try: 
+
+        try:
 
             parsed_time = datetime.strptime(
                 value,
@@ -93,13 +93,13 @@ def prompt_time_value(
             ).time()
 
             return parsed_time, False
-        
+
         except ValueError:
 
             print_empty_message(
                 "Invalid time format. Use HH:MM:SS, e.g. 13:45:00."
             )
-    
+
 def get_time_range() -> tuple[time | None, time | None]:
     """
     Prompts the user for an optional time range filter.
@@ -120,7 +120,7 @@ def get_time_range() -> tuple[time | None, time | None]:
     if use_time_filter != "y":
 
         return None, None
-    
+
     while True:
 
         start_time, cancelled = prompt_time_value(
@@ -134,7 +134,7 @@ def get_time_range() -> tuple[time | None, time | None]:
             )
 
             return None, None
-        
+
         end_time, cancelled = prompt_time_value(
             "\nEnd"
         )
@@ -146,24 +146,24 @@ def get_time_range() -> tuple[time | None, time | None]:
             )
 
             return None, None
-        
+
         if (
             start_time is None
             and end_time is None
         ):
-            
+
             print_empty_message(
                 "No time range applied."
             )
 
             return None, None
-        
+
         if (
             start_time is not None
             and end_time is not None
             and end_time < start_time
         ):
-            
+
             print_empty_message(
                 "End time cannot be earlier than start time. Please try again."
             )
@@ -216,13 +216,13 @@ def format_filter_value(
     if value is None:
 
         return "None applied."
-    
+
     if hasattr(value, "strftime"):
 
         return value.strftime(
             "%H:%M:%S"
         )
-    
+
     return str(
         value
     )
@@ -274,7 +274,7 @@ def confirm_filter_value(
         + "2. Start again"
         + Fore.RESET
     )
-    
+
     print(
         Fore.LIGHTRED_EX
         + "3. Cancel"
@@ -288,15 +288,15 @@ def confirm_filter_value(
     if choice == "1":
 
         return "apply"
-    
+
     if choice == "2":
 
         return "restart"
-    
+
     if choice == "3":
 
         return "cancel"
-    
+
     print_empty_message(
         "Invalid option. Starting again."
     )
@@ -561,7 +561,7 @@ def collect_filter_values(
         if selected_filters == ["back"]:
 
             return None
-        
+
         if selected_filters == ["none"]:
 
             start_time, end_time = get_time_range()
@@ -570,7 +570,7 @@ def collect_filter_values(
                 "start_time": start_time,
                 "end_time": end_time
             }
-        
+
         filter_values = {}
 
         invalid_filter = False
@@ -706,7 +706,7 @@ def collect_filter_values(
                     "HEAD",
                     "OPTIONS"
                 ]:
-                    
+
                     print_empty_message(
                         "Invalid method. Use GET, POST, PUT, DELETE, PATCH, HEAD, or OPTIONS."
                     )
@@ -778,11 +778,11 @@ def collect_filter_values(
         if decision == "apply":
 
             return filter_values
-        
+
         if decision == "cancel":
 
             return None
-        
+
         if decision == "restart":
 
             continue

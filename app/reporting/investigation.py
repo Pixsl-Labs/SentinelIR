@@ -24,7 +24,7 @@ from app.utils.formatting import (
 )
 
 
-class Investigation:    
+class Investigation:
     def get_suspicious_activity(
             self,
             ip: str | None=None,
@@ -85,7 +85,7 @@ class Investigation:
             results,
             key=lambda entry: entry.timestamp or datetime.min
         )
-    
+
     def print_suspicious_activity(
             self,
             ip: str | None=None,
@@ -141,7 +141,7 @@ class Investigation:
                 "No matching suspicious activity found."
             )
             return
-        
+
         print_section_header(
             "Suspicious Activity",
             Fore.GREEN
@@ -275,7 +275,7 @@ class Investigation:
                 entry.timestamp or datetime.min
             )
         )
-    
+
     def print_activity_timeline(
             self,
             ip: str | None=None,
@@ -331,7 +331,7 @@ class Investigation:
                 "No matching activity timeline found."
             )
             return
-        
+
         print_section_header(
             "Activity Timeline",
             Fore.GREEN

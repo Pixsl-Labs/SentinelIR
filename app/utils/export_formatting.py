@@ -90,7 +90,7 @@ def export_status_label(
     if not status:
 
         return "[UNKNOWN]"
-    
+
     return f"[{status.upper()}]"
 
 def export_missing_value(
@@ -109,7 +109,7 @@ def export_missing_value(
     if value is None or value == "":
 
         return "-"
-    
+
     return str(value)
 
 def export_column(
@@ -228,7 +228,7 @@ def export_filter_summary(
     if not filters:
 
         return "Filters: None\n\n"
-    
+
     lines = [
         "Filters Applied:\n"
     ]

@@ -136,7 +136,7 @@ class DetectionEngine:
         """
 
         return entity in self.alert_state.get(alert_type, set())
-    
+
     def mark_alerted(
             self,
             alert_type: str,
@@ -157,7 +157,7 @@ class DetectionEngine:
 
         if alert_type not in self.alert_state:
             self.alert_state[alert_type] = set()
-        
+
         self.alert_state[alert_type].add(entity)
 
         if current_time is None:
@@ -210,7 +210,7 @@ class DetectionEngine:
         if last_alert_time is None:
 
             return True
-        
+
         return (
             current_time - last_alert_time
             >= self.alert_cooldown_seconds
@@ -234,7 +234,7 @@ class DetectionEngine:
 
         for alert_type in self.alert_event_counts:
             self.alert_event_counts[alert_type] = 0
-    
+
     def get_alert_count(
             self,
             alert_type: str
@@ -253,7 +253,7 @@ class DetectionEngine:
             alert_type,
             0
         )
-    
+
     def get_total_alerts(
             self
     ) -> int:
@@ -267,7 +267,7 @@ class DetectionEngine:
         return sum(
             self.alert_event_counts.values()
         )
-    
+
     def get_alert_summary(
             self
     ) -> dict[str, int]:
@@ -285,7 +285,7 @@ class DetectionEngine:
             alert_type: len(alerted_entities)
             for alert_type, alerted_entities in self.alert_state.items()
         }
-    
+
 
     @staticmethod
     def get_brute_force(
@@ -409,7 +409,7 @@ class DetectionEngine:
                 )
 
         return results
-    
+
     @staticmethod
     def get_user_targeting(
         analyser,
@@ -472,7 +472,7 @@ class DetectionEngine:
                 )
 
         return results
-    
+
     @staticmethod
     def get_anonymous_ftp_logins(
             analyser
@@ -496,7 +496,7 @@ class DetectionEngine:
                 and entry.user.lower() == "anonymous"
                 and entry.status == "SUCCESS"
             ):
-                
+
                 results.append(
                     AnonymousFTPResult(
                         ip=entry.ip,
@@ -505,9 +505,9 @@ class DetectionEngine:
                         severity="MEDIUM"
                     )
                 )
-        
+
         return results
-    
+
     def process_live_detection(
             self,
             analyser
@@ -549,7 +549,7 @@ class DetectionEngine:
             str(part)
             for part in parts
         )
-        
+
     def detect_live_brute_force(
             self,
             analyser
@@ -571,14 +571,14 @@ class DetectionEngine:
         threshold = self.brute_force_threshold
 
         for (service, ip), attempts in analyser.failed_service_ip_counts.items():
-            
+
             alert_key = self.build_alert_key(
                 service,
                 ip
             )
 
             if (
-                attempts >= threshold 
+                attempts >= threshold
                 and self.can_alert(BRUTE_FORCE_ALERT, alert_key)
             ):
 
@@ -651,7 +651,7 @@ class DetectionEngine:
                 service_ip_key in failed_service_ips
                 and self.can_alert(SUSPICIOUS_SUCCESS_ALERT, alert_key)
             ):
-                
+
                 alert_message = (
                     f"Service: {entry.service} | "
                     f"IP: {entry.ip} | "
@@ -727,7 +727,7 @@ class DetectionEngine:
                 unique_ip_count >= self.user_targeting_threshold
                 and self.can_alert(USER_TARGETING_ALERT, alert_key)
             ):
-                
+
                 alert_message = (
                     f"Service: {service} | "
                     f"User: {user} | "

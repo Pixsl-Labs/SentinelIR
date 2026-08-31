@@ -67,7 +67,7 @@ def test_export_txt_contains_first_result(brute_force_reporter):
     assert first_entry.severity in content
 
 def test_export_txt_contains_filters(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_filtered_report.txt"
 
     filters = {
@@ -132,7 +132,7 @@ def test_export_json_contains_expected_keys(brute_force_reporter):
     assert expected_keys.issubset(exported_data.keys())
 
 def test_export_json_first_result_contains_expected_fields(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_report.json"
 
     data = brute_force_reporter.get_failed_logins()
@@ -159,7 +159,7 @@ def test_export_json_first_result_contains_expected_fields(brute_force_reporter)
     assert first_result["severity"] == data[0].severity
 
 def test_export_json_contains_filters(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_filtered_report.json"
 
     filters = {
@@ -185,7 +185,7 @@ def test_export_json_contains_filters(brute_force_reporter):
     assert exported_data["metadata"]["filters"]["username"] == "admin"
     assert exported_data["metadata"]["result_count"] == len(data)
 
-    
+
     assert all(
         result["service"].upper() == "FTP"
         and result["user"].lower() == "admin"

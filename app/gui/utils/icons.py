@@ -17,7 +17,7 @@ def get_icon(
     Returns:
         QIcon: Loaded Qt icon.
     """
-    
+
     assets_path = Path(__file__).resolve().parent.parent / "assets"
 
     return QIcon(

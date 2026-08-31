@@ -1,9 +1,6 @@
 import json
 import os
 
-from app.log_analyser.log_reporter import LogReporter
-from app.log_analyser.log_analyser import LogAnalyser
-
 
 def test_export_txt_creates_file(brute_force_reporter):
     output_file = "tests/test_reports/test_txt_report_created.txt"

@@ -1,11 +1,5 @@
 from app.detection.detection_engine import DetectionEngine
 
-from conftest import (
-    brute_force_reporter,
-    empty_reporter,
-    distributed_reporter
-)
-
 
 def test_get_suspicious_ips_returns_results(
         brute_force_reporter

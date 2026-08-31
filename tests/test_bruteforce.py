@@ -1,4 +1,3 @@
-from app.log_analyser.log_reporter import LogReporter
 from app.log_analyser.log_analyser import LogAnalyser
 from app.detection.detection_engine import DetectionEngine
 

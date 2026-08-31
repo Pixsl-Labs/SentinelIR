@@ -3,8 +3,6 @@ from colorama import Fore
 
 from app.utils.display import (
     print_section_header,
-    print_empty_message,
-    print_total_count,
     print_separator
 )
 

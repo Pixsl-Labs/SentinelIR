@@ -1,6 +1,3 @@
-from app.log_analyser.log_reporter import LogReporter
-from app.log_analyser.log_analyser import LogAnalyser
-from conftest import brute_force_reporter, empty_reporter
 
 def test_get_failed_logins_by_user_returns_results(brute_force_reporter):
     username = brute_force_reporter.analyser.failed_logins[0].user

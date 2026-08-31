@@ -1,6 +1,3 @@
-from app.log_analyser.log_reporter import LogReporter
-from app.log_analyser.log_analyser import LogAnalyser
-from conftest import malformed_reporter
 
 def test_malformed_log_does_not_crash(malformed_reporter):
     assert malformed_reporter is not None

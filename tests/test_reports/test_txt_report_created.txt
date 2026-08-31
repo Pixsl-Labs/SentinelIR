@@ -1,16 +1,16 @@
 
 === Failed Logins ===
 
-Generated: 2026-06-29 21:04:50
+Generated: 2026-08-31 20:47:22
 
 Filters: None
 
-Total Result: 5
+Total Results: 5
 
-Service   Status             Timestamp         User        IP Address       Method           Path            Code   Severity
+Service   Status             Timestamp         User        IP Address       Method           Path            Code   Severity 
 -----------------------------------------------------------------------------------------------------------------------------
-SSH       [FAILED]      2024-06-10 12:00:01    root        192.168.1.10       -               -               -       LOW
-SSH       [FAILED]      2024-06-10 12:00:02    root        192.168.1.10       -               -               -       LOW
-SSH       [FAILED]      2024-06-10 12:00:03    root        192.168.1.10       -               -               -       LOW
-SSH       [FAILED]      2024-06-10 12:00:04    root        192.168.1.10       -               -               -       LOW
-SSH       [FAILED]      2024-06-10 12:00:05    root        192.168.1.10       -               -               -       LOW
+SSH       [FAILED]      2024-06-10 12:00:01    root        192.168.1.10       -               -               -       LOW    
+SSH       [FAILED]      2024-06-10 12:00:02    root        192.168.1.10       -               -               -       LOW    
+SSH       [FAILED]      2024-06-10 12:00:03    root        192.168.1.10       -               -               -       LOW    
+SSH       [FAILED]      2024-06-10 12:00:04    root        192.168.1.10       -               -               -       LOW    
+SSH       [FAILED]      2024-06-10 12:00:05    root        192.168.1.10       -               -               -       LOW    

@@ -4,7 +4,6 @@ from app.config.security_config import (
     USER_TARGETING_THRESHOLD
 )
 
-
 from app.utils.formatting import (
     format_column,
     print_table_header,
@@ -25,21 +24,14 @@ from app.utils.colours import (
     get_count_colour
 )
 
-
 from app.models.detection_results import (
     SuspiciousIPResult,
-    BruteForceResult,
-    UserTargetingResult,
-    SuspiciousSuccessResult
 )
-
 
 from app.detection.detection_engine import (
     DetectionEngine
 )
 
-
-from collections import defaultdict
 from colorama import Fore
 from datetime import time
 

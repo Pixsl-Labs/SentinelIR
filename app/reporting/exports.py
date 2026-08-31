@@ -10,9 +10,6 @@ from app.utils.export_formatting import (
     export_section_header,
     export_generated_timestamp,
     export_empty_message,
-    export_separator,
-    export_status_label,
-    export_missing_value,
     export_log_entry_line,
     export_log_entry_header,
     export_filter_summary
@@ -87,8 +84,6 @@ class Export:
         Returns:
             None
         """
-
-        now = datetime.now()
 
         with open(
                 filename,

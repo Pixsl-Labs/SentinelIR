@@ -1,4 +1,3 @@
-from conftest import brute_force_reporter
 import pytest
 
 from datetime import time

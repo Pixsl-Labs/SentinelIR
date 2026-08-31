@@ -2,7 +2,7 @@
 Web interface CLI entry point.
 """
 
-import uvicorn
+# import uvicorn
 
 
 # def main() -> None:

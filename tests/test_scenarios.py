@@ -5,9 +5,9 @@ from app.generator.ssh_scenarios import (
     generate_ssh_success_scenario,
     generate_ssh_brute_force_scenario,
     generate_ssh_suspicious_success_scenario,
-    generate_ssh_user_targeting_scenario,
-    generate_ssh_normal_activity,
-    generate_ssh_mixed_attack_scenario
+    # generate_ssh_user_targeting_scenario,
+    # generate_ssh_normal_activity,
+    # generate_ssh_mixed_attack_scenario
 )
 
 from app.generator.ftp_scenarios import (
@@ -16,9 +16,9 @@ from app.generator.ftp_scenarios import (
     generate_anonymous_ftp_scenario,
     generate_ftp_brute_force_scenario,
     generate_ftp_suspicious_success_scenario,
-    generate_ftp_user_targeting_scenario,
-    generate_ftp_normal_activity,
-    generate_ftp_mixed_attack_scenario
+    # generate_ftp_user_targeting_scenario,
+    # generate_ftp_normal_activity,
+    # generate_ftp_mixed_attack_scenario
 )
 
 from app.generator.http_scenarios import (
@@ -26,9 +26,9 @@ from app.generator.http_scenarios import (
     generate_http_success_scenario,
     generate_http_brute_force_scenario,
     generate_http_suspicious_success_scenario,
-    generate_http_user_targeting_scenario,
-    generate_http_normal_activity,
-    generate_http_mixed_attack_scenario
+    # generate_http_user_targeting_scenario,
+    # generate_http_normal_activity,
+    # generate_http_mixed_attack_scenario
 )
 
 from app.runtime.generator_selection import (

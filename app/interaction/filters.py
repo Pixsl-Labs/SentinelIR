@@ -48,7 +48,7 @@ def integer_validation(
 
     except ValueError:
 
-        logging.error(f"Error: Invalid input, using default.")
+        logging.error("Error: Invalid input, using default.")
 
         print_default_message(
             label,
@@ -648,7 +648,7 @@ def collect_filter_values(
                 reporter.print_all_severities()
 
                 value = input(
-                    f"\nEnter severity: "
+                    "\nEnter severity: "
                 ).strip().upper()
 
                 if value not in ["LOW", "MEDIUM", "HIGH"]:
@@ -667,7 +667,7 @@ def collect_filter_values(
                 reporter.print_all_statuses()
 
                 value = input(
-                    f"\nEnter status: "
+                    "\nEnter status: "
                 ).strip().upper()
 
                 if value not in ["SUCCESS", "FAILED"]:

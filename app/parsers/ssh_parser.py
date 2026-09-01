@@ -6,6 +6,11 @@ from app.utils.parser import (
     extract_timestamp
 )
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_ssh_failed_login(line: str) -> bool:
     """
@@ -117,11 +122,11 @@ def extract_ssh_status(line: str) -> str | None:
 
     if is_ssh_failed_login(line):
 
-        return "FAILED"
+        return AuthenticationStatus.FAILED
 
     if is_ssh_successful_login(line):
 
-        return "SUCCESS"
+        return AuthenticationStatus.SUCCESS
 
     return None
 
@@ -167,5 +172,5 @@ def parse_ssh_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="SSH"
+        service=Service.SSH
     )

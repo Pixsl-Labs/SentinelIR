@@ -2,6 +2,12 @@ from datetime import time
 
 from app.log_analyser.log_entry import LogEntry
 
+from app.models.enums import (
+    Service,
+    AuthenticationStatus,
+    Severity
+)
+
 
 class LogFilter:
     """
@@ -17,9 +23,9 @@ class LogFilter:
         entries: list[LogEntry],
         ip: str | None = None,
         username: str | None = None,
-        severity: str | None = None,
-        service: str | None = None,
-        status: str | None = None,
+        severity: Severity | None = None,
+        service: Service | None = None,
+        status: AuthenticationStatus | None = None,
         method: str | None = None,
         path: str | None = None,
         status_code: int | None = None,
@@ -68,13 +74,13 @@ class LogFilter:
             if username and entry.user.lower() != username.lower():
                 continue
 
-            if severity and entry.severity != severity.upper():
+            if severity and entry.severity != severity:
                 continue
 
-            if service and entry.service != service.upper():
+            if service and entry.service != service:
                 continue
 
-            if status and entry.status != status.upper():
+            if status and entry.status != status:
                 continue
 
             if method and (entry.method or "").upper() != method.upper():

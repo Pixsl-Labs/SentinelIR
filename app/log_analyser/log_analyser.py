@@ -9,6 +9,11 @@ from app.utils.display import print_empty_message
 
 from app.parsers.parser_router import parse_log_line
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 class LogAnalyser:
     """
@@ -62,7 +67,7 @@ class LogAnalyser:
         """
 
         return any(
-            entry.service == "FTP"
+            entry.service == Service.FTP
             for entry in self.failed_logins + self.successful_logins
         )
 
@@ -102,7 +107,7 @@ class LogAnalyser:
             None
         """
 
-        if entry.status == "FAILED":
+        if entry.status == AuthenticationStatus.FAILED:
 
             self.failed_ip_counts[entry.ip] = (
                 self.failed_ip_counts.get(entry.ip, 0) + 1
@@ -125,7 +130,7 @@ class LogAnalyser:
 
             return
 
-        if entry.status == "SUCCESS":
+        if entry.status == AuthenticationStatus.SUCCESS:
 
             self.successful_logins.append(entry)
 
@@ -178,11 +183,11 @@ class LogAnalyser:
                         entry
                     )
 
-                    if entry.status == "FAILED":
+                    if entry.status == AuthenticationStatus.FAILED:
 
                         found_failed = True
 
-                    elif entry.status == "SUCCESS":
+                    elif entry.status == AuthenticationStatus.SUCCESS:
 
                         found_success = True
 

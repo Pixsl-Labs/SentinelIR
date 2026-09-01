@@ -6,6 +6,11 @@ from app.utils.parser import (
     extract_timestamp
 )
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_ftp_line(line: str) -> bool:
     """
@@ -63,11 +68,11 @@ def extract_ftp_status(line: str) -> str | None:
 
     if is_ftp_successful_login(line):
 
-        return "SUCCESS"
+        return AuthenticationStatus.SUCCESS
 
     if is_ftp_failed_login(line):
 
-        return "FAILED"
+        return AuthenticationStatus.FAILED
 
     return None
 
@@ -137,7 +142,7 @@ def parse_ftp_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="FTP"
+        service=Service.FTP
     )
 
 
@@ -154,6 +159,6 @@ def is_anonymous_ftp_login(line: str) -> bool:
     """
 
     return (
-        extract_ftp_status(line) == "SUCCESS"
+        extract_ftp_status(line) == AuthenticationStatus.SUCCESS
         and extract_ftp_username(line) == "anonymous"
     )

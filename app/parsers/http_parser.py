@@ -11,6 +11,11 @@ from datetime import datetime
 from app.log_analyser.log_entry import LogEntry
 from app.utils.parser import extract_ip
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_http_line(line: str) -> bool:
     """
@@ -230,11 +235,11 @@ def extract_http_status(line: str) -> str | None:
 
     if status_code in [200, 201, 204, 302]:
 
-        return "SUCCESS"
+        return AuthenticationStatus.SUCCESS
 
     if status_code in [401, 403]:
 
-        return "FAILED"
+        return AuthenticationStatus.FAILED
 
     return None
 
@@ -307,7 +312,7 @@ def parse_http_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="HTTP",
+        service=Service.HTTP,
         method=method,
         path=path,
         status_code=status_code

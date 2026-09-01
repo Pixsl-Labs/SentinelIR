@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime, time
+from colorama import Fore
 
 
 from app.utils.display import (
@@ -6,9 +8,11 @@ from app.utils.display import (
     print_empty_message
 )
 
-
-from datetime import datetime, time
-from colorama import Fore
+from app.models.enums import (
+    Service,
+    Severity,
+    AuthenticationStatus
+)
 
 
 def integer_validation(
@@ -211,7 +215,7 @@ def format_filter_display_name(
 
 
 def format_filter_value(
-        value: str
+        value
 ) -> str:
     """
     Converts a filter value into readable display text.
@@ -226,6 +230,12 @@ def format_filter_value(
         return value.strftime(
             "%H:%M:%S"
         )
+
+    if isinstance(
+        value,
+        (Service, AuthenticationStatus)
+    ):
+        return value.value
 
     return str(
         value
@@ -640,7 +650,13 @@ def collect_filter_values(
                     "\nEnter service: "
                 ).strip().upper()
 
-                if value not in ["SSH", "FTP", "HTTP"]:
+                try:
+
+                    service = Service(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid service. Use SSH, FTP, or HTTP."
@@ -649,7 +665,7 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["service"] = value
+                filter_values["service"] = service
 
             elif selected_filter == "severity":
 
@@ -659,7 +675,13 @@ def collect_filter_values(
                     "\nEnter severity: "
                 ).strip().upper()
 
-                if value not in ["LOW", "MEDIUM", "HIGH"]:
+                try:
+
+                    severity = Severity(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid severity. Use LOW, MEDIUM, or HIGH."
@@ -668,7 +690,7 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["severity"] = value
+                filter_values["severity"] = severity
 
             elif selected_filter == "status":
 
@@ -678,7 +700,13 @@ def collect_filter_values(
                     "\nEnter status: "
                 ).strip().upper()
 
-                if value not in ["SUCCESS", "FAILED"]:
+                try:
+
+                    status = AuthenticationStatus(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid status. Use SUCCESS or FAILED."
@@ -687,7 +715,7 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["status"] = value
+                filter_values["status"] = status
 
             elif selected_filter == "method":
 

@@ -1,3 +1,7 @@
+from colorama import Fore
+from datetime import time
+
+
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW,
@@ -27,13 +31,14 @@ from app.utils.colours import (
 from app.models.detection_results import (
     SuspiciousIPResult,
 )
+from app.models.enums import (
+    Service,
+    Severity
+)
 
 from app.detection.detection_engine import (
     DetectionEngine
 )
-
-from colorama import Fore
-from datetime import time
 
 
 class Detection:
@@ -323,9 +328,9 @@ class Detection:
 
     def get_suspicious_ips(
             self,
-            service: str | None = None,
+            service: Service | None = None,
             ip: str | None = None,
-            severity: str | None = None,
+            severity: Severity | None = None,
             ) -> list[SuspiciousIPResult]:
         """
         Returns suspicious IP results with optional filtering.
@@ -382,7 +387,7 @@ class Detection:
                 count
             )
 
-            if service and current_service != service.upper():
+            if service and current_service != service:
 
                 continue
 
@@ -390,7 +395,7 @@ class Detection:
 
                 continue
 
-            if severity and current_severity != severity.upper():
+            if severity and current_severity != severity:
 
                 continue
 
@@ -408,9 +413,9 @@ class Detection:
 
     def print_suspicious_ips(
             self,
-            service: str | None = None,
+            service: Service | None = None,
             ip: str | None = None,
-            severity: str | None = None,
+            severity: Severity | None = None,
             start_time: time | None = None,
             end_time: time | None = None
             ) -> None:

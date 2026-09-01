@@ -4,10 +4,10 @@ from app.log_analyser.log_analyser import LogAnalyser
 from app.monitoring.live_event_processor import LiveEventProcessor
 from app.detection.detection_engine import DetectionEngine
 
-from app.detection.alert_types import (
-    BRUTE_FORCE_ALERT,
-    SUSPICIOUS_SUCCESS_ALERT,
-    USER_TARGETING_ALERT
+from app.models.enums import (
+    AlertType,
+    AuthenticationStatus,
+    Service
 )
 
 
@@ -31,8 +31,8 @@ def test_live_processor_adds_failed_login():
     assert len(analyser.failed_logins) == 1
     assert analyser.failed_ip_counts["192.168.1.50"] == 1
     assert entry.user == "root"
-    assert entry.status == "FAILED"
-    assert entry.service == "SSH"
+    assert entry.status == AuthenticationStatus.FAILED
+    assert entry.service == Service.SSH
 
 
 def test_live_processor_adds_successful_login():
@@ -87,7 +87,7 @@ def test_live_brute_force_updates_alert_state():
 
         processor.process_line(line)
 
-    assert analyser.detection_engine.get_alert_count(BRUTE_FORCE_ALERT) == 1
+    assert analyser.detection_engine.get_alert_count(AlertType.BRUTE_FORCE) == 1
 
 
 def test_live_suspicious_success_updates_alert_state():
@@ -111,7 +111,7 @@ def test_live_suspicious_success_updates_alert_state():
     processor.process_line(failed_line)
     processor.process_line(success_line)
 
-    assert analyser.detection_engine.get_alert_count(SUSPICIOUS_SUCCESS_ALERT) == 1
+    assert analyser.detection_engine.get_alert_count(AlertType.SUSPICIOUS_SUCCESS) == 1
 
 
 def test_live_user_targeting_updates_alert_state():
@@ -131,7 +131,7 @@ def test_live_user_targeting_updates_alert_state():
 
         processor.process_line(line)
 
-    assert analyser.detection_engine.get_alert_count(USER_TARGETING_ALERT) == 1
+    assert analyser.detection_engine.get_alert_count(AlertType.USER_TARGETING) == 1
 
 
 def test_live_alert_suppression_prevents_duplicates():
@@ -151,7 +151,7 @@ def test_live_alert_suppression_prevents_duplicates():
 
         processor.process_line(line)
 
-    assert analyser.detection_engine.get_alert_count(BRUTE_FORCE_ALERT) == 1
+    assert analyser.detection_engine.get_alert_count(AlertType.BRUTE_FORCE) == 1
 
 
 def test_live_event_counter_increments():
@@ -254,8 +254,8 @@ def test_live_processor_adds_failed_ftp_login() -> None:
     assert len(analyser.failed_logins) == 1
     assert analyser.failed_ip_counts["192.168.1.30"] == 1
     assert entry.user == "admin"
-    assert entry.status == "FAILED"
-    assert entry.service == "FTP"
+    assert entry.status == AuthenticationStatus.FAILED
+    assert entry.service == Service.FTP
 
 
 def test_live_processor_adds_successful_ftp_login():
@@ -279,8 +279,8 @@ def test_live_processor_adds_successful_ftp_login():
     assert len(analyser.successful_logins) == 1
     assert entry.ip == "192.168.1.40"
     assert entry.user == "backup"
-    assert entry.status == "SUCCESS"
-    assert entry.service == "FTP"
+    assert entry.status == AuthenticationStatus.SUCCESS
+    assert entry.service == Service.FTP
 
 
 def test_live_processor_processes_anonymous_ftp_login():
@@ -304,8 +304,8 @@ def test_live_processor_processes_anonymous_ftp_login():
     assert len(analyser.successful_logins) == 1
     assert entry.ip == "203.0.113.50"
     assert entry.user == "anonymous"
-    assert entry.status == "SUCCESS"
-    assert entry.service == "FTP"
+    assert entry.status == AuthenticationStatus.SUCCESS
+    assert entry.service == Service.FTP
     assert processor.events_processed == 1
 
 
@@ -380,8 +380,8 @@ def test_live_processor_adds_failed_http_login() -> None:
     assert len(analyser.failed_logins) == 1
     assert analyser.failed_ip_counts["203.0.113.11"] == 1
     assert entry.user == "admin"
-    assert entry.status == "FAILED"
-    assert entry.service == "HTTP"
+    assert entry.status == AuthenticationStatus.FAILED
+    assert entry.service == Service.HTTP
     assert entry.method == "POST"
     assert entry.path == "/login?user=admin"
     assert entry.status_code == 401
@@ -410,8 +410,8 @@ def test_live_processor_adds_successful_http_login():
     assert entry.ip == "203.0.113.10"
     assert entry.user == "guest"
     assert entry.timestamp == datetime(2026, 4, 17, 12, 0, 8)  # "%d/%b/%Y:%H:%M:%S"
-    assert entry.status == "SUCCESS"
-    assert entry.service == "HTTP"
+    assert entry.status == AuthenticationStatus.SUCCESS
+    assert entry.service == Service.HTTP
     assert entry.method == "POST"
     assert entry.path == "/login?user=guest"
     assert entry.status_code == 200
@@ -475,19 +475,19 @@ def test_alert_cooldown_blocks_duplicate_alerts():
     alert_key = "SSH:192.168.70.10"
 
     assert engine.can_alert(
-        BRUTE_FORCE_ALERT,
+        AlertType.BRUTE_FORCE,
         alert_key,
         current_time=1000
     )
 
     engine.mark_alerted(
-        BRUTE_FORCE_ALERT,
+        AlertType.BRUTE_FORCE,
         alert_key,
         current_time=1000
     )
 
     assert not engine.can_alert(
-        BRUTE_FORCE_ALERT,
+        AlertType.BRUTE_FORCE,
         alert_key,
         current_time=1030
     )
@@ -500,15 +500,15 @@ def test_alert_count_tracks_actual_alert_events():
     alert_key = "SSH:192.168.70.10"
 
     engine.mark_alerted(
-        BRUTE_FORCE_ALERT,
+        AlertType.BRUTE_FORCE,
         alert_key,
         current_time=1000
     )
 
     engine.mark_alerted(
-        BRUTE_FORCE_ALERT,
+        AlertType.BRUTE_FORCE,
         alert_key,
         current_time=1061
     )
 
-    assert engine.get_alert_count(BRUTE_FORCE_ALERT) == 2
+    assert engine.get_alert_count(AlertType.BRUTE_FORCE) == 2

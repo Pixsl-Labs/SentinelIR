@@ -4,17 +4,18 @@ from app.config.security_config import (
     USER_TARGETING_THRESHOLD,
     ALERT_COOLDOWN_SECONDS
 )
-from app.detection.alert_types import (
-    BRUTE_FORCE_ALERT,
-    SUSPICIOUS_SUCCESS_ALERT,
-    USER_TARGETING_ALERT,
-)
 
 from app.models.detection_results import (
     BruteForceResult,
     UserTargetingResult,
     SuspiciousSuccessResult,
     AnonymousFTPResult
+)
+from app.models.enums import (
+    AlertType,
+    Service,
+    Severity,
+    AuthenticationStatus
 )
 
 from app.utils.severity import get_severity_level
@@ -68,9 +69,9 @@ class DetectionEngine:
         self.user_targeting_threshold = user_targeting_threshold
 
         self.alert_state = {
-            BRUTE_FORCE_ALERT: set(),
-            SUSPICIOUS_SUCCESS_ALERT: set(),
-            USER_TARGETING_ALERT: set()
+            AlertType.BRUTE_FORCE: set(),
+            AlertType.SUSPICIOUS_SUCCESS: set(),
+            AlertType.USER_TARGETING: set()
         }
 
         self.alert_cooldown_seconds = ALERT_COOLDOWN_SECONDS
@@ -78,9 +79,9 @@ class DetectionEngine:
         self.alert_last_seen = {}
 
         self.alert_event_counts = {
-            BRUTE_FORCE_ALERT: 0,
-            SUSPICIOUS_SUCCESS_ALERT: 0,
-            USER_TARGETING_ALERT: 0
+            AlertType.BRUTE_FORCE: 0,
+            AlertType.SUSPICIOUS_SUCCESS: 0,
+            AlertType.USER_TARGETING: 0
         }
 
     def configure_threshold(
@@ -119,7 +120,7 @@ class DetectionEngine:
 
     def has_alerted(
             self,
-            alert_type: str,
+            alert_type: AlertType,
             entity: str
             ) -> bool:
         """
@@ -139,7 +140,7 @@ class DetectionEngine:
 
     def mark_alerted(
             self,
-            alert_type: str,
+            alert_type: AlertType,
             entity: str,
             current_time: float | None = None
             ) -> None:
@@ -177,7 +178,7 @@ class DetectionEngine:
 
     def can_alert(
             self,
-            alert_type: str,
+            alert_type: AlertType,
             entity: str,
             current_time: float | None = None
             ) -> bool:
@@ -237,7 +238,7 @@ class DetectionEngine:
 
     def get_alert_count(
             self,
-            alert_type: str
+            alert_type: AlertType
             ) -> int:
         """
         Returns the number of alert events raised for a specific alert type.
@@ -270,7 +271,7 @@ class DetectionEngine:
 
     def get_alert_summary(
             self
-            ) -> dict[str, int]:
+            ) -> dict[AlertType, int]:
         """
         Returns alert counts grouped by alert type.
 
@@ -491,9 +492,9 @@ class DetectionEngine:
         for entry in analyser.successful_logins:
 
             if (
-                entry.service == "FTP"
+                entry.service == Service.FTP
                 and entry.user.lower() == "anonymous"
-                and entry.status == "SUCCESS"
+                and entry.status == AuthenticationStatus.SUCCESS
             ):
 
                 results.append(
@@ -501,7 +502,7 @@ class DetectionEngine:
                         ip=entry.ip,
                         username=entry.user,
                         attempts=1,
-                        severity="MEDIUM"
+                        severity=Severity.MEDIUM
                     )
                 )
 
@@ -578,7 +579,7 @@ class DetectionEngine:
 
             if (
                 attempts >= threshold
-                and self.can_alert(BRUTE_FORCE_ALERT, alert_key)
+                and self.can_alert(AlertType.BRUTE_FORCE, alert_key)
             ):
 
                 alert_message = (
@@ -588,21 +589,21 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="HIGH",
+                    severity=Severity.HIGH,
                     title="Brute Force Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=BRUTE_FORCE_ALERT,
-                    severity="HIGH",
+                    alert_type=AlertType.BRUTE_FORCE,
+                    severity=Severity.HIGH,
                     service=service,
                     entity=ip,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    BRUTE_FORCE_ALERT,
+                    AlertType.BRUTE_FORCE,
                     alert_key
                 )
 
@@ -648,7 +649,7 @@ class DetectionEngine:
 
             if (
                 service_ip_key in failed_service_ips
-                and self.can_alert(SUSPICIOUS_SUCCESS_ALERT, alert_key)
+                and self.can_alert(AlertType.SUSPICIOUS_SUCCESS, alert_key)
             ):
 
                 alert_message = (
@@ -659,21 +660,21 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="MEDIUM",
+                    severity=Severity.MEDIUM,
                     title="Suspicious Success Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=SUSPICIOUS_SUCCESS_ALERT,
-                    severity="MEDIUM",
+                    alert_type=AlertType.SUSPICIOUS_SUCCESS,
+                    severity=Severity.MEDIUM,
                     service=entry.service,
                     entity=entry.ip,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    SUSPICIOUS_SUCCESS_ALERT,
+                    AlertType.SUSPICIOUS_SUCCESS,
                     alert_key
                 )
 
@@ -724,7 +725,7 @@ class DetectionEngine:
 
             if (
                 unique_ip_count >= self.user_targeting_threshold
-                and self.can_alert(USER_TARGETING_ALERT, alert_key)
+                and self.can_alert(AlertType.USER_TARGETING, alert_key)
             ):
 
                 alert_message = (
@@ -735,20 +736,20 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="HIGH",
+                    severity=Severity.HIGH,
                     title="User Targeting Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=USER_TARGETING_ALERT,
-                    severity="HIGH",
+                    alert_type=AlertType.USER_TARGETING,
+                    severity=Severity.HIGH,
                     service=service,
                     entity=user,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    USER_TARGETING_ALERT,
+                    AlertType.USER_TARGETING,
                     alert_key
                 )

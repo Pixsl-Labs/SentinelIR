@@ -17,8 +17,12 @@ from app.parsers.http_parser import (
     parse_http_line
 )
 
+from app.models.enums import (
+    Service
+)
 
-def identify_log_line(line: str) -> str | None:
+
+def identify_log_line(line: str) -> Service | None:
     """
     Identifies the supported log type for a raw log line.
 
@@ -31,7 +35,7 @@ def identify_log_line(line: str) -> str | None:
         line (str): Raw log line to inspect.
 
     Returns:
-        bool | None: The detected log type, such as "FTP" or "SSH",
+        Service | None: The detected log type, such as "FTP" or "SSH",
             otherwise None if the line is unsupported.
     """
 
@@ -41,15 +45,15 @@ def identify_log_line(line: str) -> str | None:
 
     if is_ftp_line(line):
 
-        return "FTP"
+        return Service.FTP
 
     if is_http_line(line):
 
-        return "HTTP"
+        return Service.HTTP
 
     if is_ssh_line(line):
 
-        return "SSH"
+        return Service.SSH
 
     return None
 
@@ -71,15 +75,15 @@ def parse_log_line(line: str) -> LogEntry | None:
 
     log_type = identify_log_line(line)
 
-    if log_type == "FTP":
+    if log_type == Service.FTP:
 
         return parse_ftp_line(line)
 
-    if log_type == "HTTP":
+    if log_type == Service.HTTP:
 
         return parse_http_line(line)
 
-    if log_type == "SSH":
+    if log_type == Service.SSH:
 
         return parse_ssh_line(line)
 

@@ -1,9 +1,11 @@
 from datetime import datetime
 from pathlib import Path
 
+from app.models.enums import AlertType
+
 
 def write_alert_log(
-        alert_type: str,
+        alert_type: AlertType,
         severity: str,
         service: str,
         entity: str,

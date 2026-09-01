@@ -2,7 +2,8 @@
 Live Monitoring menu bar and actions for the SentinelIR GUI.
 """
 
-from app.gui.menus.menu_helpers import create_action
+# from app.gui.menus.menu_helpers import create_action
+
 
 def build_live_monitoring_menu(window) -> None:
     """

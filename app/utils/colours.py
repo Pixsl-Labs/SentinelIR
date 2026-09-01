@@ -19,7 +19,7 @@ def get_severity_colour(
 
     elif severity == "MEDIUM":
         return Fore.YELLOW
-    
+
     elif severity == "LOW":
         return Fore.GREEN
 
@@ -27,8 +27,8 @@ def get_severity_colour(
 
 
 def get_status_colour(
-    status: str
-) -> str:
+        status: str
+        ) -> str:
     """
     Returns a display colour for a login status.
 
@@ -47,9 +47,10 @@ def get_status_colour(
 
     return Fore.WHITE
 
+
 def get_attempt_colour(
-    count: int
-) -> str:
+        count: int
+        ) -> str:
     """
     Returns a display colour based on an attempt count.
 
@@ -62,21 +63,22 @@ def get_attempt_colour(
     Returns:
         str: Colorama colour matching the attempt count.
     """
-    
+
     if count >= 15:
         return Fore.LIGHTRED_EX
-    
+
     elif count >= 10:
         return Fore.RED
-    
+
     elif count >= 5:
         return Fore.LIGHTYELLOW_EX
-    
+
     return Fore.LIGHTGREEN_EX
 
+
 def get_count_colour(
-    count: int
-) -> str:
+        count: int
+        ) -> str:
     """
     Returns a display colour based on a general count value.
 
@@ -101,10 +103,11 @@ def get_count_colour(
 
     return Fore.LIGHTBLACK_EX
 
+
 def get_live_status_colour(
         label: str,
         value: int
-) -> str:
+        ) -> str:
     """
     Returns a display colour for live monitoring status values.
 
@@ -119,39 +122,40 @@ def get_live_status_colour(
     Returns:
         str: Colorama colour matching the live status type and value.
     """
-    
+
     label = label.lower()
 
     if label == "events_processed":
         return Fore.CYAN
-    
+
     if label == "failed_logins":
         return get_attempt_colour(value)
-    
+
     if label == "successful_logins":
         return Fore.GREEN if value > 0 else Fore.LIGHTRED_EX
-    
+
     if label == "unique_ips":
         return get_count_colour(value)
-    
+
     if label == "alerts_raised":
         if value >= 3:
             return Fore.LIGHTRED_EX
-        
+
         if value >= 1:
             return Fore.YELLOW
         return Fore.LIGHTBLACK_EX
-    
+
     if label == "brute_force_alert":
         return get_count_colour(value)
-    
+
     if label == "suspicious_success":
         return get_count_colour(value)
-    
+
     if label == "user_targeting":
         return get_count_colour(value)
-    
+
     return Fore.WHITE
+
 
 def get_service_colour(service: str | None) -> str:
     """
@@ -171,16 +175,17 @@ def get_service_colour(service: str | None) -> str:
     if service == "SSH":
 
         return Fore.LIGHTCYAN_EX
-    
+
     if service == "FTP":
 
         return Fore.LIGHTMAGENTA_EX
-    
+
     if service == "HTTP":
 
         return Fore.LIGHTBLUE_EX
-    
+
     return Fore.WHITE
+
 
 def get_user_colour(user: str | None) -> str:
     """
@@ -200,28 +205,29 @@ def get_user_colour(user: str | None) -> str:
     if user == "root":
 
         return Fore.RED
-    
+
     if user == "admin":
 
         return Fore.LIGHTRED_EX
-    
+
     if user == "deploy":
 
         return Fore.LIGHTYELLOW_EX
-    
+
     if user == "anonymous":
 
         return Fore.LIGHTMAGENTA_EX
-    
+
     if user == "guest":
 
         return Fore.LIGHTGREEN_EX
-    
+
     if user == "unknown":
 
         return Fore.LIGHTBLACK_EX
-    
+
     return Fore.WHITE
+
 
 def get_status_code_colour(status_code: str | None) -> str:
     """
@@ -235,31 +241,31 @@ def get_status_code_colour(status_code: str | None) -> str:
     """
 
     if status_code is None:
-        
+
         return Fore.WHITE
 
     try:
 
         code = int(status_code)
-        
+
     except ValueError:
 
         return Fore.WHITE
-    
+
     if 200 <= code <= 300:
 
         return Fore.LIGHTGREEN_EX
-    
+
     elif 300 <= code <= 400:
 
         return Fore.LIGHTCYAN_EX
-    
+
     elif 400 <= code <= 500:
 
         return Fore.LIGHTYELLOW_EX
-    
+
     elif 500 <= code <= 600:
 
         return Fore.LIGHTRED_EX
-    
+
     return Fore.WHITE

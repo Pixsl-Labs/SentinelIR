@@ -31,12 +31,11 @@ import pytest
         ),
     ]
 )
-
 def test_get_activity_timeline_filters(
         mixed_service_reporter,
         filter_kwargs,
         validator
-    ):
+        ):
 
     results = mixed_service_reporter.get_activity_timeline(
         **filter_kwargs
@@ -49,9 +48,10 @@ def test_get_activity_timeline_filters(
         for entry in results
     )
 
+
 def test_get_activity_timeline_combined_http_filters(
         mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_activity_timeline(
         service="HTTP",
@@ -73,9 +73,10 @@ def test_get_activity_timeline_combined_http_filters(
         for entry in results
     )
 
+
 def test_get_activity_timeline_http_filter_no_results(
             mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_activity_timeline(
         service="HTTP",
@@ -85,9 +86,10 @@ def test_get_activity_timeline_http_filter_no_results(
 
     assert results == []
 
+
 def test_get_activity_timeline_time_range(
         mixed_service_reporter
-    ):
+        ):
 
     start = time(12, 0, 0)
     end = time(12, 0, 5)
@@ -122,12 +124,11 @@ def test_get_activity_timeline_time_range(
         )
     ]
 )
-
 def test_get_suspicious_ips_filters(
         mixed_service_reporter,
         filter_kwargs,
         validator
-    ):
+        ):
 
     results = mixed_service_reporter.get_suspicious_ips(
         **filter_kwargs
@@ -140,9 +141,10 @@ def test_get_suspicious_ips_filters(
         for entry in results
     )
 
+
 def test_get_suspicious_ips_combined_http_filters(
         mixed_service_reporter
-    ):
+        ):
 
     results = mixed_service_reporter.get_suspicious_ips(
         service="HTTP",
@@ -159,9 +161,10 @@ def test_get_suspicious_ips_combined_http_filters(
         for result in results
     )
 
+
 def test_get_suspicious_ips_http_filter_no_results(
-            mixed_service_reporter
-    ):
+        mixed_service_reporter
+        ):
 
     results = mixed_service_reporter.get_suspicious_ips(
         service="SMTP"

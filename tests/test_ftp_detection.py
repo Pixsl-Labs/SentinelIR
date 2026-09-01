@@ -1,11 +1,9 @@
 from app.detection.detection_engine import DetectionEngine
 from app.log_analyser.log_analyser import LogAnalyser
 
-from app.parsers.parser_router import parse_log_line
-
 
 def test_anonymous_ftp_success_triggers_detection(store_parsed_line) -> None:
-    
+
     analyser = LogAnalyser()
 
     line = (

@@ -17,11 +17,12 @@ def format_http_timestamp(timestamp: datetime) -> str:
 
     return timestamp.strftime("%d/%b/%Y:%H:%M:%S")
 
+
 def generate_http_failed_scenario(
         ip: str = "192.168.1.45",
         user: str = "root",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single failed HTTP login scenario.
 
@@ -55,11 +56,12 @@ def generate_http_failed_scenario(
 
     return [line]
 
+
 def generate_http_success_scenario(
         ip: str = "192.168.1.34",
         user: str = "guest",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single successful HTTP login scenario.
 
@@ -93,12 +95,13 @@ def generate_http_success_scenario(
 
     return [line]
 
+
 def generate_http_brute_force_scenario(
         ip: str = "203.0.113.11",
         user: str = "admin",
         attempts: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a brute-force HTTP login scenario.
 
@@ -142,12 +145,13 @@ def generate_http_brute_force_scenario(
 
     return lines
 
+
 def generate_http_suspicious_success_scenario(
         ip: str = "203.0.113.20",
         user: str = "guest",
         failed_attempts: int = 3,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a suspicious-success HTTP login scenario.
 
@@ -203,12 +207,13 @@ def generate_http_suspicious_success_scenario(
 
     return lines
 
+
 def generate_http_user_targeting_scenario(
         user: str = "admin",
         base_ip: str = "203.0.113.",
         unique_ips: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a distributed user-targeting HTTP login scenario.
 
@@ -256,12 +261,13 @@ def generate_http_user_targeting_scenario(
 
     return lines
 
+
 def generate_http_normal_activity(
         users: list[str] | None = None,
         ips: list[str] | None = None,
         events: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates normal HTTP authentication activity.
 
@@ -315,9 +321,10 @@ def generate_http_normal_activity(
 
     return lines
 
+
 def generate_http_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed HTTP authentication scenario.
 

@@ -32,9 +32,9 @@ def configure(self) -> None:
     while True:
 
         display_configuration_menu(self.threshold, self.window_seconds)
-        
+
         print(
-            f"\nCurrent config: " 
+            f"\nCurrent config: "
             f"threshold={self.threshold}, "
             f"window={self.window_seconds}"
         )
@@ -48,10 +48,10 @@ def configure(self) -> None:
                 self.threshold,
                 label="threshold"
             )
-            
+
             if new_value != self.threshold:
                 self.threshold = new_value
-                
+
                 logging_info(
                     "\nSettings Updated."
                 )
@@ -63,17 +63,17 @@ def configure(self) -> None:
                 self.window_seconds,
                 label="time window"
             )
-            
+
             if new_value != self.window_seconds:
                 self.window_seconds = new_value
-                
+
                 logging_info(
                     "\nSettings Updated."
                 )
-        
+
         elif choice == "3":
             self.threshold = BRUTE_FORCE_THRESHOLD
-            
+
             self.window_seconds = BRUTE_FORCE_TIME_WINDOW
 
             print(
@@ -81,7 +81,7 @@ def configure(self) -> None:
                 f"(threshold={self.threshold}, "
                 f"time window={self.window_seconds})"
             )
-        
+
         elif choice == "4":
 
             break

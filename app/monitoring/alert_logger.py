@@ -1,15 +1,17 @@
 from datetime import datetime
 from pathlib import Path
 
+from app.models.enums import AlertType
+
 
 def write_alert_log(
-        alert_type: str,
+        alert_type: AlertType,
         severity: str,
         service: str,
         entity: str,
         message: str,
         log_path: str = "logs/alerts.log"
-    ) -> None:
+        ) -> None:
     """
     Writes a live alert to a persistent human-readable alert log file.
 

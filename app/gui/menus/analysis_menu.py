@@ -90,6 +90,7 @@ def build_analysis_menu(window) -> None:
         view_activity_timeline_action
     )
 
+
 def run_static_analysis(window) -> None:
     """
     Handles the Run Static Analysis menu action.
@@ -102,6 +103,7 @@ def run_static_analysis(window) -> None:
     """
 
     print("Run Static Analysis clicked")
+
 
 def view_summary(window) -> None:
     """
@@ -116,6 +118,7 @@ def view_summary(window) -> None:
 
     print("View Summary clicked")
 
+
 def view_failed_logins(window) -> None:
     """
     Handles the View Failed Logins menu action.
@@ -128,6 +131,7 @@ def view_failed_logins(window) -> None:
     """
 
     print("View Failed Logins clicked")
+
 
 def view_successful_logins(window) -> None:
     """
@@ -142,6 +146,7 @@ def view_successful_logins(window) -> None:
 
     print("View Successful Logins clicked")
 
+
 def view_activity_timeline(window) -> None:
     """
     Handles the View Activity Timeline menu action.
@@ -154,6 +159,7 @@ def view_activity_timeline(window) -> None:
     """
 
     print("View Activity Timeline clicked")
+
 
 def clear_analysis(window) -> None:
     """

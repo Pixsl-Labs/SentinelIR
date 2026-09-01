@@ -7,7 +7,7 @@ from PySide6.QtGui import (
 
 def get_icon(
         icon_name: str
-    ) -> QIcon:
+        ) -> QIcon:
     """
     Returns an icon from the GUI assets directory.
 
@@ -17,7 +17,7 @@ def get_icon(
     Returns:
         QIcon: Loaded Qt icon.
     """
-    
+
     assets_path = Path(__file__).resolve().parent.parent / "assets"
 
     return QIcon(

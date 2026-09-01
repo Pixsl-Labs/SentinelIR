@@ -6,6 +6,11 @@ from app.utils.parser import (
     extract_timestamp
 )
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_ftp_line(line: str) -> bool:
     """
@@ -21,6 +26,7 @@ def is_ftp_line(line: str) -> bool:
 
     return "ftp login" in line.lower()
 
+
 def is_ftp_successful_login(line: str) -> bool:
     """
     Checks whether a log line is a successful FTP login attempt.
@@ -33,7 +39,8 @@ def is_ftp_successful_login(line: str) -> bool:
     """
 
     return "ftp login success" in line.lower()
-    
+
+
 def is_ftp_failed_login(line: str) -> bool:
     """
     Checks whether a log line is a failed FTP login attempt.
@@ -46,6 +53,7 @@ def is_ftp_failed_login(line: str) -> bool:
     """
 
     return "ftp login failed" in line.lower()
+
 
 def extract_ftp_status(line: str) -> str | None:
     """
@@ -60,13 +68,14 @@ def extract_ftp_status(line: str) -> str | None:
 
     if is_ftp_successful_login(line):
 
-        return "SUCCESS"
-    
+        return AuthenticationStatus.SUCCESS
+
     if is_ftp_failed_login(line):
 
-        return "FAILED"
-    
+        return AuthenticationStatus.FAILED
+
     return None
+
 
 def extract_ftp_username(line: str) -> str:
     """
@@ -91,6 +100,7 @@ def extract_ftp_username(line: str) -> str:
         else "unknown"
     )
 
+
 def parse_ftp_line(line: str) -> LogEntry | None:
     """
     Parses a supported FTP authentication log line into a LogEntry object.
@@ -112,19 +122,19 @@ def parse_ftp_line(line: str) -> LogEntry | None:
     if status is None:
 
         return None
-    
+
     ip = extract_ip(line)
 
     if not ip:
 
         return None
-    
+
     timestamp = extract_timestamp(line)
 
     if not timestamp:
 
         return None
-    
+
     username = extract_ftp_username(line)
 
     return LogEntry(
@@ -132,8 +142,9 @@ def parse_ftp_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="FTP"
+        service=Service.FTP
     )
+
 
 def is_anonymous_ftp_login(line: str) -> bool:
     """
@@ -148,6 +159,6 @@ def is_anonymous_ftp_login(line: str) -> bool:
     """
 
     return (
-        extract_ftp_status(line) == "SUCCESS"
+        extract_ftp_status(line) == AuthenticationStatus.SUCCESS
         and extract_ftp_username(line) == "anonymous"
     )

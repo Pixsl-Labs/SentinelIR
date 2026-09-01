@@ -9,6 +9,11 @@ from app.utils.display import print_empty_message
 
 from app.parsers.parser_router import parse_log_line
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 class LogAnalyser:
     """
@@ -62,7 +67,7 @@ class LogAnalyser:
         """
 
         return any(
-            entry.service == "FTP"
+            entry.service == Service.FTP
             for entry in self.failed_logins + self.successful_logins
         )
 
@@ -86,7 +91,7 @@ class LogAnalyser:
             grouped_attempts[entry.ip].append(entry.timestamp)
 
         return grouped_attempts
-    
+
     def store_entry(self, entry: LogEntry) -> None:
         """
         Stores a parsed log entry in the correct analyser collection.
@@ -102,7 +107,7 @@ class LogAnalyser:
             None
         """
 
-        if entry.status == "FAILED":
+        if entry.status == AuthenticationStatus.FAILED:
 
             self.failed_ip_counts[entry.ip] = (
                 self.failed_ip_counts.get(entry.ip, 0) + 1
@@ -124,13 +129,13 @@ class LogAnalyser:
             self.failed_logins.append(entry)
 
             return
-        
-        if entry.status == "SUCCESS":
+
+        if entry.status == AuthenticationStatus.SUCCESS:
 
             self.successful_logins.append(entry)
 
             return
-        
+
         logging.warning(
             f"Skipping parsed entry with unsupported status: {entry.status}"
         )
@@ -138,7 +143,7 @@ class LogAnalyser:
     def analyse(
             self,
             file_path: str
-        ) -> bool:
+            ) -> bool:
         """
         Reads and processes an authentication log file.
 
@@ -158,7 +163,7 @@ class LogAnalyser:
         found_success = False
 
         try:
-            
+
             logging.info(
                 f"Analysing File: {file_path}"
             )
@@ -178,11 +183,11 @@ class LogAnalyser:
                         entry
                     )
 
-                    if entry.status == "FAILED":
+                    if entry.status == AuthenticationStatus.FAILED:
 
                         found_failed = True
 
-                    elif entry.status == "SUCCESS":
+                    elif entry.status == AuthenticationStatus.SUCCESS:
 
                         found_success = True
 

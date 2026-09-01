@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+cd "$SCRIPT_DIR"
+
+PYTHON="$SCRIPT_DIR/.venv/bin/python"
+
+if [[ ! -x "$PYTHON" ]]; then
+    echo "SentinelIR is not installed."
+    echo "Run: ./install.sh"
+    exit 1
+fi
+
+"$PYTHON" -m app.cli.generate "$@"

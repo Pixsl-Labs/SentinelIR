@@ -89,6 +89,7 @@ def build_file_menu(window) -> None:
         exit_action
     )
 
+
 def open_log_file(window) -> None:
     """
     Handles the Open Log File menu action.

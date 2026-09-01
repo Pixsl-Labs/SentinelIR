@@ -5,7 +5,7 @@ def write_lines_to_file(
         file_path: str,
         lines: list[str],
         append: bool = True
-    ) -> None:
+        ) -> None:
     """
     Writes generated log lines to a file.
 
@@ -30,11 +30,12 @@ def write_lines_to_file(
 
             f.write(line + "\n")
 
+
 def stream_lines_to_file(
         file_path: str,
         lines: list[str],
         delay_seconds: float = 0.2
-    ) -> None:
+        ) -> None:
     """
     Streams generated log lines into a file one at a time.
 

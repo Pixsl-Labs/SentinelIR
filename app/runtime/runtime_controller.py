@@ -25,7 +25,7 @@ class RunTimeController:
             analyser,
             reporter,
             log_file
-        ) -> None:
+            ) -> None:
         """
         Initialises the runtime controller.
 
@@ -43,7 +43,7 @@ class RunTimeController:
 
     def start(
             self
-        ) -> None:
+            ) -> None:
         """
         Runs the runtime mode selection loop.
 
@@ -53,14 +53,14 @@ class RunTimeController:
         Returns:
             None
         """
-        
+
         while True:
 
             print_section_header(
                 "Runtime Mode",
-                Fore.GREEN                
+                Fore.GREEN
             )
-            
+
             print("1. Static Analysis")
             print("2. Live Monitoring")
             print("3. Generate Scenario")
@@ -110,7 +110,7 @@ class RunTimeController:
                 break
 
             else:
-                
+
                 print_empty_message(
                     "Invalid choice."
                 )

@@ -10,9 +10,6 @@ from app.utils.export_formatting import (
     export_section_header,
     export_generated_timestamp,
     export_empty_message,
-    export_separator,
-    export_status_label,
-    export_missing_value,
     export_log_entry_line,
     export_log_entry_header,
     export_filter_summary
@@ -20,8 +17,8 @@ from app.utils.export_formatting import (
 
 
 def serialise_filters(
-            filters: dict | None
-    ) -> dict:
+        filters: dict | None
+        ) -> dict:
     """
     Converts export filters values into JSON-safe values.
 
@@ -35,7 +32,7 @@ def serialise_filters(
     if not filters:
 
         return {}
-    
+
     serialised = {}
 
     for key, value in filters.items():
@@ -56,6 +53,7 @@ def serialise_filters(
 
     return serialised
 
+
 class Export:
     """
     Provides report export functionality.
@@ -69,7 +67,7 @@ class Export:
             title: str,
             data: list,
             filters: dict | None = None
-        ) -> None:
+            ) -> None:
         """
         Exports filtered results to a TXT file.
 
@@ -88,12 +86,10 @@ class Export:
             None
         """
 
-        now = datetime.now()
-
         with open(
-                filename, 
+                filename,
                 "w"
-            ) as f:
+                ) as f:
 
             f.write(
                 export_section_header(title)
@@ -102,7 +98,7 @@ class Export:
             f.write(
                 export_generated_timestamp()
                 )
-            
+
             f.write(
                 export_filter_summary(filters)
             )
@@ -115,13 +111,13 @@ class Export:
                 )
 
             else:
-                
+
                 if all(
                     (hasattr(item, "ip")
                         and hasattr(item, "status")
                         for item in data)
                 ):
-                    
+
                     f.write(
                         f"Total Results: {len(data)}\n\n"
                     )
@@ -132,8 +128,10 @@ class Export:
 
                 for item in data:
 
-                    if (hasattr(item, "ip")
-                        and hasattr(item, "status")):
+                    if (
+                        hasattr(item, "ip")
+                        and hasattr(item, "status")
+                            ):
 
                         f.write(
                             export_log_entry_line(item)
@@ -149,7 +147,7 @@ class Export:
             title: str,
             data: list,
             filters: dict | None = None
-        ) -> None:
+            ) -> None:
         """
         Exports filtered results to a structured JSON file.
 
@@ -180,7 +178,7 @@ class Export:
                 "result_count": len(data),
                 "filters": serialise_filters(filters)
             },
-            
+
             "results": [
 
                 {
@@ -200,13 +198,13 @@ class Export:
         }
 
         with open(
-            filename, 
-            "w"
-            ) as f:
+                filename,
+                "w"
+                ) as f:
 
             json.dump(
-                export_data, 
-                f, 
+                export_data,
+                f,
                 indent=4
             )
 

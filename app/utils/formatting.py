@@ -10,11 +10,12 @@ from app.utils.colours import (
 
 TABLE_INDENT = "    "
 
+
 def format_service_column(
-            service: str | None,
-            width: int | str,
-            align: str = "<"
-    ) -> str:
+        service: str | None,
+        width: int | str,
+        align: str = "<"
+        ) -> str:
     """
     Formats a service column with service-specific colour.
 
@@ -38,11 +39,12 @@ def format_service_column(
         + Fore.RESET
     )
 
+
 def format_user_column(
-            user: str | None,
-            width: int | str,
-            align: str = "<"
-    ) -> str:
+        user: str | None,
+        width: int | str,
+        align: str = "<"
+        ) -> str:
     """
     Formats the username column with user-specific colour.
 
@@ -66,11 +68,12 @@ def format_user_column(
         + Fore.RESET
     )
 
+
 def format_severity_column(
-            severity: str | None,
-            width: int | str,
-            align: str = "<"
-    ) -> str:
+        severity: str | None,
+        width: int | str,
+        align: str = "<"
+        ) -> str:
     """
     Formats the severity column with user-specific colour.
 
@@ -95,11 +98,12 @@ def format_severity_column(
         + Fore.RESET
     )
 
+
 def format_status_code_column(
         status_code: int | str | None,
         width: int | str,
         align: str = "^"
-    ) -> str:
+        ) -> str:
     """
     Formats an HTTP status code column with status-code-specific colour.
 
@@ -138,11 +142,12 @@ def format_status_code_column(
         + Fore.RESET
     )
 
+
 def format_column(
-    value,
-    width: int | str,
-    align="<"
-) -> str:
+        value,
+        width: int | str,
+        align="<"
+        ) -> str:
     """
     Formats a value into a table column.
 

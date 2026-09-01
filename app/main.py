@@ -29,24 +29,6 @@ from app.log_analyser.log_reporter import LogReporter
 
 import argparse
 import os
-import logging
-from colorama import init
-
-
-os.makedirs("logs", exist_ok=True)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(
-            "logs/application.log"
-        )
-    ]
-)
-
-init(autoreset=True)
 
 
 def run_cli(args) -> None:
@@ -65,7 +47,7 @@ def run_cli(args) -> None:
     """
 
     analyser = LogAnalyser()
-    
+
     reporter = LogReporter(
         analyser
     )
@@ -82,6 +64,7 @@ def run_cli(args) -> None:
     )
 
     controller.start()
+
 
 def run_interactive() -> None:
     """
@@ -127,11 +110,11 @@ def run_interactive() -> None:
             print_empty_message(
                 "Analysis failed. Try again\n"
             )
-            
+
             continue
-        
+
         break
-    
+
     reporter = LogReporter(analyser)
 
     reporter.print_analysis_summary()

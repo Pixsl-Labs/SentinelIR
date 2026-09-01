@@ -32,8 +32,9 @@ class BruteForceResult(DetectionResult):
     """
     Represents a brute-force detection result.
 
-    Stores the source service attacking IP address, failed attempt count, 
-    detection time window, and severity level for repeated login failures within a configured period.
+    Stores the source service attacking IP address, failed attempt count,
+    detection time window, and severity level for repeated login failures
+    within a configured period.
     """
     ip: str
     time_window: float
@@ -45,9 +46,9 @@ class UserTargetingResult(DetectionResult):
     """
     Represents a distributed user-targeting detection result.
 
-    Stores the source service, targeted username, total failed attempts, 
-    number of unique attacking IP addresses, and severity level for password spraying or coordinated account
-    targeting behaviour.
+    Stores the source service, targeted username, total failed attempts,
+    number of unique attacking IP addresses, and severity level for
+    password spraying or coordinated account targeting behaviour.
     """
     username: str
     unique_ips: int

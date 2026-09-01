@@ -33,7 +33,7 @@ class ConfigRuntime:
             analyser,
             reporter,
             config_path: str = "sentinel_config.json"
-        ) -> None:
+            ) -> None:
         """
         Initialises the configuration runtime.
 
@@ -80,7 +80,7 @@ class ConfigRuntime:
             )
 
             return
-        
+
         except JSONDecodeError:
 
             print_empty_message(
@@ -88,13 +88,13 @@ class ConfigRuntime:
             )
 
             return
-        
+
         if not config.watched_files:
 
             print_empty_message(
                 "No watched file configured."
             )
-        
+
         self.print_config_summary(
             config
         )
@@ -108,10 +108,10 @@ class ConfigRuntime:
         )
 
     def start_monitoring_file(
-                self,
-                file_path: str,
-                config
-        ) -> None:
+            self,
+            file_path: str,
+            config
+            ) -> None:
         """
         Starts live monitoring for a selected configuration file.
 
@@ -141,9 +141,9 @@ class ConfigRuntime:
         runtime.start()
 
     def start_configured_monitoring(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Starts configuration-driven monitoring actions.
 
@@ -178,7 +178,7 @@ class ConfigRuntime:
                 ):
 
                     return
-                
+
                 selected_file = self.select_watched_file(
                     config.watched_files
                 )
@@ -194,14 +194,14 @@ class ConfigRuntime:
                     )
 
                     return
-                
+
                 self.start_monitoring_file(
                     selected_file,
                     config
                 )
 
                 return
-            
+
             if action == "add":
 
                 added = self.add_watched_file_from_log_directory(
@@ -255,9 +255,9 @@ class ConfigRuntime:
                 return
 
     def apply_detection_thresholds(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Applies configured threshold values to the detection engine.
 
@@ -278,9 +278,9 @@ class ConfigRuntime:
         )
 
     def validate_watched_files(
-                self,
-                watched_files: list[str]
-        ) -> bool:
+            self,
+            watched_files: list[str]
+            ) -> bool:
         """
         Validates that all configured watched files exist.
 
@@ -316,13 +316,13 @@ class ConfigRuntime:
                 )
 
             return False
-        
+
         return True
-    
+
     def select_watched_file(
-                self,
-                watched_files: list[str]
-        ) -> str | None:
+            self,
+            watched_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select a configured watched file.
 
@@ -351,7 +351,7 @@ class ConfigRuntime:
                     print(f"{index}. {file_path}")
 
                 back_option = len(watched_files) + 1
-                
+
                 exit_option = len(watched_files) + 2
 
                 print(f"{back_option}. Back")
@@ -379,11 +379,11 @@ class ConfigRuntime:
                 if choice_number == exit_option:
 
                     return None
-                
+
                 if 1 <= choice_number <= len(watched_files):
 
                     return watched_files[choice_number - 1]
-                
+
                 print_empty_message(
                     "Invalid watched file choice."
                 )
@@ -397,9 +397,9 @@ class ConfigRuntime:
             return "BACK"
 
     def select_available_log_file(
-                self,
-                available_files: list[str]
-        ) -> str | None:
+            self,
+            available_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select an available log file.
 
@@ -447,11 +447,11 @@ class ConfigRuntime:
                 if choice_number == cancel_option:
 
                     return None
-                
+
                 if 1 <= choice_number <= len(available_files):
-                    
+
                     return available_files[choice_number - 1]
-                
+
                 print_empty_message(
                     "Invalid file choice."
                 )
@@ -461,9 +461,9 @@ class ConfigRuntime:
             return None
 
     def add_watched_file_from_log_directory(
-                self,
-                config
-        ) -> bool:
+            self,
+            config
+            ) -> bool:
         """
         Adds a watched file from the log_files directory.
 
@@ -486,7 +486,7 @@ class ConfigRuntime:
             )
 
             return False
-        
+
         configured_file = set(
             config.watched_files
         )
@@ -504,7 +504,7 @@ class ConfigRuntime:
             )
 
             return False
-        
+
         selected_file = self.select_available_log_file(
             unconfigured_files
         )
@@ -520,7 +520,7 @@ class ConfigRuntime:
             )
 
             return False
-        
+
         added = add_watched_file(
             self.config_path,
             selected_file
@@ -534,17 +534,17 @@ class ConfigRuntime:
             )
 
             return True
-        
+
         print_empty_message(
             f"{selected_file} is already being watched."
         )
 
         return False
-    
+
     def select_watched_file_to_remove(
-                self,
-                watched_files: list[str]
-        ) -> str | None:
+            self,
+            watched_files: list[str]
+            ) -> str | None:
         """
         Prompts the user to select a watched file to remove.
 
@@ -575,7 +575,6 @@ class ConfigRuntime:
 
                 back_option = len(watched_files) + 1
                 cancel_option = len(watched_files) + 2
-                
 
                 print(f"{back_option}. Back")
                 print(f"{cancel_option}. Cancel\n")
@@ -597,15 +596,15 @@ class ConfigRuntime:
                 if choice_number == back_option:
 
                     return "BACK"
-                
+
                 if choice_number == cancel_option:
 
                     return None
-                
+
                 if 1 <= choice_number <= len(watched_files):
 
                     return watched_files[choice_number - 1]
-                
+
                 print_empty_message(
                     "Invalid watched file choice."
                 )
@@ -617,11 +616,11 @@ class ConfigRuntime:
             )
 
             return "BACK"
-        
+
     def remove_watched_file_from_config(
-                self,
-                config
-        ) -> bool:
+            self,
+            config
+            ) -> bool:
         """
         Removes a selected watched file from the configuration.
 
@@ -642,7 +641,7 @@ class ConfigRuntime:
             )
 
             return False
-        
+
         selected_file = self.select_watched_file_to_remove(
             config.watched_files
         )
@@ -650,7 +649,7 @@ class ConfigRuntime:
         if selected_file == "BACK":
 
             return False
-        
+
         if selected_file is None:
 
             print_empty_message(
@@ -658,7 +657,7 @@ class ConfigRuntime:
             )
 
             return False
-        
+
         removed = remove_watched_file(
             self.config_path,
             selected_file
@@ -672,13 +671,13 @@ class ConfigRuntime:
             )
 
             return True
-        
+
         print_empty_message(
             f"Watched file not found in config: {selected_file}"
         )
 
         return False
-    
+
     def select_config_monitoring_action(self) -> str:
         """
         Prompts the user to choose a config monitoring action.
@@ -709,27 +708,27 @@ class ConfigRuntime:
             if choice == "1":
 
                 return "monitor"
-            
+
             if choice == "2":
 
                 return "add"
-            
+
             if choice == "3":
 
                 return "remove"
-            
+
             if choice == "4":
 
                 return "cancel"
-            
+
             print_empty_message(
                 "Invalid config monitoring action."
             )
 
     def print_config_summary(
-                self,
-                config
-        ) -> None:
+            self,
+            config
+            ) -> None:
         """
         Prints a summary of the loaded configuration.
 

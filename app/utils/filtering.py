@@ -4,14 +4,14 @@ from app.log_analyser.log_entry import LogEntry
 
 
 def filter_log_entries(
-    entries: list[LogEntry],
-    ip: str | None=None,
-    username: str | None=None,
-    severity: str | None=None,
-    status: str | None=None,
-    start_time: time | None=None,
-    end_time: time | None=None
-) -> list[LogEntry]:
+        entries: list[LogEntry],
+        ip: str | None = None,
+        username: str | None = None,
+        severity: str | None = None,
+        status: str | None = None,
+        start_time: time | None = None,
+        end_time: time | None = None
+        ) -> list[LogEntry]:
     """
     Filters log entries using optional search criteria.
 

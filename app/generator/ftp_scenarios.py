@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 
+
 def generate_ftp_failed_scenario(
         ip: str = "192.168.1.25",
         user: str = "root",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single failed FTP login scenario.
 
@@ -37,11 +38,12 @@ def generate_ftp_failed_scenario(
 
     return [line]
 
+
 def generate_ftp_success_scenario(
         ip: str = "192.168.1.25",
         user: str = "guest",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single successful FTP login scenario.
 
@@ -74,11 +76,12 @@ def generate_ftp_success_scenario(
 
     return [line]
 
+
 def generate_anonymous_ftp_scenario(
         ip: str = "192.168.1.25",
         user: str = "anonymous",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a successful anonymous FTP login scenario.
 
@@ -111,12 +114,13 @@ def generate_anonymous_ftp_scenario(
 
     return [line]
 
+
 def generate_ftp_brute_force_scenario(
         ip: str = "192.168.1.25",
         user: str = "root",
         attempts: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a brute-force FTP login scenario.
 
@@ -159,12 +163,13 @@ def generate_ftp_brute_force_scenario(
 
     return lines
 
+
 def generate_ftp_suspicious_success_scenario(
         ip: str = "192.168.1.30",
         user: str = "deploy",
         failed_attempts: int = 3,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a suspicious-success FTP login scenario.
 
@@ -218,12 +223,13 @@ def generate_ftp_suspicious_success_scenario(
 
     return lines
 
+
 def generate_ftp_user_targeting_scenario(
         user: str = "admin",
         base_ip: str = "192.168.1.",
         unique_ips: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a distributed user-targeting FTP login scenario.
 
@@ -270,12 +276,13 @@ def generate_ftp_user_targeting_scenario(
 
     return lines
 
+
 def generate_ftp_normal_activity(
         users: list[str] | None = None,
         ips: list[str] | None = None,
         events: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates normal FTP authentication activity.
 
@@ -328,9 +335,10 @@ def generate_ftp_normal_activity(
 
     return lines
 
+
 def generate_ftp_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed FTP authentication scenario.
 

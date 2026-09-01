@@ -1,3 +1,5 @@
+from colorama import Fore
+
 from app.monitoring.file_monitor import FileMonitor
 from app.monitoring.live_event_processor import LiveEventProcessor
 
@@ -10,13 +12,9 @@ from app.utils.colours import (
     get_live_status_colour
 )
 
-from app.detection.alert_types import (
-    BRUTE_FORCE_ALERT,
-    SUSPICIOUS_SUCCESS_ALERT,
-    USER_TARGETING_ALERT
+from app.models.enums import (
+    AlertType
 )
-
-from colorama import Fore
 
 
 class LiveRuntime:
@@ -36,7 +34,7 @@ class LiveRuntime:
             status_interval: int = 10,
             poll_interval: float = 0.2,
             mode_title: str = "Live Monitoring Mode"
-        ) -> None:
+            ) -> None:
         """
         Initialises the live runtime.
 
@@ -106,9 +104,9 @@ class LiveRuntime:
             )
 
     def print_live_session_summary(
-                self,
-                processor
-        ) -> None:
+            self,
+            processor
+            ) -> None:
         """
         Prints a summary of the live monitoring session.
 
@@ -123,15 +121,15 @@ class LiveRuntime:
         """
 
         brute_force_alerts = self.analyser.detection_engine.get_alert_count(
-            BRUTE_FORCE_ALERT
+            AlertType.BRUTE_FORCE
         )
 
         suspicious_success_alerts = self.analyser.detection_engine.get_alert_count(
-            SUSPICIOUS_SUCCESS_ALERT
+            AlertType.SUSPICIOUS_SUCCESS
         )
 
         user_targeting_alerts = self.analyser.detection_engine.get_alert_count(
-            USER_TARGETING_ALERT
+            AlertType.USER_TARGETING
         )
 
         print_section_header(
@@ -144,10 +142,10 @@ class LiveRuntime:
             + "Session Activity"
         )
 
-        brute_force_colour = get_live_status_colour("brute_force_alert", brute_force_alerts)
+        brute_force_colour = get_live_status_colour("brute_force", brute_force_alerts)
 
         suspicious_colour = get_live_status_colour("suspicious_success", suspicious_success_alerts)
-        
+
         user_targeting_colour = get_live_status_colour("user_targeting", user_targeting_alerts)
 
         processor.print_session_activity()

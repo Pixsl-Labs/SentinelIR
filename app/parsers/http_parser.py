@@ -11,6 +11,11 @@ from datetime import datetime
 from app.log_analyser.log_entry import LogEntry
 from app.utils.parser import extract_ip
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_http_line(line: str) -> bool:
     """
@@ -34,6 +39,7 @@ def is_http_line(line: str) -> bool:
 
     return match is not None
 
+
 def is_http_login(line: str) -> bool:
     """
     Checks whether an HTTP log line targets a login-related path.
@@ -54,15 +60,15 @@ def is_http_login(line: str) -> bool:
     if path is None:
 
         return False
-    
-    path = path.lower()
 
+    path = path.lower()
 
     return (
         path.startswith("/login")
         or path.startswith("/admin")
         or path.startswith("/wp")
     )
+
 
 def extract_http_ip(line: str) -> str | None:
     """
@@ -76,6 +82,7 @@ def extract_http_ip(line: str) -> str | None:
     """
 
     return extract_ip(line)
+
 
 def extract_http_timestamp(line: str) -> datetime | None:
     """
@@ -108,6 +115,7 @@ def extract_http_timestamp(line: str) -> datetime | None:
 
     return None
 
+
 def extract_http_method(line: str) -> str | None:
     """
     Extracts the HTTP request method from an HTTP access log line.
@@ -131,6 +139,7 @@ def extract_http_method(line: str) -> str | None:
 
     return None
 
+
 def extract_http_path(line: str) -> str | None:
     """
     Extracts the requested URL path from an HTTP access log line.
@@ -153,6 +162,7 @@ def extract_http_path(line: str) -> str | None:
         return match.group(1)
 
     return None
+
 
 def extract_http_username(line: str) -> str:
     """
@@ -180,6 +190,7 @@ def extract_http_username(line: str) -> str:
         else "unknown"
     )
 
+
 def extract_http_status_code(line: str) -> int | None:
     """
     Extracts the HTTP response status code from an HTTP access log line.
@@ -203,6 +214,7 @@ def extract_http_status_code(line: str) -> int | None:
 
     return None
 
+
 def extract_http_status(line: str) -> str | None:
     """
     Converts an HTTP status code into a SentinelIR authentication status.
@@ -223,13 +235,14 @@ def extract_http_status(line: str) -> str | None:
 
     if status_code in [200, 201, 204, 302]:
 
-        return "SUCCESS"
-    
+        return AuthenticationStatus.SUCCESS
+
     if status_code in [401, 403]:
 
-        return "FAILED"
-    
+        return AuthenticationStatus.FAILED
+
     return None
+
 
 def parse_http_line(line: str) -> LogEntry | None:
     """
@@ -299,7 +312,7 @@ def parse_http_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="HTTP",
+        service=Service.HTTP,
         method=method,
         path=path,
         status_code=status_code

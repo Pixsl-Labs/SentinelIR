@@ -1160,59 +1160,59 @@ SentinelIR currently supports Linux SSH-style authentication logs and a defined 
 
 # Sources
 
-- LogicMonitor: Log Files Explained  
+- LogicMonitor: Log Files Explained
   https://www.logicmonitor.com/blog/log-files-explained-types-uses-best-practices
 
-- Elastic: Grokking Linux Authorization Logs  
+- Elastic: Grokking Linux Authorization Logs
   https://www.elastic.co/blog/grokking-the-linux-authorization-logs
 
-- OSSEC: SSH / Linux Log Samples  
+- OSSEC: SSH / Linux Log Samples
   https://www.ossec.net/docs/log_samples/
 
-- OSSEC: FTP Log Samples  
+- OSSEC: FTP Log Samples
   https://www.ossec.net/docs/log_samples/ftp/index.html
 
-- OSSEC: vsftpd Log Samples  
+- OSSEC: vsftpd Log Samples
   https://www.ossec.net/docs/log_samples/ftp/vsftpd.html
 
-- Loggly: Access and Error Logs Guide  
+- Loggly: Access and Error Logs Guide
   https://www.loggly.com/ultimate-guide/access-and-error-logs/
 
-- DigitalOcean: NGINX Access and Error Logs  
+- DigitalOcean: NGINX Access and Error Logs
   https://www.digitalocean.com/community/tutorials/nginx-access-logs-error-logs
 
-- Microsoft Learn: Windows Security Event ID 4624 - Successful Logon  
+- Microsoft Learn: Windows Security Event ID 4624 - Successful Logon
   https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624
 
-- Microsoft Learn: Windows Security Event ID 4625 - Failed Logon  
+- Microsoft Learn: Windows Security Event ID 4625 - Failed Logon
   https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4625
 
-- AWS Documentation: CloudTrail Log File Examples  
+- AWS Documentation: CloudTrail Log File Examples
   https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-examples.html
 
-- AWS Documentation: Console Sign-In Events  
+- AWS Documentation: Console Sign-In Events
   https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
 
-- Kubernetes Documentation: Logging Architecture  
+- Kubernetes Documentation: Logging Architecture
   https://kubernetes.io/docs/concepts/cluster-administration/logging/
 
-- Kubernetes Documentation: System Logs  
+- Kubernetes Documentation: System Logs
   https://kubernetes.io/docs/concepts/cluster-administration/system-logs/
 
-- Docker Documentation: JSON File Logging Driver  
+- Docker Documentation: JSON File Logging Driver
   https://docs.docker.com/engine/logging/drivers/json-file/
 
-- PostgreSQL Documentation: Authentication Problems  
+- PostgreSQL Documentation: Authentication Problems
   https://www.postgresql.org/docs/current/client-authentication-problems.html
 
-- Suricata Documentation: EVE JSON Output  
+- Suricata Documentation: EVE JSON Output
   https://docs.suricata.io/en/latest/output/eve/eve-json-output.html
 
-- Zeek Documentation: conn.log  
+- Zeek Documentation: conn.log
   https://docs.zeek.org/en/master/reference/logs/conn.html
 
-- Zeek Documentation: dns.log  
+- Zeek Documentation: dns.log
   https://docs.zeek.org/en/current/logs/dns.html
 
-- Zeek Documentation: http.log  
+- Zeek Documentation: http.log
   https://docs.zeek.org/en/current/reference/logs/http.html

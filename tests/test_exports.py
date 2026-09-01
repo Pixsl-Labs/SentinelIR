@@ -1,9 +1,6 @@
 import json
 import os
 
-from app.log_analyser.log_reporter import LogReporter
-from app.log_analyser.log_analyser import LogAnalyser
-
 
 def test_export_txt_creates_file(brute_force_reporter):
     output_file = "tests/test_reports/test_txt_report_created.txt"
@@ -17,6 +14,7 @@ def test_export_txt_creates_file(brute_force_reporter):
     )
 
     assert os.path.exists(output_file)
+
 
 def test_export_txt_contains_headers(brute_force_reporter):
 
@@ -43,6 +41,7 @@ def test_export_txt_contains_headers(brute_force_reporter):
     assert "Code" in content
     assert "Severity" in content
 
+
 def test_export_txt_contains_first_result(brute_force_reporter):
 
     output_file = "tests/test_reports/test_txt_first_result.txt"
@@ -66,8 +65,9 @@ def test_export_txt_contains_first_result(brute_force_reporter):
     assert first_entry.ip in content
     assert first_entry.severity in content
 
+
 def test_export_txt_contains_filters(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_filtered_report.txt"
 
     filters = {
@@ -110,6 +110,7 @@ def test_export_json_creates_file(brute_force_reporter):
 
     assert os.path.exists(output_file)
 
+
 def test_export_json_contains_expected_keys(brute_force_reporter):
     output_file = "tests/test_reports/test_report.json"
 
@@ -131,8 +132,9 @@ def test_export_json_contains_expected_keys(brute_force_reporter):
 
     assert expected_keys.issubset(exported_data.keys())
 
+
 def test_export_json_first_result_contains_expected_fields(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_report.json"
 
     data = brute_force_reporter.get_failed_logins()
@@ -158,8 +160,9 @@ def test_export_json_first_result_contains_expected_fields(brute_force_reporter)
     assert first_result["ip"] == data[0].ip
     assert first_result["severity"] == data[0].severity
 
+
 def test_export_json_contains_filters(brute_force_reporter):
-    
+
     output_file = "tests/test_reports/test_filtered_report.json"
 
     filters = {
@@ -185,7 +188,6 @@ def test_export_json_contains_filters(brute_force_reporter):
     assert exported_data["metadata"]["filters"]["username"] == "admin"
     assert exported_data["metadata"]["result_count"] == len(data)
 
-    
     assert all(
         result["service"].upper() == "FTP"
         and result["user"].lower() == "admin"

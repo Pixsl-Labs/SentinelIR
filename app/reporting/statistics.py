@@ -4,7 +4,7 @@ from app.log_analyser.filtering import LogFilter
 
 from app.utils.formatting import (
     print_table_header,
-    format_column, 
+    format_column,
     format_service_column,
     format_status_code_column,
     format_user_column
@@ -18,7 +18,7 @@ from app.utils.display import (
     print_stat_row
 )
 from app.utils.colours import (
-    get_severity_colour, 
+    get_severity_colour,
     get_attempt_colour,
     get_count_colour
 )
@@ -45,17 +45,17 @@ class Statistics:
     """
     def get_failed_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns filtered failed login attempts.
 
@@ -98,15 +98,15 @@ class Statistics:
             results,
             key=lambda entry: entry.timestamp or datetime.min
         )
-    
+
     def get_failed_login_summary(
             self
-        ) -> list[FailedLoginSummaryResult]:
+            ) -> list[FailedLoginSummaryResult]:
         """
         Returns failed login results grouped by username and IP address.
 
         Groups failed login entries by username and source IP address, counts attempts
-        for each pair, calculates severity, source service, and returns the results 
+        for each pair, calculates severity, source service, and returns the results
         sorted by attempt count.
 
         Returns:
@@ -134,7 +134,7 @@ class Statistics:
             username,
             ip
         ), attempts in grouped_results.items():
-            
+
             severity = get_severity_level(attempts)
 
             results.append(
@@ -152,20 +152,20 @@ class Statistics:
             key=lambda result: result.attempts,
             reverse=True
         )
-    
+
     def print_failed_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            status: str | None=None,
-            service: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            status: str | None = None,
+            service: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints filtered failed login attempts.
 
@@ -209,7 +209,7 @@ class Statistics:
             )
 
             return
-    
+
         print_section_header(
             "Failed Login Results",
             Fore.YELLOW
@@ -273,7 +273,7 @@ class Statistics:
 
     def print_failed_logins_summary(
             self
-        ) -> None:
+            ) -> None:
         """
         Prints grouped failed login summary results.
 
@@ -293,7 +293,7 @@ class Statistics:
             )
 
             return
-        
+
         print_section_header(
             "Failed Login Summary",
             Fore.YELLOW
@@ -322,12 +322,12 @@ class Statistics:
         for result in results:
             attempt_colour = get_attempt_colour(result.attempts)
 
-            severity_colour = get_severity_colour(result.severity)            
+            severity_colour = get_severity_colour(result.severity)
 
             print(
                 "    "
                 + format_service_column(result.service, 11)
-                + attempt_colour                
+                + attempt_colour
                 + format_user_column(result.username, 12)
                 + attempt_colour
                 + format_column(result.ip, 14)
@@ -339,17 +339,17 @@ class Statistics:
 
     def get_successful_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> list[LogEntry]:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> list[LogEntry]:
         """
         Returns filtered successful login entries.
 
@@ -395,17 +395,17 @@ class Statistics:
 
     def print_successful_logins(
             self,
-            ip: str | None=None,
-            username: str | None=None,
-            severity: str | None=None,
-            service: str | None=None,
-            status: str | None=None,
-            start_time: time | None=None,
-            end_time: time | None=None,
-            method: str | None=None,
-            path:  str | None=None,
-            status_code: int | None=None
-        ) -> None:
+            ip: str | None = None,
+            username: str | None = None,
+            severity: str | None = None,
+            service: str | None = None,
+            status: str | None = None,
+            start_time: time | None = None,
+            end_time: time | None = None,
+            method: str | None = None,
+            path:  str | None = None,
+            status_code: int | None = None
+            ) -> None:
         """
         Prints filtered successful login entries.
 
@@ -449,7 +449,7 @@ class Statistics:
             )
 
             return
-        
+
         print_section_header(
             "Successful Logins",
             Fore.GREEN
@@ -659,7 +659,7 @@ class Statistics:
             "top_attacker": top_attacker,
             "most_targeted_user": most_targeted_user
         }
-    
+
     def get_most_targeted_users(self) -> list[TargetedUserResult]:
         """
         Returns users sorted by failed login attempts.

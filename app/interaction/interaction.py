@@ -5,22 +5,22 @@ from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
 
 from app.config.security_config import (
-    BRUTE_FORCE_THRESHOLD, 
+    BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW
 )
 
 from app.interaction.menus import (
-    display_log_analysis_menu, 
+    display_log_analysis_menu,
     current_config
 )
 from app.interaction.filters import (
-    integer_validation, 
-    handle_filter_menu, 
+    integer_validation,
+    handle_filter_menu,
     collect_filter_values
 )
 from app.interaction.configuration import configure
 from app.utils.colours import (
-    get_count_colour, 
+    get_count_colour,
     get_attempt_colour
 )
 from app.utils.display import (
@@ -39,7 +39,7 @@ class Interaction:
     reporting and detection actions, applies filters, handles exports, and allows
     configuration changes during static analysis mode.
     """
-    
+
     def __init__(self, analyser, reporter):
         """
         Initialises the interaction controller.
@@ -103,11 +103,11 @@ class Interaction:
                 )
 
                 total_ips = self.reporter.get_total_number_of_unique_ip_addresses()
-                
+
                 total_failed = self.reporter.get_total_failed_login_attempts()
 
                 failed_attempt_colour = get_count_colour(total_failed)
-            
+
                 print(
                     Fore.CYAN
                     + f"Unique IP Addresses: {total_ips:>7}\n"
@@ -209,7 +209,7 @@ class Interaction:
                 self.reporter.print_failed_logins_summary()
 
             # === Detection ===
-            
+
             elif choice == "8":
 
                 handle_filter_menu(
@@ -468,21 +468,21 @@ class Interaction:
                 self.analyser.analyse(file_path)
 
             elif choice == "19":
-                
+
                 configure(self)
 
             elif choice == "20":
 
                 current_config(self.threshold, self.window_seconds)
-            
+
             elif choice == "21":
 
                 print(
                     Fore.LIGHTGREEN_EX
-                    +"Goodbye!"
+                    + "Goodbye!"
                 )
 
-                self.running = False           
+                self.running = False
 
             else:
 

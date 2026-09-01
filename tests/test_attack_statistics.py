@@ -1,12 +1,9 @@
-from app.log_analyser.log_reporter import LogReporter
-from app.log_analyser.log_analyser import LogAnalyser
-from conftest import brute_force_reporter, empty_reporter
-from app.utils.severity import get_severity_level
 
 def test_attack_statistics_returns_dictionary(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()
 
     assert isinstance(results, dict)
+
 
 def test_attack_statistics_contains_expected_keys(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()
@@ -24,6 +21,7 @@ def test_attack_statistics_contains_expected_keys(brute_force_reporter):
 
     assert all(key in results for key in expected_keys)
 
+
 def test_attack_statistics_values_are_correct(brute_force_reporter):
     results = brute_force_reporter.get_attack_statistics()
 
@@ -37,8 +35,9 @@ def test_attack_statistics_values_are_correct(brute_force_reporter):
             "top_attacker": "SSH 192.168.1.10 (5 attempts)",
             "most_targeted_user": "SSH root (5 attempts)"
         }
-    
+
     assert results == expected_results
+
 
 def test_attack_statistics_empty_log(empty_reporter):
     results = empty_reporter.get_attack_statistics()
@@ -53,5 +52,5 @@ def test_attack_statistics_empty_log(empty_reporter):
             "top_attacker": None,
             "most_targeted_user": None
         }
-    
+
     assert results == expected_results

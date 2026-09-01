@@ -31,6 +31,7 @@ def test_list_available_log_files_returns_only_log_files(tmp_path):
 
     assert str(notes_file) not in results
 
+
 def test_add_watched_file_updates_config(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
 
@@ -51,6 +52,7 @@ def test_add_watched_file_updates_config(tmp_path):
 
     assert added is True
     assert "log_files/auth.log" in config_data["watched_files"]
+
 
 def test_add_watched_file_prevents_duplicates(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
@@ -75,9 +77,10 @@ def test_add_watched_file_prevents_duplicates(tmp_path):
     assert added is False
     assert config_data["watched_files"].count("log_files/auth.log") == 1
 
+
 def test_remove_watched_file_updates_config(tmp_path):
     config_file = tmp_path / "sentinel_config.json"
-    
+
     real_log_file = tmp_path / "auth.log"
     real_log_file.write_text("log content")
 
@@ -101,6 +104,7 @@ def test_remove_watched_file_updates_config(tmp_path):
     assert removed is True
     assert str(real_log_file) not in config_data["watched_files"]
     assert real_log_file.exists()
+
 
 def test_remove_watched_file_returns_false_when_file_not_configured(tmp_path):
     config_file = tmp_path / "sentinel_config.json"

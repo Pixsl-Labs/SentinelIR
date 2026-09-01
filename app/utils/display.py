@@ -4,25 +4,26 @@ from colorama import Fore
 
 
 def print_section_header(
-    title: str,
-    colour: str=Fore.CYAN
-) -> None:
+        title: str,
+        colour: str = Fore.CYAN
+        ) -> None:
     """
     Prints a formatted section header.
 
     Args:
         title (str): Header title to display.
-        colour (str): Colorama colour used for the header text. 
+        colour (str): Colorama colour used for the header text.
             Defaults to Fore.CYAN.
 
     Returns:
         None
     """
-    
+
     print(
         colour
         + f"\n=== {title} ===\n"
     )
+
 
 def print_empty_message(
     message: str
@@ -41,6 +42,7 @@ def print_empty_message(
         Fore.LIGHTRED_EX
         + f"\n{message}"
     )
+
 
 def print_default_message(
     label: str,
@@ -68,6 +70,7 @@ def print_default_message(
         + f"({default})\n"
     )
 
+
 def print_info(
     message: str,
     colour: str = Fore.CYAN
@@ -89,6 +92,7 @@ def print_info(
         + message
         + Fore.RESET
     )
+
 
 def print_total_count(
     label: str,
@@ -112,10 +116,11 @@ def print_total_count(
         + f"    {label}: {count}\n"
     )
 
+
 def print_separator(
-    count: int,
-    colour: str=Fore.CYAN
-) -> None:
+        count: int,
+        colour: str = Fore.CYAN
+        ) -> None:
     """
     Prints a coloured separator line.
 
@@ -127,22 +132,23 @@ def print_separator(
     Returns:
         None
     """
-    
+
     print(
-    colour
-    + "-" * count
+        colour
+        + "-" * count
     )
 
+
 def logging_info(
-    message: str,
-    colour: str=Fore.YELLOW
-) -> None:
+        message: str,
+        colour: str = Fore.YELLOW
+        ) -> None:
     """
     Writes a formatted informational message to the application log.
 
     Args:
         message (str): Message to write to the log.
-        colour (str): Colorama colour prefix applied to the logged message. 
+        colour (str): Colorama colour prefix applied to the logged message.
             Defaults to Fore.YELLOW.
 
     Returns:
@@ -154,16 +160,17 @@ def logging_info(
         + f"{message}"
     )
 
+
 def logging_error(
-    message: str,
-    colour: str=Fore.LIGHTRED_EX
-) -> None:
+        message: str,
+        colour: str = Fore.LIGHTRED_EX
+        ) -> None:
     """
     Writes a formatted error message to the application log.
 
     Args:
         message (str): Message to write to the log.
-        colour (str): Colorama colour prefix applied to the logged message. 
+        colour (str): Colorama colour prefix applied to the logged message.
             Defaults to Fore.LIGHTRED_EX.
 
     Returns:
@@ -175,11 +182,12 @@ def logging_error(
         + f"{message}"
     )
 
+
 def print_alert(
         severity: str,
         title: str,
         message: str
-    ) -> None:
+        ) -> None:
     """
     Prints a formatted security alert.
 
@@ -223,12 +231,13 @@ def print_alert(
         + message
     )
 
+
 def print_status_line(
-    label: str,
-    value,
-    colour: str,
-    width: int = 25
-) -> None:
+        label: str,
+        value,
+        colour: str,
+        width: int = 25
+        ) -> None:
     """
     Prints a formatted labelled status line.
 
@@ -249,6 +258,7 @@ def print_status_line(
         f"{Fore.RESET}"
     )
 
+
 def print_generated_timestamp() -> None:
     """
     Prints the current report generation timestamp.
@@ -267,11 +277,11 @@ def print_generated_timestamp() -> None:
 
 
 def print_stat_row(
-    label: str,
-    value,
-    colour: str = Fore.WHITE,
-    width: int = 25
-) -> None:
+        label: str,
+        value,
+        colour: str = Fore.WHITE,
+        width: int = 25
+        ) -> None:
     """
     Prints a formatted statistic row.
 

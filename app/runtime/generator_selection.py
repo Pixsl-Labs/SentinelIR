@@ -90,6 +90,7 @@ def select_scenario_type() -> str | None:
             "Invalid scenario type."
         )
 
+
 def select_ssh_scenario() -> tuple[str, list[str]] | None:
     """
     Prompts the user to select an SSH log generation scenario.
@@ -124,7 +125,7 @@ def select_ssh_scenario() -> tuple[str, list[str]] | None:
         if choice == "1":
 
             return "Failed login", generate_ssh_failed_scenario()
-        
+
         elif choice == "2":
 
             return "Successful login", generate_ssh_success_scenario()
@@ -132,32 +133,33 @@ def select_ssh_scenario() -> tuple[str, list[str]] | None:
         elif choice == "3":
 
             return "Brute force", generate_ssh_brute_force_scenario()
-        
+
         elif choice == "4":
 
             return "Suspicious success", generate_ssh_suspicious_success_scenario()
-        
+
         elif choice == "5":
 
             return "User targeting", generate_ssh_user_targeting_scenario()
-        
+
         elif choice == "6":
 
             return "Normal activity", generate_ssh_normal_activity()
-        
+
         elif choice == "7":
 
             return "Mixed attack", generate_ssh_mixed_attack_scenario()
-        
+
         elif choice == "8":
 
             return None
-        
+
         else:
 
             print_empty_message(
                 "Invalid scenario choice."
             )
+
 
 def select_ftp_scenario() -> tuple[str, list[str]] | None:
     """
@@ -194,11 +196,11 @@ def select_ftp_scenario() -> tuple[str, list[str]] | None:
         if choice == "1":
 
             return "Failed login", generate_ftp_failed_scenario()
-        
+
         elif choice == "2":
 
             return "Successful login", generate_ftp_success_scenario()
-        
+
         elif choice == "3":
 
             return "Successful anonymous login", generate_anonymous_ftp_scenario()
@@ -206,32 +208,33 @@ def select_ftp_scenario() -> tuple[str, list[str]] | None:
         elif choice == "4":
 
             return "Brute force", generate_ftp_brute_force_scenario()
-        
+
         elif choice == "5":
 
             return "Suspicious success", generate_ftp_suspicious_success_scenario()
-        
+
         elif choice == "6":
 
             return "User targeting", generate_ftp_user_targeting_scenario()
-        
+
         elif choice == "7":
 
             return "Normal activity", generate_ftp_normal_activity()
-        
+
         elif choice == "8":
 
             return "Mixed attack", generate_ftp_mixed_attack_scenario()
-        
+
         elif choice == "9":
 
             return None
-        
+
         else:
 
             print_empty_message(
                 "Invalid scenario choice."
             )
+
 
 def select_http_scenario() -> tuple[str, list[str]] | None:
     """
@@ -267,7 +270,7 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
         if choice == "1":
 
             return "Failed login", generate_http_failed_scenario()
-        
+
         elif choice == "2":
 
             return "Successful login", generate_http_success_scenario()
@@ -275,32 +278,33 @@ def select_http_scenario() -> tuple[str, list[str]] | None:
         elif choice == "3":
 
             return "Brute force", generate_http_brute_force_scenario()
-        
+
         elif choice == "4":
 
             return "Suspicious success", generate_http_suspicious_success_scenario()
-        
+
         elif choice == "5":
 
             return "User targeting", generate_http_user_targeting_scenario()
-        
+
         elif choice == "6":
 
             return "Normal activity", generate_http_normal_activity()
-        
+
         elif choice == "7":
 
             return "Mixed attack", generate_http_mixed_attack_scenario()
-        
+
         elif choice == "8":
 
             return None
-        
+
         else:
 
             print_empty_message(
                 "Invalid scenario choice."
             )
+
 
 def select_mixed_services() -> tuple[str, list[str]] | None:
     """
@@ -355,9 +359,10 @@ def select_mixed_services() -> tuple[str, list[str]] | None:
             "Invalid mixed service scenario choice."
         )
 
+
 def generate_mixed_service_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed multi-service attack scenario.
 
@@ -399,9 +404,10 @@ def generate_mixed_service_attack_scenario(
 
     return lines
 
+
 def generate_ssh_ftp_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed SSH and FTP attack scenario.
 
@@ -436,9 +442,10 @@ def generate_ssh_ftp_mixed_attack_scenario(
 
     return lines
 
+
 def generate_ssh_http_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed SSH and HTTP attack scenario.
 
@@ -473,9 +480,10 @@ def generate_ssh_http_mixed_attack_scenario(
 
     return lines
 
+
 def generate_ftp_http_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed FTP and HTTP attack scenario.
 

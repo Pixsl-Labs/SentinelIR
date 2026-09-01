@@ -5,7 +5,7 @@ def generate_ssh_failed_scenario(
         ip: str = "192.168.1.10",
         user: str = "root",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single failed SSH login scenario.
 
@@ -38,11 +38,12 @@ def generate_ssh_failed_scenario(
 
     return [line]
 
+
 def generate_ssh_success_scenario(
         ip: str = "192.168.1.12",
         user: str = "guest",
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a single successful SSH login scenario.
 
@@ -75,12 +76,13 @@ def generate_ssh_success_scenario(
 
     return [line]
 
+
 def generate_ssh_brute_force_scenario(
         ip: str = "192.168.1.10",
         user: str = "root",
         attempts: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a brute-force SSH login scenario.
 
@@ -123,12 +125,13 @@ def generate_ssh_brute_force_scenario(
 
     return lines
 
+
 def generate_ssh_suspicious_success_scenario(
         ip: str = "192.168.1.20",
         user: str = "deploy",
         failed_attempts: int = 3,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a suspicious-success SSH login scenario.
 
@@ -182,12 +185,13 @@ def generate_ssh_suspicious_success_scenario(
 
     return lines
 
+
 def generate_ssh_user_targeting_scenario(
         user: str = "admin",
         base_ip: str = "10.20.0.",
         unique_ips: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a distributed user-targeting SSH login scenario.
 
@@ -234,12 +238,13 @@ def generate_ssh_user_targeting_scenario(
 
     return lines
 
+
 def generate_ssh_normal_activity(
         users: list[str] | None = None,
         ips: list[str] | None = None,
         events: int = 5,
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates normal SSH authentication activity.
 
@@ -292,9 +297,10 @@ def generate_ssh_normal_activity(
 
     return lines
 
+
 def generate_ssh_mixed_attack_scenario(
         start_time: datetime | None = None
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Generates a mixed SSH authentication scenario.
 

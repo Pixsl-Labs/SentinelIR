@@ -4,17 +4,18 @@ from app.config.security_config import (
     USER_TARGETING_THRESHOLD,
     ALERT_COOLDOWN_SECONDS
 )
-from app.detection.alert_types import (
-    BRUTE_FORCE_ALERT,
-    SUSPICIOUS_SUCCESS_ALERT,
-    USER_TARGETING_ALERT,
-)
 
 from app.models.detection_results import (
     BruteForceResult,
     UserTargetingResult,
     SuspiciousSuccessResult,
     AnonymousFTPResult
+)
+from app.models.enums import (
+    AlertType,
+    Service,
+    Severity,
+    AuthenticationStatus
 )
 
 from app.utils.severity import get_severity_level
@@ -44,7 +45,7 @@ class DetectionEngine:
             brute_force_threshold: int = BRUTE_FORCE_THRESHOLD,
             brute_force_time_window: int = BRUTE_FORCE_TIME_WINDOW,
             user_targeting_threshold: int = USER_TARGETING_THRESHOLD
-        ) -> None:
+            ) -> None:
         """
         Initialises the detection engine alert state and threshold settings.
 
@@ -68,9 +69,9 @@ class DetectionEngine:
         self.user_targeting_threshold = user_targeting_threshold
 
         self.alert_state = {
-            BRUTE_FORCE_ALERT: set(),
-            SUSPICIOUS_SUCCESS_ALERT: set(),
-            USER_TARGETING_ALERT: set()
+            AlertType.BRUTE_FORCE: set(),
+            AlertType.SUSPICIOUS_SUCCESS: set(),
+            AlertType.USER_TARGETING: set()
         }
 
         self.alert_cooldown_seconds = ALERT_COOLDOWN_SECONDS
@@ -78,9 +79,9 @@ class DetectionEngine:
         self.alert_last_seen = {}
 
         self.alert_event_counts = {
-            BRUTE_FORCE_ALERT: 0,
-            SUSPICIOUS_SUCCESS_ALERT: 0,
-            USER_TARGETING_ALERT: 0
+            AlertType.BRUTE_FORCE: 0,
+            AlertType.SUSPICIOUS_SUCCESS: 0,
+            AlertType.USER_TARGETING: 0
         }
 
     def configure_threshold(
@@ -88,7 +89,7 @@ class DetectionEngine:
             brute_force_threshold: int | None = None,
             brute_force_time_window: int | None = None,
             user_targeting_threshold: int | None = None
-        ) -> None:
+            ) -> None:
         """
         Updates detection threshold settings.
 
@@ -119,9 +120,9 @@ class DetectionEngine:
 
     def has_alerted(
             self,
-            alert_type: str,
+            alert_type: AlertType,
             entity: str
-    ) -> bool:
+            ) -> bool:
         """
         Checks whether an alert has already been raised for an entity.
 
@@ -136,13 +137,13 @@ class DetectionEngine:
         """
 
         return entity in self.alert_state.get(alert_type, set())
-    
+
     def mark_alerted(
             self,
-            alert_type: str,
+            alert_type: AlertType,
             entity: str,
             current_time: float | None = None
-    ) -> None:
+            ) -> None:
         """
         Records that an entity has triggered a specific alert type.
 
@@ -157,7 +158,7 @@ class DetectionEngine:
 
         if alert_type not in self.alert_state:
             self.alert_state[alert_type] = set()
-        
+
         self.alert_state[alert_type].add(entity)
 
         if current_time is None:
@@ -176,11 +177,11 @@ class DetectionEngine:
         )
 
     def can_alert(
-        self,
-        alert_type: str,
-        entity: str,
-        current_time: float | None = None
-    ) -> bool:
+            self,
+            alert_type: AlertType,
+            entity: str,
+            current_time: float | None = None
+            ) -> bool:
         """
         Checks whether an alert can be raised based on the cooldown period.
 
@@ -210,7 +211,7 @@ class DetectionEngine:
         if last_alert_time is None:
 
             return True
-        
+
         return (
             current_time - last_alert_time
             >= self.alert_cooldown_seconds
@@ -234,11 +235,11 @@ class DetectionEngine:
 
         for alert_type in self.alert_event_counts:
             self.alert_event_counts[alert_type] = 0
-    
+
     def get_alert_count(
             self,
-            alert_type: str
-        ) -> int:
+            alert_type: AlertType
+            ) -> int:
         """
         Returns the number of alert events raised for a specific alert type.
 
@@ -253,10 +254,10 @@ class DetectionEngine:
             alert_type,
             0
         )
-    
+
     def get_total_alerts(
             self
-    ) -> int:
+            ) -> int:
         """
         Returns the total number of live alerts raised across all alert types.
 
@@ -267,10 +268,10 @@ class DetectionEngine:
         return sum(
             self.alert_event_counts.values()
         )
-    
+
     def get_alert_summary(
             self
-    ) -> dict[str, int]:
+            ) -> dict[AlertType, int]:
         """
         Returns alert counts grouped by alert type.
 
@@ -285,14 +286,13 @@ class DetectionEngine:
             alert_type: len(alerted_entities)
             for alert_type, alerted_entities in self.alert_state.items()
         }
-    
 
     @staticmethod
     def get_brute_force(
-        analyser,
-        threshold=BRUTE_FORCE_THRESHOLD,
-        window_seconds=BRUTE_FORCE_TIME_WINDOW
-    ) -> list[BruteForceResult]:
+            analyser,
+            threshold=BRUTE_FORCE_THRESHOLD,
+            window_seconds=BRUTE_FORCE_TIME_WINDOW
+            ) -> list[BruteForceResult]:
         """
         Detects brute-force activity from failed login timestamps.
 
@@ -358,8 +358,8 @@ class DetectionEngine:
 
     @staticmethod
     def get_suspicious_success(
-        analyser
-    ) -> list[SuspiciousSuccessResult]:
+            analyser
+            ) -> list[SuspiciousSuccessResult]:
         """
         Detects successful logins from service/IP pairs that previously failed
         authentication.
@@ -409,12 +409,12 @@ class DetectionEngine:
                 )
 
         return results
-    
+
     @staticmethod
     def get_user_targeting(
-        analyser,
-        threshold=USER_TARGETING_THRESHOLD
-    ) -> list[UserTargetingResult]:
+            analyser,
+            threshold=USER_TARGETING_THRESHOLD
+            ) -> list[UserTargetingResult]:
         """
         Detects distributed user-targeting activity.
 
@@ -472,11 +472,11 @@ class DetectionEngine:
                 )
 
         return results
-    
+
     @staticmethod
     def get_anonymous_ftp_logins(
             analyser
-        ) -> list[AnonymousFTPResult]:
+            ) -> list[AnonymousFTPResult]:
         """
         Detects successful anonymous FTP logins.
 
@@ -492,26 +492,26 @@ class DetectionEngine:
         for entry in analyser.successful_logins:
 
             if (
-                entry.service == "FTP"
+                entry.service == Service.FTP
                 and entry.user.lower() == "anonymous"
-                and entry.status == "SUCCESS"
+                and entry.status == AuthenticationStatus.SUCCESS
             ):
-                
+
                 results.append(
                     AnonymousFTPResult(
                         ip=entry.ip,
                         username=entry.user,
                         attempts=1,
-                        severity="MEDIUM"
+                        severity=Severity.MEDIUM
                     )
                 )
-        
+
         return results
-    
+
     def process_live_detection(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Runs all live detection checks against the current analyser state.
 
@@ -534,7 +534,7 @@ class DetectionEngine:
     @staticmethod
     def build_alert_key(
             *parts
-        ) -> str:
+            ) -> str:
         """
         Builds a consistent service-aware alert key.
 
@@ -549,11 +549,11 @@ class DetectionEngine:
             str(part)
             for part in parts
         )
-        
+
     def detect_live_brute_force(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live brute-force activity and prints an alert when triggered.
 
@@ -571,15 +571,15 @@ class DetectionEngine:
         threshold = self.brute_force_threshold
 
         for (service, ip), attempts in analyser.failed_service_ip_counts.items():
-            
+
             alert_key = self.build_alert_key(
                 service,
                 ip
             )
 
             if (
-                attempts >= threshold 
-                and self.can_alert(BRUTE_FORCE_ALERT, alert_key)
+                attempts >= threshold
+                and self.can_alert(AlertType.BRUTE_FORCE, alert_key)
             ):
 
                 alert_message = (
@@ -589,28 +589,28 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="HIGH",
+                    severity=Severity.HIGH,
                     title="Brute Force Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=BRUTE_FORCE_ALERT,
-                    severity="HIGH",
+                    alert_type=AlertType.BRUTE_FORCE,
+                    severity=Severity.HIGH,
                     service=service,
                     entity=ip,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    BRUTE_FORCE_ALERT,
+                    AlertType.BRUTE_FORCE,
                     alert_key
                 )
 
     def detect_live_suspicious_success(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live successful logins from service/IP pairs that previously failed
         authentication.
@@ -649,9 +649,9 @@ class DetectionEngine:
 
             if (
                 service_ip_key in failed_service_ips
-                and self.can_alert(SUSPICIOUS_SUCCESS_ALERT, alert_key)
+                and self.can_alert(AlertType.SUSPICIOUS_SUCCESS, alert_key)
             ):
-                
+
                 alert_message = (
                     f"Service: {entry.service} | "
                     f"IP: {entry.ip} | "
@@ -660,28 +660,28 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="MEDIUM",
+                    severity=Severity.MEDIUM,
                     title="Suspicious Success Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=SUSPICIOUS_SUCCESS_ALERT,
-                    severity="MEDIUM",
+                    alert_type=AlertType.SUSPICIOUS_SUCCESS,
+                    severity=Severity.MEDIUM,
                     service=entry.service,
                     entity=entry.ip,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    SUSPICIOUS_SUCCESS_ALERT,
+                    AlertType.SUSPICIOUS_SUCCESS,
                     alert_key
                 )
 
     def detect_live_user_targeting(
             self,
             analyser
-        ) -> None:
+            ) -> None:
         """
         Detects live distributed user-targeting activity.
 
@@ -725,9 +725,9 @@ class DetectionEngine:
 
             if (
                 unique_ip_count >= self.user_targeting_threshold
-                and self.can_alert(USER_TARGETING_ALERT, alert_key)
+                and self.can_alert(AlertType.USER_TARGETING, alert_key)
             ):
-                
+
                 alert_message = (
                     f"Service: {service} | "
                     f"User: {user} | "
@@ -736,20 +736,20 @@ class DetectionEngine:
                 )
 
                 print_alert(
-                    severity="HIGH",
+                    severity=Severity.HIGH,
                     title="User Targeting Detected",
                     message=alert_message
                 )
 
                 write_alert_log(
-                    alert_type=USER_TARGETING_ALERT,
-                    severity="HIGH",
+                    alert_type=AlertType.USER_TARGETING,
+                    severity=Severity.HIGH,
                     service=service,
                     entity=user,
                     message=alert_message
                 )
 
                 self.mark_alerted(
-                    USER_TARGETING_ALERT,
+                    AlertType.USER_TARGETING,
                     alert_key
                 )

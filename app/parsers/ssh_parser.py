@@ -6,6 +6,11 @@ from app.utils.parser import (
     extract_timestamp
 )
 
+from app.models.enums import (
+    AuthenticationStatus,
+    Service
+)
+
 
 def is_ssh_failed_login(line: str) -> bool:
     """
@@ -19,6 +24,7 @@ def is_ssh_failed_login(line: str) -> bool:
     """
 
     return "failed password" in line.lower()
+
 
 def is_ssh_successful_login(line: str) -> bool:
     """
@@ -34,9 +40,11 @@ def is_ssh_successful_login(line: str) -> bool:
             otherwise False
     """
 
-    return ("accepted password" in line.lower()
-            or "session opened" in line.lower()
-    )
+    return (
+        "accepted password" in line.lower()
+        or "session opened" in line.lower()
+        )
+
 
 def is_ssh_line(line: str) -> bool:
     """
@@ -56,7 +64,8 @@ def is_ssh_line(line: str) -> bool:
     return (
         is_ssh_failed_login(line)
         or is_ssh_successful_login(line)
-    )
+        )
+
 
 def extract_ssh_username(line: str) -> str:
     """
@@ -82,9 +91,9 @@ def extract_ssh_username(line: str) -> str:
     )
 
     if match:
-        
+
         return match.group(1)
-    
+
     session_match = re.search(
         r"session opened for user (\w+)",
         line,
@@ -96,6 +105,7 @@ def extract_ssh_username(line: str) -> str:
         return session_match.group(1)
 
     return "unknown"
+
 
 def extract_ssh_status(line: str) -> str | None:
     """
@@ -112,13 +122,14 @@ def extract_ssh_status(line: str) -> str | None:
 
     if is_ssh_failed_login(line):
 
-        return "FAILED"
-    
+        return AuthenticationStatus.FAILED
+
     if is_ssh_successful_login(line):
 
-        return "SUCCESS"
-    
+        return AuthenticationStatus.SUCCESS
+
     return None
+
 
 def parse_ssh_line(line: str) -> LogEntry | None:
     """
@@ -141,19 +152,19 @@ def parse_ssh_line(line: str) -> LogEntry | None:
     if status is None:
 
         return None
-    
+
     ip = extract_ip(line)
 
     if not ip:
 
         return None
-    
+
     timestamp = extract_timestamp(line)
 
     if not timestamp:
 
         return None
-    
+
     username = extract_ssh_username(line)
 
     return LogEntry(
@@ -161,5 +172,5 @@ def parse_ssh_line(line: str) -> LogEntry | None:
         user=username,
         timestamp=timestamp,
         status=status,
-        service="SSH"
+        service=Service.SSH
     )

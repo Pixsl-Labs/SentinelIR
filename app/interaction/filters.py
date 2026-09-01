@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime, time
+from colorama import Fore
 
 
 from app.utils.display import (
@@ -6,16 +8,18 @@ from app.utils.display import (
     print_empty_message
 )
 
-
-from datetime import datetime, time
-from colorama import Fore
+from app.models.enums import (
+    Service,
+    Severity,
+    AuthenticationStatus
+)
 
 
 def integer_validation(
-        prompt, 
-        default, 
+        prompt,
+        default,
         label="value"
-    ) -> int:
+        ) -> int:
     """
     Prompts the user for an integer input.
 
@@ -41,14 +45,14 @@ def integer_validation(
         )
 
         return default
-    
+
     try:
 
         return int(value)
-    
+
     except ValueError:
 
-        logging.error(f"Error: Invalid input, using default.")
+        logging.error("Error: Invalid input, using default.")
 
         print_default_message(
             label,
@@ -56,10 +60,11 @@ def integer_validation(
         )
 
         return default
-    
+
+
 def prompt_time_value(
         label: str
-) -> tuple[time | None, bool]:
+        ) -> tuple[time | None, bool]:
     """
     Prompts for a single time value until valid, skipped or cancelled.
 
@@ -80,12 +85,12 @@ def prompt_time_value(
         if value == "":
 
             return None, False
-        
+
         if value.lower() in ["back", "cancel", "q", "quit"]:
 
             return None, True
-        
-        try: 
+
+        try:
 
             parsed_time = datetime.strptime(
                 value,
@@ -93,13 +98,14 @@ def prompt_time_value(
             ).time()
 
             return parsed_time, False
-        
+
         except ValueError:
 
             print_empty_message(
                 "Invalid time format. Use HH:MM:SS, e.g. 13:45:00."
             )
-    
+
+
 def get_time_range() -> tuple[time | None, time | None]:
     """
     Prompts the user for an optional time range filter.
@@ -120,7 +126,7 @@ def get_time_range() -> tuple[time | None, time | None]:
     if use_time_filter != "y":
 
         return None, None
-    
+
     while True:
 
         start_time, cancelled = prompt_time_value(
@@ -134,7 +140,7 @@ def get_time_range() -> tuple[time | None, time | None]:
             )
 
             return None, None
-        
+
         end_time, cancelled = prompt_time_value(
             "\nEnd"
         )
@@ -146,24 +152,24 @@ def get_time_range() -> tuple[time | None, time | None]:
             )
 
             return None, None
-        
+
         if (
             start_time is None
             and end_time is None
         ):
-            
+
             print_empty_message(
                 "No time range applied."
             )
 
             return None, None
-        
+
         if (
             start_time is not None
             and end_time is not None
             and end_time < start_time
         ):
-            
+
             print_empty_message(
                 "End time cannot be earlier than start time. Please try again."
             )
@@ -172,9 +178,10 @@ def get_time_range() -> tuple[time | None, time | None]:
 
         return start_time, end_time
 
+
 def format_filter_display_name(
         filter_name: str
-    ) -> str:
+        ) -> str:
     """
     Converts an internal filter key into a readable menu label.
 
@@ -206,8 +213,9 @@ def format_filter_display_name(
         filter_name.title()
     )
 
+
 def format_filter_value(
-        value: str
+        value
 ) -> str:
     """
     Converts a filter value into readable display text.
@@ -216,21 +224,28 @@ def format_filter_value(
     if value is None:
 
         return "None applied."
-    
+
     if hasattr(value, "strftime"):
 
         return value.strftime(
             "%H:%M:%S"
         )
-    
+
+    if isinstance(
+        value,
+        (Service, AuthenticationStatus)
+    ):
+        return value.value
+
     return str(
         value
     )
 
+
 def confirm_filter_value(
         title: str,
         filter_values: dict
-) -> str:
+        ) -> str:
     """
     Shows selected filter values and asks the user how to continue.
 
@@ -243,7 +258,7 @@ def confirm_filter_value(
         + f"\n=== {title} Filter Summary ===\n"
     )
 
-    if not confirm_filter_value:
+    if not filter_values:
 
         print("No filters applied.")
 
@@ -274,7 +289,7 @@ def confirm_filter_value(
         + "2. Start again"
         + Fore.RESET
     )
-    
+
     print(
         Fore.LIGHTRED_EX
         + "3. Cancel"
@@ -288,25 +303,26 @@ def confirm_filter_value(
     if choice == "1":
 
         return "apply"
-    
+
     if choice == "2":
 
         return "restart"
-    
+
     if choice == "3":
 
         return "cancel"
-    
+
     print_empty_message(
         "Invalid option. Starting again."
     )
 
     return "restart"
 
+
 def parse_filter_selection(
         choice: str,
         options: dict[str, str]
-    ) -> list[str]:
+        ) -> list[str]:
     """
     Parses one or more selected filter options from user input.
 
@@ -370,7 +386,7 @@ def handle_filter_menu(
         title,
         show_function,
         filters
-    ) -> None:
+        ) -> None:
     """
     Handles a reusable multi-filter menu for report and investigation views.
 
@@ -401,10 +417,11 @@ def handle_filter_menu(
         **filter_values
     )
 
+
 def get_available_filter_values(
         reporter,
         filter_name: str
-    ) -> list:
+        ) -> list:
     """
     Returns available values for a selected filter.
 
@@ -455,7 +472,7 @@ def get_available_filter_values(
 def filter_has_available_values(
         reporter,
         filter_name: str
-    ) -> bool:
+        ) -> bool:
     """
     Checks whether a selected filter has any values available.
     """
@@ -470,7 +487,7 @@ def filter_has_available_values(
 
 def print_unavailable_filter_message(
         filter_name: str
-    ) -> None:
+        ) -> None:
     """
     Prints a readable message when a selected filter has no available values.
     """
@@ -493,11 +510,12 @@ def print_unavailable_filter_message(
         )
     )
 
+
 def collect_filter_values(
-            reporter,
-            title: str,
-            filters: list[str]
-    ) -> dict | None:
+        reporter,
+        title: str,
+        filters: list[str]
+        ) -> dict | None:
     """
     Collects selected filter values from the reusable CLI filter menu.
 
@@ -561,7 +579,7 @@ def collect_filter_values(
         if selected_filters == ["back"]:
 
             return None
-        
+
         if selected_filters == ["none"]:
 
             start_time, end_time = get_time_range()
@@ -570,7 +588,7 @@ def collect_filter_values(
                 "start_time": start_time,
                 "end_time": end_time
             }
-        
+
         filter_values = {}
 
         invalid_filter = False
@@ -632,7 +650,13 @@ def collect_filter_values(
                     "\nEnter service: "
                 ).strip().upper()
 
-                if value not in ["SSH", "FTP", "HTTP"]:
+                try:
+
+                    service = Service(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid service. Use SSH, FTP, or HTTP."
@@ -641,17 +665,23 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["service"] = value
+                filter_values["service"] = service
 
             elif selected_filter == "severity":
 
                 reporter.print_all_severities()
 
                 value = input(
-                    f"\nEnter severity: "
+                    "\nEnter severity: "
                 ).strip().upper()
 
-                if value not in ["LOW", "MEDIUM", "HIGH"]:
+                try:
+
+                    severity = Severity(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid severity. Use LOW, MEDIUM, or HIGH."
@@ -660,17 +690,23 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["severity"] = value
+                filter_values["severity"] = severity
 
             elif selected_filter == "status":
 
                 reporter.print_all_statuses()
 
                 value = input(
-                    f"\nEnter status: "
+                    "\nEnter status: "
                 ).strip().upper()
 
-                if value not in ["SUCCESS", "FAILED"]:
+                try:
+
+                    status = AuthenticationStatus(
+                        value
+                    )
+
+                except ValueError:
 
                     print_empty_message(
                         "Invalid status. Use SUCCESS or FAILED."
@@ -679,7 +715,7 @@ def collect_filter_values(
                     invalid_filter = True
                     break
 
-                filter_values["status"] = value
+                filter_values["status"] = status
 
             elif selected_filter == "method":
 
@@ -706,7 +742,7 @@ def collect_filter_values(
                     "HEAD",
                     "OPTIONS"
                 ]:
-                    
+
                     print_empty_message(
                         "Invalid method. Use GET, POST, PUT, DELETE, PATCH, HEAD, or OPTIONS."
                     )
@@ -778,11 +814,11 @@ def collect_filter_values(
         if decision == "apply":
 
             return filter_values
-        
+
         if decision == "cancel":
 
             return None
-        
+
         if decision == "restart":
 
             continue

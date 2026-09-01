@@ -152,7 +152,7 @@ Next steps: GUI + start the report! -> analyse similar tools + objectives -> are
 
 Add my own terminal -> shortcuts + CLI used already!
 
-Make into a real-software (downloaded) all in one stand alone software -> Pushing the edge -> extreme marks -> distribute throughout to different students -> feedback (effectiveness / security needs!) -> unit test 
+Make into a real-software (downloaded) all in one stand alone software -> Pushing the edge -> extreme marks -> distribute throughout to different students -> feedback (effectiveness / security needs!) -> unit test
 
 SDLC -> software development life cycle -> suitable project management development -> solo! -> Project management section! -> GUI (Usability testing!) -> Cyber security focused project:
 

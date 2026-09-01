@@ -3,8 +3,6 @@ from colorama import Fore
 
 from app.utils.display import (
     print_section_header,
-    print_empty_message,
-    print_total_count,
     print_separator
 )
 
@@ -20,7 +18,7 @@ def display_log_analysis_menu() -> None:
     Returns:
         None
     """
-    
+
     print_section_header(
         "Log Analysis Menu",
         Fore.GREEN
@@ -73,10 +71,11 @@ def display_log_analysis_menu() -> None:
         Fore.MAGENTA
     )
 
+
 def display_configuration_menu(
-        threshold: int, 
+        threshold: int,
         window_seconds: int
-    ) -> None:
+        ) -> None:
     """
     Prints the configuration menu.
 
@@ -106,10 +105,11 @@ def display_configuration_menu(
         Fore.MAGENTA
     )
 
+
 def current_config(
-        threshold: int, 
+        threshold: int,
         window_seconds: int
-    ) -> None:
+        ) -> None:
     """
     Prints the current detection configuration.
 

@@ -47,7 +47,7 @@ class FilterValues:
             empty_message: str,
             colour: str = Fore.GREEN,
             value_colour_function=None
-        ) -> None:
+            ) -> None:
         """
         Prints a sorted list of available filter values.
 
@@ -76,7 +76,7 @@ class FilterValues:
             )
 
             return
-        
+
         print_section_header(
             title,
             colour

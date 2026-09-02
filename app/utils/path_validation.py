@@ -85,7 +85,7 @@ def validate_input_log_path(
     except OSError as e:
 
         raise PermissionError(
-            "Log file caanot be read."
+            "Log file cannot be read."
         ) from e
 
     return candidate

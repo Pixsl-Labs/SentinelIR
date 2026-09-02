@@ -15,6 +15,7 @@ from app.log_analyser.log_reporter import LogReporter
 
 from app.utils.paths import (
     APPLICATION_LOGS_DIR,
+    APPLICATION_LOG_PATH
 )
 from app.utils.path_validation import validate_input_log_path
 
@@ -35,7 +36,7 @@ def initialise_cli() -> None:
         handlers=[
             logging.StreamHandler(),
             logging.FileHandler(
-                APPLICATION_LOGS_DIR / "application.log"
+                APPLICATION_LOG_PATH
             )
         ]
     )

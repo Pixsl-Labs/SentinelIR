@@ -68,7 +68,7 @@ class AppConfig:
     monitoring settings, and output paths into one structured object.
     """
 
-    watched_files: list[str] = field(
+    watched_files: list[Path] = field(
         default_factory=lambda: [validate_input_log_path(
             "generated.log"
             )]

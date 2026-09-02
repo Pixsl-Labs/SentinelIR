@@ -8,6 +8,7 @@ from app.config.security_config import (
     USER_TARGETING_THRESHOLD
 )
 
+
 from app.utils.formatting import (
     format_column,
     print_table_header,
@@ -28,6 +29,7 @@ from app.utils.colours import (
     get_count_colour
 )
 
+
 from app.models.detection_results import (
     SuspiciousIPResult,
 )
@@ -35,6 +37,8 @@ from app.models.enums import (
     Service,
     Severity
 )
+from app.models.detection_summary import DetectionResults
+
 
 from app.detection.detection_engine import (
     DetectionEngine
@@ -49,6 +53,31 @@ class Detection:
     suspicious IP addresses, suspicious successful logins, and distributed
     user-targeting behaviour.
     """
+
+    def get_detection_results(self) -> DetectionResults:
+        """
+        Returns all current detection findings in one structured result.
+
+        Returns:
+            DetectionResults: Combined brute-force, suspicious-success,
+                suspicious-IP, user-targeting, and anonymous FTP findings.
+        """
+
+        return DetectionResults(
+            brute_force=DetectionEngine.get_brute_force(
+                self.analyser
+            ),
+            suspicious_success=DetectionEngine.get_suspicious_success(
+                self.analyser
+            ),
+            suspicious_ips=self.get_suspicious_ips(),
+            user_targeting=DetectionEngine.get_user_targeting(
+                self.analyser
+            ),
+            anonymous_ftp=DetectionEngine.get_anonymous_ftp_logins(
+                self.analyser
+            )
+        )
 
     def print_brute_force_results(
             self,

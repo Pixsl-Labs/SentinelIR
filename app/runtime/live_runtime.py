@@ -13,7 +13,7 @@ from app.utils.display import (
 from app.utils.colours import (
     get_live_status_colour
 )
-from app.utils.paths import APPLICATION_LOGS_DIR
+from app.utils.paths import ALERT_LOG_PATH
 
 
 from app.models.enums import (
@@ -197,7 +197,7 @@ class LiveRuntime:
 
         print_stat_row(
             "Alert log path",
-            APPLICATION_LOGS_DIR / "alerts.log",
+            ALERT_LOG_PATH,
             Fore.CYAN,
             28
         )

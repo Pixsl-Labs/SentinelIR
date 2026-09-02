@@ -36,7 +36,10 @@ from app.utils.display import (
 from app.utils.paths import (
     REPORTS_DIR
 )
-from app.utils.path_validation import validate_input_log_path
+from app.utils.path_validation import (
+    validate_input_log_path,
+    validate_export_path
+)
 
 
 class Interaction:
@@ -435,6 +438,20 @@ class Interaction:
                 file_path = input(
                     "\nEnter report filename (.txt/.json): "
                 ).strip()
+
+                try:
+
+                    file_path = validate_export_path(
+                        file_path
+                    )
+
+                except ValueError as exc:
+
+                    print_empty_message(
+                        str(exc)
+                    )
+
+                    continue
 
                 file_path = REPORTS_DIR / file_path
 

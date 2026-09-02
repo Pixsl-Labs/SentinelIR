@@ -16,19 +16,23 @@ mode.
 """
 
 
+import argparse
+import os
+
+
 from app.utils.display import (
     print_section_header,
     print_empty_message
 )
+from app.utils.path_validation import validate_input_log_path
+
 
 from app.interaction.interaction import Interaction
 from app.runtime.runtime_controller import RunTimeController
 
+
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
-
-import argparse
-import os
 
 
 def run_cli(args) -> None:
@@ -52,8 +56,7 @@ def run_cli(args) -> None:
         analyser
     )
 
-    log_file = os.path.join(
-        "log_files",
+    log_file = validate_input_log_path(
         args.file
     )
 
@@ -98,7 +101,9 @@ def run_interactive() -> None:
         if not file_name.endswith(".log"):
             file_name += ".log"
 
-        log_file = os.path.join("log_files", file_name)
+        log_file = validate_input_log_path(
+            file_name
+        )
 
         if not os.path.exists(log_file):
             print("File not found. Try again.\n")

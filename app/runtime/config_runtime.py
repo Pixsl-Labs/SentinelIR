@@ -1,5 +1,7 @@
 from json import JSONDecodeError
 from pathlib import Path
+from colorama import Fore
+
 
 from app.config.config_loader import load_config
 from app.config.config_manager import (
@@ -7,7 +9,10 @@ from app.config.config_manager import (
     add_watched_file,
     remove_watched_file
 )
+
+
 from app.runtime.live_runtime import LiveRuntime
+
 
 from app.utils.display import (
     print_section_header,
@@ -15,8 +20,7 @@ from app.utils.display import (
     print_info,
     print_stat_row
 )
-
-from colorama import Fore
+from app.utils.paths import CONFIG_PATH
 
 
 class ConfigRuntime:
@@ -32,7 +36,7 @@ class ConfigRuntime:
             self,
             analyser,
             reporter,
-            config_path: str = "sentinel_config.json"
+            config_path: str = CONFIG_PATH
             ) -> None:
         """
         Initialises the configuration runtime.

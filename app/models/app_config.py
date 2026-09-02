@@ -1,10 +1,19 @@
 from dataclasses import dataclass, field
+from pathlib import Path
+
 
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW,
     USER_TARGETING_THRESHOLD
 )
+
+
+from app.utils.paths import (
+    REPORTS_DIR,
+    APPLICATION_LOGS_DIR,
+)
+from app.utils.path_validation import validate_input_log_path
 
 
 @dataclass
@@ -46,8 +55,8 @@ class OutputConfig:
     application log files.
     """
 
-    reports_dir: str = "reports"
-    logs_dir: str = "logs"
+    reports_dir: Path = REPORTS_DIR
+    logs_dir: Path = APPLICATION_LOGS_DIR
 
 
 @dataclass
@@ -60,7 +69,9 @@ class AppConfig:
     """
 
     watched_files: list[str] = field(
-        default_factory=lambda: ["log_files/generated.log"]
+        default_factory=lambda: [validate_input_log_path(
+            "generated.log"
+            )]
     )
     thresholds: ThresholdConfig = field(
         default_factory=ThresholdConfig

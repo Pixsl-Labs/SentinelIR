@@ -1,10 +1,12 @@
 from colorama import Fore
-import os
+
 
 from app.utils.display import (
     print_section_header,
     print_empty_message
 )
+from app.utils.path_validation import validate_input_log_path
+
 
 from app.runtime.generator_selection import (
     select_scenario_type,
@@ -13,6 +15,7 @@ from app.runtime.generator_selection import (
     select_http_scenario,
     select_mixed_services
 )
+
 
 from app.generator.log_generator import (
     write_lines_to_file,
@@ -214,10 +217,7 @@ class GeneratorRuntime:
         if not file_name.endswith(".log"):
             file_name += ".log"
 
-        return os.path.join(
-            "log_files",
-            file_name
-        )
+        return validate_input_log_path(file_name)
 
     def select_stream_or_write(
             self,

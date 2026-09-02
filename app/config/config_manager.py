@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
 
+
 from app.config.config_loader import load_config_dict
+
+
+from app.utils.paths import INPUT_LOGS_DIR
 
 
 def save_config_dict(
@@ -29,7 +33,7 @@ def save_config_dict(
 
 
 def list_available_log_files(
-        log_dir: str = "log_files"
+        log_dir: str = INPUT_LOGS_DIR
         ) -> list[str]:
     """
     Returns available log files from the configured log directory.

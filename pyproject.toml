@@ -28,3 +28,14 @@ web = [
     "fastapi",
     "uvicorn"
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = [
+    "tests*",
+    "log_files*",
+    "logs*",
+    "reports*",
+    "dissertation*",
+    "docs*",
+]

@@ -1,7 +1,9 @@
 from colorama import Fore
 
+
 from app.monitoring.file_monitor import FileMonitor
 from app.monitoring.live_event_processor import LiveEventProcessor
+
 
 from app.utils.display import (
     print_section_header,
@@ -11,6 +13,8 @@ from app.utils.display import (
 from app.utils.colours import (
     get_live_status_colour
 )
+from app.utils.paths import ALERT_LOG_PATH
+
 
 from app.models.enums import (
     AlertType
@@ -193,7 +197,7 @@ class LiveRuntime:
 
         print_stat_row(
             "Alert log path",
-            "logs/alerts.log",
+            ALERT_LOG_PATH,
             Fore.CYAN,
             28
         )

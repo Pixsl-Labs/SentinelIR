@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+
 from app.models.app_config import (
     AppConfig,
     ThresholdConfig,
@@ -9,8 +10,14 @@ from app.models.app_config import (
 )
 
 
+from app.utils.paths import (
+    CONFIG_PATH,
+    PROJECT_ROOT
+)
+
+
 def load_config(
-        config_path: str = "sentinel_config.json"
+        config_path: str | Path = CONFIG_PATH
         ) -> AppConfig:
     """
     Loads the SentinelIR application configuration.
@@ -36,7 +43,7 @@ def load_config(
 
 
 def load_config_dict(
-        config_path: str
+        config_path: str | Path
         ) -> dict:
     """
     Reads raw configuration data from a JSON file.
@@ -137,12 +144,11 @@ def build_app_config(
         ),
 
         outputs=OutputConfig(
-            reports_dir=outputs.get(
+            reports_dir=PROJECT_ROOT / outputs.get(
                 "reports_dir",
                 default_config.outputs.reports_dir
             ),
-
-            logs_dir=outputs.get(
+            logs_dir=PROJECT_ROOT / outputs.get(
                 "logs_dir",
                 default_config.outputs.logs_dir
             )

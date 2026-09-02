@@ -4,14 +4,20 @@ Shared helpers for SentinelIR CLI entry points
 
 import logging
 
+
 from pathlib import Path
 from colorama import init
+
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
 
 
-LOG_FILES_DIR = Path("log_files")
+from app.utils.paths import (
+    APPLICATION_LOGS_DIR,
+    APPLICATION_LOG_PATH
+)
+from app.utils.path_validation import validate_input_log_path
 
 
 def initialise_cli() -> None:
@@ -19,7 +25,7 @@ def initialise_cli() -> None:
     Initialises shared SentinelIR CLI behaviour.
     """
 
-    Path("logs").mkdir(
+    Path(APPLICATION_LOGS_DIR).mkdir(
         parents=True,
         exist_ok=True
     )
@@ -30,7 +36,7 @@ def initialise_cli() -> None:
         handlers=[
             logging.StreamHandler(),
             logging.FileHandler(
-                "logs/application.log"
+                APPLICATION_LOG_PATH
             )
         ]
     )
@@ -76,7 +82,9 @@ def resolve_log_file(
     if not file_name.endswith(".log"):
         file_name += ".log"
 
-    file_path = LOG_FILES_DIR / file_name
+    file_path = validate_input_log_path(
+        file_name
+    )
 
     if not file_path.is_file():
 

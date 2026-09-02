@@ -1,7 +1,16 @@
 import json
 
+
 from app.config.config_loader import load_config
+
+
 from app.models.app_config import AppConfig
+
+
+from app.utils.paths import (
+    REPORTS_DIR,
+    APPLICATION_LOGS_DIR
+)
 
 
 def test_load_config_returns_app_config(tmp_path):
@@ -150,8 +159,8 @@ def test_load_config_uses_defaults_when_optional_sections_missing(tmp_path):
     assert config.live_monitoring.status_interval == 10
     assert config.live_monitoring.show_new_logs is True
 
-    assert config.outputs.reports_dir == "reports"
-    assert config.outputs.logs_dir == "logs"
+    assert config.outputs.reports_dir == REPORTS_DIR
+    assert config.outputs.logs_dir == APPLICATION_LOGS_DIR
 
 
 def test_build_app_config_reads_live_monitoring_settings(tmp_path):

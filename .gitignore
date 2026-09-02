@@ -1,4 +1,5 @@
 # Python
+
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -6,22 +7,33 @@ __pycache__/
 htmlcov/
 
 # Virtual environments and secrets
+
 venv/
 .venv/
 .env
 .env.*
 
 # Runtime output
+
 logs/
 reports/
 
+# Build / packaging
+
+build/
+dist/
+*.egg-info/
+
 # IDE
+
 .vscode/
 *.code-workspace
 
 # OS
+
 .DS_Store
 
 # Personal
+
 docs/
 sentinel_config.json

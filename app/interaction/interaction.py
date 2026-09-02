@@ -1,13 +1,15 @@
-import os
 from colorama import Fore
+
 
 from app.log_analyser.log_analyser import LogAnalyser
 from app.log_analyser.log_reporter import LogReporter
+
 
 from app.config.security_config import (
     BRUTE_FORCE_THRESHOLD,
     BRUTE_FORCE_TIME_WINDOW
 )
+
 
 from app.interaction.menus import (
     display_log_analysis_menu,
@@ -19,6 +21,8 @@ from app.interaction.filters import (
     collect_filter_values
 )
 from app.interaction.configuration import configure
+
+
 from app.utils.colours import (
     get_count_colour,
     get_attempt_colour
@@ -28,6 +32,13 @@ from app.utils.display import (
     print_empty_message,
     print_total_count,
     print_generated_timestamp
+)
+from app.utils.paths import (
+    REPORTS_DIR
+)
+from app.utils.path_validation import (
+    validate_input_log_path,
+    validate_export_path
 )
 
 
@@ -428,10 +439,21 @@ class Interaction:
                     "\nEnter report filename (.txt/.json): "
                 ).strip()
 
-                file_path = os.path.join(
-                    "reports",
-                    file_path
-                )
+                try:
+
+                    file_path = validate_export_path(
+                        file_path
+                    )
+
+                except ValueError as exc:
+
+                    print_empty_message(
+                        str(exc)
+                    )
+
+                    continue
+
+                file_path = REPORTS_DIR / file_path
 
                 if file_path.endswith(".txt"):
 
@@ -463,7 +485,9 @@ class Interaction:
 
                 self.analyser.reset()
 
-                file_path = "log_files/" + file_path
+                file_path = validate_input_log_path(
+                    file_path
+                )
 
                 self.analyser.analyse(file_path)
 

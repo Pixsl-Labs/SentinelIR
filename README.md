@@ -582,51 +582,51 @@ This can support evaluation of:
 
 ## Completed / Stable Foundation
 
-- SSH, FTP, and HTTP parsing;
-- Structured event model;
-- Combined filtering;
-- Rule-based detections;
-- Live monitoring;
-- Alert cooldown;
-- Persistent alerts;
-- Scenario generation;
-- TXT and JSON reporting;
-- Shared project paths;
-- Safe file validation;
-- Structured analysis and detection results;
-- Small backend service layer;
-- Flake8 / pytest / compile checks;
-- GitHub Actions CI;
-- Branch protection and pull-request workflow.
+- SSH, FTP, and HTTP parsing
+- Structured event model
+- Combined filtering
+- Rule-based detections
+- Live monitoring
+- Alert cooldown
+- Persistent alerts
+- Scenario generation
+- TXT and JSON reporting
+- Shared project paths
+- Safe file validation
+- Structured analysis and detection results
+- Small backend service layer
+- Flake8 / pytest / compile checks
+- GitHub Actions CI
+- Branch protection and pull-request workflow
 
 ## Next
 
-- FastAPI application foundation;
-- Health/version endpoints;
-- API schemas;
-- Analysis endpoints;
-- Filtering and detection endpoints;
-- Export endpoints;
-- API error handling and security boundaries.
+- FastAPI application foundation
+- Health/version endpoints
+- API schemas
+- Analysis endpoints
+- Filtering and detection endpoints
+- Export endpoints
+- API error handling and security boundaries
 
 ## After API
 
-- Web dashboard;
-- File upload / selection workflow;
-- Summary views;
-- Event tables;
-- Filtering controls;
-- Detection views;
-- Exports;
-- Live-monitoring integration.
+- Web dashboard
+- File upload/selection workflow
+- Summary views
+- Event tables
+- Filtering controls
+- Detection views
+- Exports
+- Live-monitoring integration
 
 ## Future / Optional
 
-- Additional log sources;
-- Broader detection coverage;
-- Expanded CTF evaluation;
-- Desktop GUI development if it remains useful;
-- Additional CLI convenience features.
+- Additional log sources
+- Broader detection coverage
+- Expanded CTF evaluation
+- Desktop GUI development if it remains useful
+- Additional CLI convenience features
 
 ---
 
@@ -634,12 +634,12 @@ This can support evaluation of:
 
 Current limitations include:
 
-- Only SSH, FTP, and HTTP are supported as implemented parser sources;
-- Detections are rule-based rather than machine-learning based;
-- The FastAPI layer is not yet the primary interface;
-- The Web UI is not yet implemented;
-- The desktop GUI is not the primary supported interface;
-- Current evaluation is still being developed.
+- Only SSH, FTP, and HTTP are supported as implemented parser sources
+- Detections are rule-based rather than machine-learning-based
+- The FastAPI layer is not yet the primary interface
+- The Web UI is not yet implemented
+- The desktop GUI is not the primary supported interface
+- Current evaluation is still being developed
 
 ---
 
@@ -647,15 +647,15 @@ Current limitations include:
 
 SentinelIR currently prioritises:
 
-- Explainable detections;
-- Modular parsers;
-- Reusable backend logic;
-- Safe file handling;
-- Testability;
-- Small focused services;
-- Minimal duplication between interfaces;
-- Incremental development;
-- Traceable engineering decisions.
+- Explainable detections
+- Modular parsers
+- Reusable backend logic
+- Safe file handling
+- Testability
+- Small focused services
+- Minimal duplication between interfaces
+- Incremental development
+- Traceable engineering decisions
 
 ---
 

@@ -553,17 +553,17 @@ A controlled CTF environment is planned as a source of primary experimental data
 
 The intended process is:
 
-1. Build a deliberately vulnerable test environment;
-2. Perform known attacks in a controlled setting;
-3. Capture the generated service logs;
-4. Analyse those logs using SentinelIR;
-5. Compare SentinelIR detections against the known ground truth.
+1. Build a deliberately vulnerable test environment
+2. Perform known attacks in a controlled setting
+3. Capture the generated service logs
+4. Analyse those logs using SentinelIR
+5. Compare SentinelIR detections against the known ground truth
 
 Likely early targets align with the services SentinelIR already supports:
 
-- SSH;
-- HTTP;
-- FTP.
+- SSH
+- HTTP
+- FTP
 
 This can support evaluation of:
 

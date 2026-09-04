@@ -41,7 +41,7 @@ SentinelIR aims to provide a lightweight, explainable security-analysis workflow
 
 ## SSH
 
-SentinelIR support SSH authentication activity including failed and successful login events.
+SentinelIR supports SSH authentication activity including failed and successful login events.
 
 Typical fields include:
 
@@ -54,7 +54,7 @@ Typical fields include:
 
 ## FTP
 
-FTP login events are normalised into the same structured event model, and include support for anonmyous-login detection.
+FTP login events are normalised into the same structured event model, and include support for anonymous-login detection.
 
 ## HTTP
 
@@ -75,7 +75,7 @@ Unsupported or malformed lines are ignored safely rather than being forced into 
 
 # Parser Design
 
-SenintelIR separates parser identification, routing, validation, and structured event creation.
+SentinelIR separates parser identification, routing, validation, and structured event creation.
 
 ```mermaid
 flowchart LR
@@ -113,7 +113,9 @@ Each parser validates the fields required to build a usable event. Missing requi
 
 Valid lines are converted into `LogEntry` objects so filtering, detection, reporting, and live monitoring work against a common model rather than raw text.
 
-## Filtering Design
+---
+
+# Filtering Design
 
 Filtering operates on structured log events rather than terminal output.
 
@@ -229,7 +231,7 @@ The structured detection result groups:
 - User-targeting findings
 - Anonymous FTP findings
 
-These models are intended for resuse by the CLI, service layer, and future API.
+These models are intended for reuse by the CLI, service layer, and future API.
 
 ---
 
@@ -294,9 +296,11 @@ flowchart TD
     J --> U[Persistent Alerts]
 ```
 
-## Safe Paths and File Validation
+---
 
-SentinelIR centralises project path using `pathlib.Path`.
+# Safe Paths and File Validation
+
+SentinelIR centralises project paths using `pathlib.Path`.
 
 Shared paths cover:
 
@@ -314,11 +318,13 @@ Input-file validation checks:
 - Supported extensions
 - Readability
 - Approved input directory
-- Attempts to escape to configured log directory
+- Attempts to escape the configured log directory
 
 Export validation checks report filenames and prevents output from being written outside the approved reports directory.
 
-## CLI
+---
+
+# CLI
 
 The project exposes four root launch commands:
 
@@ -337,7 +343,7 @@ The CLI can:
 
 - Load supported log files
 - Analyse authentication events
-- View summarises and statistics
+- View summaries and statistics
 - Filter events
 - Review detections
 - Export results
@@ -350,13 +356,21 @@ The CLI can:
 
 `./generate` creates controlled log activity for development, testing, and demonstration.
 
-Current scenarios coverage includes:
+Supported scenario groups:
+- SSH
+- FTP
+- HTTP
+- Mixed multi-service
 
+Scenario types include:
+- Failed login
+- Successful login
 - Brute force
 - Suspicious success
 - User targeting
 - Normal activity
-- Mixed attack activity
+- Mixed attack
+- Anonymous FTP login where applicable
 
 Generation can write a complete file or stream events with configured delay and append/overwrite behaviour.
 
@@ -366,8 +380,8 @@ SentinelIR provides both human-readable CLI reporting and reusable structured re
 
 Current reporting capabilities include:
 
-- Investigation summarises
-- Attack summarises
+- Investigation summaries
+- Attack summaries
 - Attack statistics
 - Filtered results
 - Detection findings
@@ -402,7 +416,7 @@ source .venv/bin/activate
 Runtime configuration is stored in:
 
 ```text
-senintel_config.json
+sentinel_config.json
 ```
 
 Configuration is used for values such as:
@@ -425,7 +439,7 @@ SentinelIR uses:
 - Flake8 for style and static checks
 - Pre-commit hooks
 - Python compile validation
-- Github Actions CI
+- GitHub Actions CI
 - Protected `main` branch workflows
 
 Run the local quality checks with:
@@ -482,7 +496,7 @@ SentinelIR/
 
 Generated runtime output such as application logs, reports, Python caches, virtual environments, and pytest caches is excluded from version control.
 
-# Developed Worflow
+# Development Workflow
 
 SentinelIR uses a branch-and-pull-request workflow.
 

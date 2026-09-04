@@ -1,12 +1,8 @@
-![Python](https://img.shields.io/badge/Python-3-blue)
-![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)
-![Status](https://img.shields.io/badge/Status-Active-success)
-
 # SentinelIR
 
-SentinelIR is a Python-based incident response and SOC investigation toolkit for analysing authentication logs, monitoring security activity in real time, generating attack scenarios, and supporting defensive investigation workflows.
+SentinelIR is a Python-based incident response and SOC investigation toolkit for analysing authentication-focused log data, identifying suspicious behaviour, monitoring live log activity, and producing structured investigation results.
 
-The project started as a Linux authentication log analyser and is evolving into a lightweight live incident response tool. It is designed around clean software architecture, modular detection logic, configurable thresholds, live monitoring, and test-driven development.
+The project is being developed as a final-year cybersecurity dissertation and is currently centred on a stable CLI backend, reusable service interfaces, and preparation for a FastAPI/Web UI layer.
 
 ---
 
@@ -26,83 +22,433 @@ The long-term direction is to expand SentinelIR into a broader investigation pla
 
 ---
 
-# Current Features
+# Project Goals
 
-## Static Log Analysis
+SentinelIR aims to provide a lightweight, explainable security-analysis workflow that can:
 
-- Parses Linux-style authentication logs
-- Extracts failed login events
-- Extracts successful login events
-- Groups failed login attempts by IP address
-- Builds activity timelines
-- Supports filtering by:
-  - IP address
-  - Username
-  - Severity
-  - Status
-  - Time range
+- Parse supported security log formats into a common structured representation
+- Filter events for investigation
+- Detect suspicious authentication behaviour
+- Monitor live log files
+- Persist security alerts
+- Generate repeatable test scenarios
+- Export investigation results
+- Expose the same backend through CLI, API, and future Web UI interfaces
 
-## Detection
+---
 
-- Detects brute-force login attacks
-- Detects suspicious IP addresses
-- Detects successful logins following failed attempts
-- Detects distributed user-targeting attacks
-- Calculates severity levels
-- Tracks alert state during live monitoring
-- Suppresses duplicate live alerts
+# Supported Log Sources
+
+## SSH
+
+SentinelIR support SSH authentication activity including failed and successful login events.
+
+Typical fields include:
+
+- Timestamps
+- Source IP addresses
+- Username
+- Authentication status
+- Service
+- Severity
+
+## FTP
+
+FTP login events are normalised into the same structured event model, and include support for anonmyous-login detection.
+
+## HTTP
+
+HTTP parser support extracts login-oriented request information where available, including:
+
+- Timestamps
+- Source IP
+- Username
+- Authentication results
+- HTTP method
+- Request path
+- Status code
+- Service
+
+Unsupported or malformed lines are ignored safely rather than being forced into an invalid event.
+
+---
+
+# Parser Design
+
+SenintelIR separates parser identification, routing, validation, and structured event creation.
+
+```mermaid
+flowchart LR
+    A[Raw Log Line] --> B[Parser Router]
+    B --> C{Identify Supported Type}
+
+    C -->|SSH| D[SSH Parser]
+    C -->|FTP| E[FTP Parser]
+    C -->|HTTP| F[HTTP Parser]
+    C -->|Unsupported| G[Ignore Safely]
+
+    D --> H[Validate Required Fields]
+    E --> H
+    F --> H
+
+    H -->|Valid| I[Structured LogEntry]
+    H -->|Malformed| G
+
+    I --> J[Log Analyser]
+```
+
+## Identification
+
+The parser router checks whether a raw line matches a supported source.
+
+## Routing
+
+Supported lines are routed to the dedicated SSH, FTP, or HTTP parser.
+
+## Validation
+
+Each parser validates the fields required to build a usable event. Missing required values result in the line being rejected safely.
+
+## Structured Event Creation
+
+Valid lines are converted into `LogEntry` objects so filtering, detection, reporting, and live monitoring work against a common model rather than raw text.
+
+## Filtering Design
+
+Filtering operates on structured log events rather than terminal output.
+
+Supported filters include:
+
+- Source IP
+- Username
+- Service
+- Authentication Status
+- Severity
+- Time range
+
+Filters can be combined so an investigator can narrow a dataset using more than one criterion at the same time.
+
+```mermaid
+flowchart LR
+    A[Structured Log Entries] --> B[Filter Engine]
+
+    B --> C[IP]
+    B --> D[User]
+    B --> E[Service]
+    B --> F[Status]
+    B --> G[Severity]
+    B --> H[Time Range]
+
+    C --> I[Combined Filtered Results]
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+
+    I --> J[CLI Reporting]
+    I --> K[Structured Backend Results]
+```
+
+---
+
+# Detection Design
+
+SentinelIR uses rule-based detections to identify suspicious authentication behaviour.
+
+Current detection categories include:
+
+- Brute force
+- Suspicious successful login following suspicious failures
+- Suspicious IP activity
+- User targeting
+- Anonymous FTP access
+
+Detection logic is service-aware so events from different services are not treated as one undifferentiated stream.
+
+```mermaid
+flowchart TD
+    A[Structured Events] --> B[Detection Engine]
+
+    B --> C[Brute Force]
+    B --> D[Suspicious Success]
+    B --> E[Suspicious IP]
+    B --> F[User Targeting]
+    B --> G[Anonymous FTP]
+
+    C --> H[Detection Results]
+    D --> H
+    E --> H
+    F --> H
+    G --> H
+
+    H --> I[Severity]
+    H --> J[Live Alert State]
+
+    J --> K{Cooldown Active?}
+    K -->|Yes| L[Suppress Duplicate Alert]
+    K -->|No| M[Emit Alert]
+
+    M --> N[Terminal]
+    M --> O[Persistent Alert Log]
+```
+
+## Cooldown behaviour
+
+Live detections keep alert state so repeated events do not continuously produce duplicate alerts within the configured cooldown period.
+
+## Persistent Alerts
+
+Live alerts can be written to the shared application alert-log path, allowing detection history to survive beyond terminal output.
+
+---
+
+# Structured Results
+
+The backend exposes reusable data structures that do not depend on CLI printing.
+
+## Analysis Summary
+
+The structured analysis summary contains:
+
+- Total events
+- Failed logins
+- Successful logins
+- Unique IP addresses
+- Per-service totals
+- Severity totals
+- Detection counts
+
+## Detection Results
+
+The structured detection result groups:
+
+- Brute-force findings
+- Suspicious-success findings
+- Suspicious-IP findings
+- User-targeting findings
+- Anonymous FTP findings
+
+These models are intended for resuse by the CLI, service layer, and future API.
+
+---
+
+# Service Layer
+
+A small service layer sits between user-facing interfaces and the existing backend.
+
+Current service responsibilities are intentionally narrow:
+
+Service | Responsibility |
+|---|---|
+| `AnalysisService` | Coordinates analysis and structured analysis results |
+| `DetectionService` | Coordinates reusable detection results |
+| `FileService` | Coordinates safe input-file validation |
+| `ExportService` | Coordinates safe report-export handling |
+
+The services do not replace the existing parser, analyser, detection, or reporting code. They provide a stable interface that the CLI and future FastAPI routes can share.
+
+---
+
+# Architecture
+
+```mermaid
+flowchart TD
+    A[Input Log Files] --> B[Safe File Validation]
+    B --> C[Parser Router]
+
+    C --> D[SSH Parser]
+    C --> E[FTP Parser]
+    C --> F[HTTP Parser]
+
+    D --> G[Structured LogEntry]
+    E --> G
+    F --> G
+
+    G --> H[Log Analyser]
+
+    H --> I[Filtering]
+    H --> J[Detection Engine]
+
+    I --> K[Reporting]
+    J --> K
+
+    H --> L[Analysis Service]
+    J --> M[Detection Service]
+    B --> N[File Service]
+    K --> O[Export Service]
+
+    L --> P[Future FastAPI Layer]
+    M --> P
+    N --> P
+    O --> P
+
+    P --> Q[Future Web UI]
+
+    K --> R[CLI]
+    K --> S[TXT / JSON Reports]
+
+    H --> T[Live Monitoring]
+    T --> J
+
+    J --> U[Persistent Alerts]
+```
+
+## Safe Paths and File Validation
+
+SentinelIR centralises project path using `pathlib.Path`.
+
+Shared paths cover:
+
+- Project root
+- Configuration
+- Input logs
+- Application logs
+- Alert logs
+- Reports
+
+Input-file validation checks:
+
+- File existence
+- Regular-file status
+- Supported extensions
+- Readability
+- Approved input directory
+- Attempts to escape to configured log directory
+
+Export validation checks report filenames and prevents output from being written outside the approved reports directory.
+
+## CLI
+
+The project exposes four root launch commands:
+
+Command | Purpose |
+|---|---|
+| `./analyse` | Static log analysis and investigation |
+| `./monitor` | Live file monitoring and alerting |
+| `./generate` | Controlled scenario generation |
+| `./web` | Web entry-point scaffold / future API launcher |
+
+## Static Analysis
+
+`./analyse` provides the main investigation workflow.
+
+The CLI can:
+
+- Load supported log files
+- Analyse authentication events
+- View summarises and statistics
+- Filter events
+- Review detections
+- Export results
 
 ## Live Monitoring
 
-- Watches a log file for new events
-- Processes new log lines as they arrive
-- Runs detections immediately against live state
-- Prints live alerts when suspicious behaviour is detected
-- Displays periodic live monitoring status
-- Prints a live session summary when monitoring ends
-- Uses service-aware alert keys so SSH, FTP, and HTTP activity is tracked separately.
-- Applies cooldown-based alert suppression to reduce repeated alert spam.
-- Persists live alerts to logs/alerts.log for later investigation.
+`./monitor` watches configured log files for new events and runs live detection logic against appended data.
 
-# Scenario Generator
+## Scenario Generation
 
-- Generates realistic SSH authentication log scenarios
-- Supports:
-  - Brute-force scenario
-  - Suspicious-success scenario
-  - User-targeting scenario
-  - Normal activity scenario
-  - Mixed attack scenario
-- Can write generated logs instantly
-- Can stream generated logs slowly into a file
-- Supports append or overwrite mode
-- Supports custom stream delay
-- Includes scenario preview and confirmation
+`./generate` creates controlled log activity for development, testing, and demonstration.
+
+Current scenarios coverage includes:
+
+- Brute force
+- Suspicious success
+- User targeting
+- Normal activity
+- Mixed attack activity
+
+Generation can write a complete file or stream events with configured delay and append/overwrite behaviour.
 
 ## Reporting
 
-- Interactive CLI reports
-- Attack summaries
+SentinelIR provides both human-readable CLI reporting and reusable structured results.
+
+Current reporting capabilities include:
+
+- Investigation summarises
+- Attack summarises
 - Attack statistics
-- TXT report export
-- JSON report export
+- Filtered results
+- Detection findings
+- TXT export
+- JSON export
 
-## Testing
+---
 
-- Unit tests for detection logic
-- Unit tests for filtering
-- Unit tests for report exports
-- Unit tests for live event processing
-- Unit tests for scenario generation
-- Unit tests for file writing and streaming
+# Installation
+
+SentinelIR provides a one-command project installer.
+
+```bash
+chmod +x install.sh analyse monitor generate web
+./install.sh
+```
+
+The installer creates a project virtual environment and installs the required Python dependencies.
+
+The project launcher scripts use the project `.venv` environment.
+
+Manual activation is also possible:
+
+```bash
+source .venv/bin/activate
+```
+
+---
+
+# Configuration
+
+Runtime configuration is stored in:
+
+```text
+senintel_config.json
+```
+
+Configuration is used for values such as:
+
+- Watched files
+- Monitoring behaviour
+- Alert thresholds
+- Cooldown behaviour
+- Detection settings
+
+Configuration loading is centralised so interfaces do not need to duplicate path handling.
+
+---
+
+# Testing and Code Quality
+
+SentinelIR uses:
+
+- `pytest` for automated testing
+- Flake8 for style and static checks
+- Pre-commit hooks
+- Python compile validation
+- Github Actions CI
+- Protected `main` branch workflows
+
+Run the local quality checks with:
+
+```bash
+python -m compileall app tests
+flake8 app tests
+pytest
+```
+
+The GitHub Actions workflow runs quality checks on pushed branches and pull requests so changes can be validated before merging into `main`.
 
 ---
 
 # Project Structure
 
 ```text
-log-analyser/
+SentinelIR/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── app/
+│   ├── cli/
 │   ├── config/
 │   ├── detection/
 │   ├── generator/
@@ -110,517 +456,193 @@ log-analyser/
 │   ├── log_analyser/
 │   ├── models/
 │   ├── monitoring/
+│   ├── parsers/
 │   ├── reporting/
 │   ├── runtime/
-│   ├── utils/
-│   └── main.py
-│
+│   ├── services/
+│   └── utils/
+├── dissertation/
+├── docs/
 ├── log_files/
-├── logs/
-├── reports/
 ├── tests/
+├── .flake8
+├── .gitignore
+├── .pre-commit-config.yaml
+├── analyse
+├── generate
+├── install.sh
+├── monitor
+├── pyproject.toml
 ├── pytest.ini
 ├── requirements.txt
+├── sentinel_config.json
+├── web
 └── README.md
 ```
 
----
+Generated runtime output such as application logs, reports, Python caches, virtual environments, and pytest caches is excluded from version control.
 
-# Architecture
+# Developed Worflow
 
-SentinelIR uses a modular architecture to separate core responsibilities.
+SentinelIR uses a branch-and-pull-request workflow.
 
-## Runtime Layer
-
-Responsible for selecting how the application runs.
-
-Current runtime modes:
+Typical development flow:
 
 ```text
-1. Static Analysis
-2. Live Monitoring
-3. Generate Scenario
-4. Config Monitoring
-5. Exit
+Issue
+  ↓
+Feature / fix branch
+  ↓
+Implementation
+  ↓
+Local compile + Flake8 + pytest
+  ↓
+Push
+  ↓
+GitHub Actions
+  ↓
+Pull request
+  ↓
+Protected main branch
 ```
 
-Key files:
-
-```text
-app/runtime/runtime_controller.py
-app/runtime/static_runtime.py
-app/runtime/live_runtime.py
-app/runtime/generator_runtime.py
-app/runtime/config_runtime.py
-app/config/config_loader.py
-app/models/app_config.py
-sentinel_config.json
-```
+This supports traceability between project issues, code changes, tests, and dissertation evidence.
 
 ---
 
-## Log Analysis Layer
+# Research And Dissertation Direction
 
-Responsible for parsing log files and storing structured authentication events.
+SentinelIR is also being used as the implementation artefact for a cybersecurity dissertation.
 
-Key files:
+The project is being developed incrementally so software-engineering evidence can be collected alongside the implementation rather than reconstructed at the end.
 
-```text
-app/log_analyser/log_analyser.py
-app/log_analyser/log_entry.py
-app/log_analyser/filtering.py
-```
+The methodology will document:
 
-The analyser extracts:
+- Architecture
+- Implementation approach
+- Testing strategy
+- Traceability
+- Experimental design
+- Evaluation
 
-- IP address
-- Username
-- Timestamp
-- Authentication status
-- Severity
+## Evaluation Design
 
----
+Evaluation is planned around both synthetic and controlled experimental data.
 
-## Detection Layer
+## Synthetic Datasets
 
-Responsible for identifying suspicious behaviour.
+The built-in scenario generator provides repeatable attack and normal-activity datasets.
 
-Key files:
+## Controlled CTF Dataset
 
-```text
-app/detection/detection_engine.py
-app/detection/alert_types.py
-```
+A controlled CTF environment is planned as a source of primary experimental data.
 
-Current detections include:
+The intended process is:
 
-- Brute-force detection
-- Suspicious success detection
-- User-targeting detection
-- Live alert suppression
-- Alert state tracking
+1. Build a deliberately vulnerable test environment;
+2. Perform known attacks in a controlled setting;
+3. Capture the generated service logs;
+4. Analyse those logs using SentinelIR;
+5. Compare SentinelIR detections against the known ground truth.
 
----
+Likely early targets align with the services SentinelIR already supports:
 
-## Monitoring Layer
+- SSH;
+- HTTP;
+- FTP.
 
-Responsible for real time file monitoring and event processing.
+This can support evaluation of:
 
-Key files:
-
-```text
-app/monitoring/file_monitor.py
-app/monitoring/live_event_processor.py
-```
-
-The monitoring layer watches a target log file, processes new lines as they arrive, and passes live events into the detection engine.
+- True positives
+- False positives
+- False negatives
+- Detection rate
+- Detection latency
+- Parser success
+- Malformed-input handling
+- Performance
 
 ---
 
-## Generator Layer
-
-Responsible for creating controlled log scenarios for testing and demonstrations.
-
-Key files:
-
-```text
-app/generator/scenarios.py
-app/generator/log_generator.py
-```
-
-This allows SentinelIR to simulate realistic attack activity and stream it into a monitored log file.
-
----
-
-## Reporting Layer
-
-Responsible for presenting investigation findings and exporting results.
-
-Key files:
-
-```text
-app/reporting/statistics.py
-app/reporting/detection.py
-app/reporting/investigation.py
-app/reporting/exports.py
-app/reporting/summary.py
-```
-
----
-
-# Detection Logic
-
-## Brute-Force Detection
-
-Brute-force detection identifies repeated failed login attempts from the same IP address.
-
-Example:
-
-```text
-192.168.1.10 -> 5 attempts within 10 seconds
-```
-
-In live monitoring mode, the alert fires once for the attacking IP and is then suppressed to prevent duplicate alert spam.
-
----
-
-## Suspicious Success Detection
-
-Suspicious-success detection identifies successful logins from IP addresses that previously failed authentication.
-
-This may include:
-
-- Credential guessing
-- Password compromise
-- Successful brute-force attempts
-- Suspicious authentication behaviour
-
----
-
-## User-Targeting Detection
-
-User-targeting detection identifies one username being attacked by multiple IP addresses.
-
-This models:
-
-- Password spraying
-- Distributed account targeting
-- Coordinated authentication attacks
-
-Example:
-
-```text
-admin targeted by 5 unique IP addresses
-```
-
----
-
-# Live Monitoring Workflow
-
-Terminal 1:
-
-```bash
-python3 -m app.main generated.log
-```
-
-Select:
-
-```text
-2. Live Monitoring
-```
-
-Terminal 2:
-
-```bash
-python3 -m app.main generated.log
-```
-
-Select:
-
-```text
-3. Generate Scenario
-5. Mixed attack
-```
-
-Then choose:
-
-```text
-Overwrite existing file
-Stream slowly
-Delay: 0.5 seconds
-```
-
-Expected live alerts:
-
-```text
-[HIGH] Brute Force Detected
-[MEDIUM] Suspicious Success Detected
-[HIGH] User Targeting Detected
-```
-
-When live monitoring stops, SentinelIR prints a live summary showing processed events, failed logins, successful logins, unique IPs, and alert counts.
-
----
-
-# Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Pixsl-Labs/SentinelIR.git
-cd SentinelIR
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# Usage
-
-Run SentinelIR with a target log file:
-
-```bash
-python3 -m app.main <log_file>
-```
-
-Example:
-
-```bash
-python3 -m app.main brute_force.log
-```
-
-You will then be asked to choose a runtime mode:
-
-```text
-1. Static Analysis
-2. Live Monitoring
-3. Generate Scenario
-4. Config Monitoring
-5. Exit
-```
-
----
-
-## Static Analysis Mode
-
-Static analysis reads an existing log file and opens the investigation menu.
-
-Example:
-
-```bash
-python3 -m app.main brute_force.log
-```
-
-Select:
-
-```text
-1. Static Analysis
-```
-
-This allows you to view:
-
-- Full report
-- Attack summary
-- Attack statistics
-- Activity timeline
-- Failed login details
-- Suspicious IPs
-- Brute-force detections
-- User-targeting detections
-- Successful logins
-- Export options
-
----
-
-## Live Monitoring Mode
-
-Live monitoring watches a log file for new lines.
-
-Example:
-
-```bash
-python3 -m app.main generated.log
-```
-
-Select:
-
-```text
-2. Live Monitoring
-```
-
-SentinelIR will monitor the file and process new authentication events in real time.
-
----
-
-## Scenario Generator Mode
-
-Scenario generator mode creates test authentication logs.
-
-Example:
-
-```bash
-python3 -m app.main generated.log
-```
-
-Select:
-
-```text
-3. Generate Scenario
-```
-
-Available scenarios:
-
-```text
-1. Brute force
-2. Suspicious success
-3. User targeting
-4. Normal activity
-5. Mixed attack
-```
-
-Output options:
-
-```text
-1. Write instantly
-2. Stream slowly
-```
-
-File modes:
-
-```text
-1. Append to existing file
-2. Overwrite existing file
-```
-
----
-
-## Report Exporting
-
-SentinelIR can export investigation data to TXT or JSON.
-
-TXT reports are human-readable.
-
-JSON reports are structured for further processing.
-
-Example report paths:
-
-```text
-reports/report.txt
-reports/generated.json
-```
-
----
-
-# Testing
-
-Run all tests:
-
-```bash
-pytest
-```
-
-Run specific test groups:
-
-```bash
-pytest tests/test_live_event_processor.py
-pytest tests/test_scenarios.py
-pytest tests/test_log_generator.py
-```
-
-Current tested areas include:
-
-- Brute-force detection
-- User-targeting detection
-- Suspicious-success detection
-- Severity classification
-- Filtering
-- Exporting reports
-- Malformed log handling
-- Live event processing
-- Live alert state tracking
-- Scenario generation
-- Log writing and streaming
-
----
-
-# Design Goals
-
-SentinelIR is designed to demonstrate:
-
-- Practical cyber security tooling
-- Incident response investigation workflows
-- Detection engineering principles
-- Clean Python architecture
-- Modular software design
-- Test-driven development
-- Live event processing
-- Extensible investigation features
-
-The goal is not to build a full enterprise SIEM. The goal is to build a focused, lightweight investigation tool that demonstrates how suspicious authentication activity can be parsed, monitored, detected, and reported.
-
----
-
-# Dissertation Direction
-
-SentinelIR is being developed as a potential final-year cyber security dissertation project.
-
-Possible research direction:
-
-```text
-Design and Evaluation of SentinelIR: A Lightweight Live Incident Response and SOC Investigation Toolkit
-```
-
-The project can support investigation into:
-
-- Rule-based detection
-- Behaviour-based anomaly detection
-- Authentication attack detection
-- Live incident response workflows
-- Usability of security investigation tools
-- Evaluation of lightweight SOC tooling
-
----
-
-# Future Improvements
-
-Planned or possible future work includes:
-
-- Expand the existing GUI scaffold into a usable anaylst dashboard
-- Cross-platform log support
-- Windows Event Log support
-- macOS log support
-- Multi-file investigation
-- Case management
-- File hash generation
-- Signature scanning
-- VirusTotal-style enrichment
-- IOC extraction
-- Dashboard-style investigation view
-- Advanced anomaly detection
-- Baseline profiling
-- Alert cooldown windows
-- Persistent storage
-- Docker support
-- Standalone packaged application
+# Roadmap
+
+## Completed / Stable Foundation
+
+- SSH, FTP, and HTTP parsing;
+- Structured event model;
+- Combined filtering;
+- Rule-based detections;
+- Live monitoring;
+- Alert cooldown;
+- Persistent alerts;
+- Scenario generation;
+- TXT and JSON reporting;
+- Shared project paths;
+- Safe file validation;
+- Structured analysis and detection results;
+- Small backend service layer;
+- Flake8 / pytest / compile checks;
+- GitHub Actions CI;
+- Branch protection and pull-request workflow.
+
+## Next
+
+- FastAPI application foundation;
+- Health/version endpoints;
+- API schemas;
+- Analysis endpoints;
+- Filtering and detection endpoints;
+- Export endpoints;
+- API error handling and security boundaries.
+
+## After API
+
+- Web dashboard;
+- File upload / selection workflow;
+- Summary views;
+- Event tables;
+- Filtering controls;
+- Detection views;
+- Exports;
+- Live-monitoring integration.
+
+## Future / Optional
+
+- Additional log sources;
+- Broader detection coverage;
+- Expanded CTF evaluation;
+- Desktop GUI development if it remains useful;
+- Additional CLI convenience features.
 
 ---
 
 # Limitations
 
-Current limitations:
+Current limitations include:
 
-- Primarily supports Linux-style SSH + FTP + HTTP event logs
-- Detection rules are heuristic-based
-- No database or persistent case storage yet
-- GUI scaffold exists, but the main usable workflow is still CLI-based
-- No cross-platform event parsing yet
-- No external threat intelligence enrichment yet
-- No file scanning yet
-
----
-
-# Technologies Used
-
-- Python 3
-- argparse
-- logging
-- dataclasses
-- pytest
-- JSON
-- colorama
+- Only SSH, FTP, and HTTP are supported as implemented parser sources;
+- Detections are rule-based rather than machine-learning based;
+- The FastAPI layer is not yet the primary interface;
+- The Web UI is not yet implemented;
+- The desktop GUI is not the primary supported interface;
+- Current evaluation is still being developed.
 
 ---
 
-# Author
+# Design Principles
 
-Samuel Stacey
+SentinelIR currently prioritises:
 
-Cyber Security student focused on detection engineering, incident response tooling, Linux, secure software development, and practical cyber security investigation workflows.
+- Explainable detections;
+- Modular parsers;
+- Reusable backend logic;
+- Safe file handling;
+- Testability;
+- Small focused services;
+- Minimal duplication between interfaces;
+- Incremental development;
+- Traceable engineering decisions.
 
-# Credits
+---
 
-Need to update once all icons added -> saved within icon_credits.md
+SentinelIR is under active development as both a cybersecurity investigation toolkit and a final-year dissertation implementation artefact.
